@@ -414,22 +414,9 @@ function renderEligibilityBar(value, classCode) {
 
 function renderMunicipalitiesWithEligibility(row, selectedClass) {
   const candidatures = getRelevantCandidatures(row, selectedClass);
-  const rowKey = String(row.id ?? Math.random()).replace(/[^a-zA-Z0-9_-]/g, "");
 
   return `
-    <div class="municipality-toggle-group" data-municipality-group>
-      <div class="municipality-toggle-list">
-        ${(row.comuni || []).map((municipality, index) => `
-          <button
-            type="button"
-            class="municipality-toggle"
-            data-municipality-toggle="${rowKey}-${index}"
-            aria-expanded="false"
-          >
-            <span>${index + 1}</span>${escapeHtml(municipality)}
-          </button>
-        `).join("")}
-      </div>
+    <div class="municipality-preferences">
       ${(row.comuni || []).map((municipality, index) => {
         const estimates = candidatures.map(candidature => {
           const value = calculateEligibility(row, candidature, municipality, index);
@@ -437,10 +424,10 @@ function renderMunicipalitiesWithEligibility(row, selectedClass) {
         }).join("");
 
         return `
-          <div class="municipality-toggle-panel" data-municipality-panel="${rowKey}-${index}" hidden>
-            <div class="municipality-toggle-panel__title">
-              <strong>${index + 1}. ${escapeHtml(municipality)}</strong>
-              <span>Stima di eleggibilità</span>
+          <div class="municipality-preference-item">
+            <div class="municipality-name">
+              <span class="preference-number">${index + 1}</span>
+              <strong>${escapeHtml(municipality)}</strong>
             </div>
             <div class="eligibility-list">${estimates}</div>
           </div>
@@ -567,27 +554,6 @@ document.querySelector("#toggle-selected-municipalities").addEventListener("clic
   renderSelectedMunicipalities();
 });
 
-document.querySelector("#results-body").addEventListener("click", event => {
-  const button = event.target.closest("[data-municipality-toggle]");
-  if (!button) return;
-
-  const group = button.closest("[data-municipality-group]");
-  const key = button.dataset.municipalityToggle;
-  const panel = group.querySelector(`[data-municipality-panel="${key}"]`);
-  const wasOpen = button.getAttribute("aria-expanded") === "true";
-
-  group.querySelectorAll("[data-municipality-toggle]").forEach(item => {
-    item.setAttribute("aria-expanded", "false");
-  });
-  group.querySelectorAll("[data-municipality-panel]").forEach(item => {
-    item.hidden = true;
-  });
-
-  if (!wasOpen) {
-    button.setAttribute("aria-expanded", "true");
-    panel.hidden = false;
-  }
-});
 
 document.querySelector("#candidate-form").addEventListener("submit", async event => {
   event.preventDefault();
@@ -680,8 +646,41 @@ function observeMap() {
   observer.observe(mapElement);
 }
 
+
+function initWelcomePopup() {
+  const popup = document.querySelector("#welcome-popup");
+  if (!popup) return;
+
+  const storageKey = "pnrr3WelcomeSeen";
+  const showPopup = () => {
+    popup.hidden = false;
+    document.body.classList.add("popup-open");
+    requestAnimationFrame(() => popup.classList.add("is-visible"));
+  };
+
+  const closePopup = () => {
+    popup.classList.remove("is-visible");
+    document.body.classList.remove("popup-open");
+    sessionStorage.setItem(storageKey, "1");
+    window.setTimeout(() => {
+      popup.hidden = true;
+    }, 180);
+  };
+
+  popup.querySelectorAll("[data-popup-close]").forEach(element => {
+    element.addEventListener("click", closePopup);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !popup.hidden) closePopup();
+  });
+
+  if (!sessionStorage.getItem(storageKey)) showPopup();
+}
+
 (async function start() {
   try {
+    initWelcomePopup();
     initWelcomeModal();
     addCandidatureRow();
     initSupabase();

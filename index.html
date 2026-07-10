@@ -30,28 +30,18 @@
       </div>
 
       <form id="candidate-form">
+        <div class="candidatures-box">
+          <div class="preferences-head">
+            <div>
+              <h3>Classi di concorso</h3>
+              <p>Aggiungi una o più classi. Per ciascuna indica posizione e punteggio.</p>
+            </div>
+            <button type="button" id="add-candidature" class="secondary">Aggiungi classe</button>
+          </div>
+          <div id="candidatures-list" class="candidatures-list"></div>
+        </div>
+
         <div class="form-grid">
-          <label>
-            Classe di concorso
-            <select id="classe_concorso" required>
-              <option value="">Seleziona</option>
-              <option value="AAAA">AAAA – Infanzia, posto comune</option>
-              <option value="ADAA">ADAA – Infanzia, sostegno</option>
-              <option value="EEEE">EEEE – Primaria, posto comune</option>
-              <option value="ADEE">ADEE – Primaria, sostegno</option>
-            </select>
-          </label>
-
-          <label>
-            Posizione in graduatoria
-            <input id="posizione" type="number" min="1" step="1" required>
-          </label>
-
-          <label>
-            Punteggio
-            <input id="punteggio" type="number" min="0" step="0.01" required>
-          </label>
-
           <label>
             Provincia 1
             <select id="provincia_1" required>

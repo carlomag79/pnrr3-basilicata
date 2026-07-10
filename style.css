@@ -138,3 +138,51 @@ footer { padding: 26px 0 40px; color: var(--muted); font-size: .86rem; }
   .badge { align-self: flex-start; }
   #map { height: 460px; }
 }
+
+.candidatures-box {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fafcfc;
+}
+
+.candidatures-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.candidature-row {
+  display: grid;
+  grid-template-columns: 1.35fr .8fr .8fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.candidature-row .remove-candidature {
+  min-height: 46px;
+  color: var(--danger);
+  background: #fff1f0;
+}
+
+.candidature-summary {
+  display: grid;
+  gap: 8px;
+  min-width: 260px;
+}
+
+.candidature-summary-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (max-width: 760px) {
+  .candidature-row { grid-template-columns: 1fr; }
+}

@@ -8,6 +8,13 @@ const CLASS_COLORS = {
   ADEE: "#2563eb"
 };
 
+const CLASS_LABELS = {
+  AAAA: "AAAA – Infanzia, posto comune",
+  ADAA: "ADAA – Infanzia, sostegno",
+  EEEE: "EEEE – Primaria, posto comune",
+  ADEE: "ADEE – Primaria, sostegno"
+};
+
 let supabaseClient = null;
 let geojsonData = null;
 let rows = [];
@@ -45,6 +52,21 @@ function normalizeName(value) {
   return String(value || "").trim().toLocaleLowerCase("it-IT");
 }
 
+function normalizeRow(row) {
+  if (Array.isArray(row.candidature) && row.candidature.length) return row;
+  if (row.classe_concorso) {
+    return {
+      ...row,
+      candidature: [{
+        classe: row.classe_concorso,
+        posizione: row.posizione,
+        punteggio: row.punteggio
+      }]
+    };
+  }
+  return { ...row, candidature: [] };
+}
+
 function initSupabase() {
   if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY ||
       CONFIG.SUPABASE_URL.includes("INCOLLA_QUI") ||
@@ -68,13 +90,71 @@ async function loadRows() {
   if (!supabaseClient) return;
   const { data, error } = await supabaseClient
     .from("candidati")
-    .select("id, classe_concorso, posizione, punteggio, provincia_1, provincia_2, comuni, created_at")
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  rows = data || [];
+  rows = (data || []).map(normalizeRow);
   renderTable();
   drawMap();
+}
+
+function candidatureOptions(selected = "") {
+  return `
+    <option value="">Seleziona</option>
+    ${Object.entries(CLASS_LABELS).map(([value, label]) =>
+      `<option value="${value}" ${selected === value ? "selected" : ""}>${label}</option>`
+    ).join("")}
+  `;
+}
+
+function addCandidatureRow(values = {}) {
+  const list = document.querySelector("#candidatures-list");
+  const row = document.createElement("div");
+  row.className = "candidature-row";
+  row.innerHTML = `
+    <label>
+      Classe di concorso
+      <select class="candidature-class" required>${candidatureOptions(values.classe || "")}</select>
+    </label>
+    <label>
+      Posizione
+      <input class="candidature-position" type="number" min="1" step="1" value="${values.posizione || ""}" required>
+    </label>
+    <label>
+      Punteggio
+      <input class="candidature-score" type="number" min="0" step="0.01" value="${values.punteggio || ""}" required>
+    </label>
+    <button type="button" class="remove-candidature">Rimuovi</button>
+  `;
+  list.appendChild(row);
+  updateCandidatureControls();
+}
+
+function updateCandidatureControls() {
+  const rowsEls = [...document.querySelectorAll(".candidature-row")];
+  rowsEls.forEach(row => {
+    row.querySelector(".remove-candidature").disabled = rowsEls.length === 1;
+  });
+}
+
+function getCandidatures() {
+  const result = [...document.querySelectorAll(".candidature-row")].map(row => ({
+    classe: row.querySelector(".candidature-class").value,
+    posizione: Number(row.querySelector(".candidature-position").value),
+    punteggio: Number(row.querySelector(".candidature-score").value)
+  }));
+
+  if (!result.length) throw new Error("Inserisci almeno una classe di concorso.");
+  if (result.some(item => !item.classe || !item.posizione || Number.isNaN(item.punteggio))) {
+    throw new Error("Completa classe, posizione e punteggio per ogni candidatura.");
+  }
+
+  const classes = result.map(item => item.classe);
+  if (new Set(classes).size !== classes.length) {
+    throw new Error("La stessa classe di concorso non può essere inserita due volte.");
+  }
+  return result;
 }
 
 function selectedProvinces() {
@@ -124,15 +204,26 @@ function renderSelectedMunicipalities() {
   populateMunicipalityOptions();
 }
 
+function rowHasClass(row, classCode) {
+  return (row.candidature || []).some(item => item.classe === classCode);
+}
+
 function buildCounts(filterClass = "ALL") {
   const counts = {};
   rows.forEach(row => {
-    if (filterClass !== "ALL" && row.classe_concorso !== filterClass) return;
+    const classes = (row.candidature || [])
+      .map(item => item.classe)
+      .filter(cls => filterClass === "ALL" || cls === filterClass);
+
+    if (!classes.length) return;
+
     (row.comuni || []).forEach(name => {
       const key = normalizeName(name);
       if (!counts[key]) counts[key] = { total: 0, AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
       counts[key].total += 1;
-      counts[key][row.classe_concorso] = (counts[key][row.classe_concorso] || 0) + 1;
+      classes.forEach(cls => {
+        counts[key][cls] = (counts[key][cls] || 0) + 1;
+      });
     });
   });
   return counts;
@@ -167,7 +258,7 @@ function drawMap() {
       const count = counts[normalizeName(name)] || { total: 0, AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
       layer.bindPopup(`
         <strong>${escapeHtml(name)}</strong><br>
-        Preferenze totali: <strong>${count.total}</strong><br><br>
+        Utenti che lo hanno scelto: <strong>${count.total}</strong><br><br>
         AAAA: ${count.AAAA}<br>
         ADAA: ${count.ADAA}<br>
         EEEE: ${count.EEEE}<br>
@@ -187,10 +278,21 @@ function filteredRows() {
   const cls = document.querySelector("#table-class-filter").value;
   const query = normalizeName(document.querySelector("#municipality-search").value);
   return rows.filter(row => {
-    const classOk = cls === "ALL" || row.classe_concorso === cls;
+    const classOk = cls === "ALL" || rowHasClass(row, cls);
     const municipalityOk = !query || (row.comuni || []).some(name => normalizeName(name).includes(query));
     return classOk && municipalityOk;
   });
+}
+
+function renderCandidaturesSummary(candidatures) {
+  return `<div class="candidature-summary">${
+    candidatures.map(item => `
+      <div class="candidature-summary-item">
+        <span class="class-chip ${item.classe}">${item.classe}</span>
+        <span>Pos. <strong>${item.posizione}</strong> · Punti <strong>${Number(item.punteggio).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+      </div>
+    `).join("")
+  }</div>`;
 }
 
 function renderTable() {
@@ -199,14 +301,12 @@ function renderTable() {
   body.innerHTML = "";
 
   if (!data.length) {
-    body.innerHTML = '<tr><td colspan="6">Nessun dato corrispondente ai filtri.</td></tr>';
+    body.innerHTML = '<tr><td colspan="4">Nessun dato corrispondente ai filtri.</td></tr>';
   } else {
     data.forEach(row => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><span class="class-chip ${row.classe_concorso}">${row.classe_concorso}</span></td>
-        <td>${row.posizione}</td>
-        <td>${Number(row.punteggio).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td>${renderCandidaturesSummary(row.candidature || [])}</td>
         <td>${escapeHtml(row.provincia_1)}</td>
         <td>${escapeHtml(row.provincia_2 || "—")}</td>
         <td class="municipalities-cell">${(row.comuni || []).map((name, i) => `${i + 1}. ${escapeHtml(name)}`).join(" · ")}</td>
@@ -220,13 +320,11 @@ function renderTable() {
 
 function downloadCsv() {
   const data = filteredRows();
-  const header = ["classe_concorso", "posizione", "punteggio", "provincia_1", "provincia_2", "comuni"];
+  const header = ["classi_posizioni_punteggi", "provincia_1", "provincia_2", "comuni"];
   const lines = [
     header.join(";"),
     ...data.map(row => [
-      row.classe_concorso,
-      row.posizione,
-      String(row.punteggio).replace(".", ","),
+      (row.candidature || []).map(item => `${item.classe}: posizione ${item.posizione}, punteggio ${item.punteggio}`).join(" | "),
       row.provincia_1,
       row.provincia_2 || "",
       (row.comuni || []).join(" | ")
@@ -260,13 +358,20 @@ function showMessage(message, isError = false) {
   el.className = isError ? "error" : "success";
 }
 
+document.querySelector("#add-candidature").addEventListener("click", () => addCandidatureRow());
+
+document.querySelector("#candidatures-list").addEventListener("click", event => {
+  const button = event.target.closest(".remove-candidature");
+  if (!button) return;
+  button.closest(".candidature-row").remove();
+  updateCandidatureControls();
+});
+
 document.querySelectorAll("#provincia_1, #provincia_2").forEach(el => {
   el.addEventListener("change", () => {
     const p1 = document.querySelector("#provincia_1").value;
     const p2 = document.querySelector("#provincia_2").value;
-    if (p1 && p2 && p1 === p2) {
-      document.querySelector("#provincia_2").value = "";
-    }
+    if (p1 && p2 && p1 === p2) document.querySelector("#provincia_2").value = "";
     populateMunicipalityOptions();
   });
 });
@@ -290,14 +395,19 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
   if (!supabaseClient) return showMessage("Supabase non è ancora configurato.", true);
   if (!selectedMunicipalities.length) return showMessage("Inserisci almeno un comune.", true);
 
+  let candidature;
+  try {
+    candidature = getCandidatures();
+  } catch (error) {
+    return showMessage(error.message, true);
+  }
+
   const submitButton = event.submitter;
   submitButton.disabled = true;
   showMessage("Invio in corso…");
 
   const payload = {
-    classe_concorso: document.querySelector("#classe_concorso").value,
-    posizione: Number(document.querySelector("#posizione").value),
-    punteggio: Number(document.querySelector("#punteggio").value),
+    candidature,
     provincia_1: document.querySelector("#provincia_1").value,
     provincia_2: document.querySelector("#provincia_2").value || null,
     comuni: selectedMunicipalities
@@ -310,6 +420,8 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
 
   event.target.reset();
   selectedMunicipalities = [];
+  document.querySelector("#candidatures-list").innerHTML = "";
+  addCandidatureRow();
   renderSelectedMunicipalities();
   showMessage("Dati inviati correttamente. Grazie!");
   await loadRows();
@@ -325,6 +437,7 @@ document.querySelector("#refresh-data").addEventListener("click", async () => {
 
 (async function start() {
   try {
+    addCandidatureRow();
     initSupabase();
     await loadGeoJSON();
     if (supabaseClient) await loadRows();

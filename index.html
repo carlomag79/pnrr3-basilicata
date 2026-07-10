@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PNRR3 Basilicata – Preferenze anonime</title>
+  <meta name="description" content="Raccolta anonima e pubblica delle preferenze dei vincitori del concorso PNRR3 Infanzia e Primaria in Basilicata.">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <p class="eyebrow">Progetto aperto e non ufficiale</p>
+      <h1>PNRR3 Basilicata</h1>
+      <p class="lead">Raccolta anonima delle preferenze territoriali dei vincitori del concorso Infanzia e Primaria.</p>
+      <p class="notice">I dati sono inseriti volontariamente dagli utenti, non sono verificati e hanno valore esclusivamente orientativo.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel" id="form-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Partecipa</p>
+          <h2>Inserisci le tue preferenze</h2>
+        </div>
+        <span class="badge">Nessun nome o email richiesti</span>
+      </div>
+
+      <form id="candidate-form">
+        <div class="form-grid">
+          <label>
+            Classe di concorso
+            <select id="classe_concorso" required>
+              <option value="">Seleziona</option>
+              <option value="AAAA">AAAA – Infanzia, posto comune</option>
+              <option value="ADAA">ADAA – Infanzia, sostegno</option>
+              <option value="EEEE">EEEE – Primaria, posto comune</option>
+              <option value="ADEE">ADEE – Primaria, sostegno</option>
+            </select>
+          </label>
+
+          <label>
+            Posizione in graduatoria
+            <input id="posizione" type="number" min="1" step="1" required>
+          </label>
+
+          <label>
+            Punteggio
+            <input id="punteggio" type="number" min="0" step="0.01" required>
+          </label>
+
+          <label>
+            Provincia 1
+            <select id="provincia_1" required>
+              <option value="">Seleziona</option>
+              <option value="Potenza">Potenza</option>
+              <option value="Matera">Matera</option>
+            </select>
+          </label>
+
+          <label>
+            Provincia 2
+            <select id="provincia_2">
+              <option value="">Nessuna / non indicata</option>
+              <option value="Potenza">Potenza</option>
+              <option value="Matera">Matera</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="preferences-box">
+          <div class="preferences-head">
+            <div>
+              <h3>Preferenza comuni</h3>
+              <p>Seleziona fino a 20 comuni. L’ordine inserito sarà considerato ordine di preferenza.</p>
+            </div>
+            <strong id="counter">0 / 20</strong>
+          </div>
+
+          <div class="add-municipality">
+            <select id="municipality-select" disabled>
+              <option value="">Seleziona prima almeno una provincia</option>
+            </select>
+            <button type="button" id="add-municipality">Aggiungi comune</button>
+          </div>
+
+          <ol id="selected-municipalities" class="selected-list"></ol>
+        </div>
+
+        <label class="consent">
+          <input id="consenso" type="checkbox" required>
+          <span>Comprendo che posizione, punteggio e preferenze saranno pubblicati senza nome, ma potrebbero rendermi indirettamente riconoscibile confrontandoli con graduatorie esterne.</span>
+        </label>
+
+        <div class="form-actions">
+          <button class="primary" type="submit">Invia i dati</button>
+          <p id="form-message" role="status"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Risultati</p>
+          <h2>Mappa delle preferenze</h2>
+        </div>
+        <button type="button" id="refresh-data" class="secondary">Aggiorna dati</button>
+      </div>
+
+      <div class="filters">
+        <label>
+          Filtra per classe
+          <select id="map-filter">
+            <option value="ALL">Tutte</option>
+            <option value="AAAA">AAAA</option>
+            <option value="ADAA">ADAA</option>
+            <option value="EEEE">EEEE</option>
+            <option value="ADEE">ADEE</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot aaaa"></i>AAAA – Infanzia comune</span>
+        <span><i class="dot adaa"></i>ADAA – Infanzia sostegno</span>
+        <span><i class="dot eeee"></i>EEEE – Primaria comune</span>
+        <span><i class="dot adee"></i>ADEE – Primaria sostegno</span>
+      </div>
+
+      <div id="map" aria-label="Mappa dei comuni della Basilicata"></div>
+      <p class="map-note">Il colore del comune indica la classe più rappresentata; l’intensità cresce con il numero di preferenze.</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Dati aperti</p>
+          <h2>Tabella pubblica</h2>
+        </div>
+        <button type="button" id="download-csv" class="secondary">Scarica CSV</button>
+      </div>
+
+      <div class="filters">
+        <label>
+          Classe
+          <select id="table-class-filter">
+            <option value="ALL">Tutte</option>
+            <option value="AAAA">AAAA</option>
+            <option value="ADAA">ADAA</option>
+            <option value="EEEE">EEEE</option>
+            <option value="ADEE">ADEE</option>
+          </select>
+        </label>
+        <label>
+          Cerca comune
+          <input id="municipality-search" type="search" placeholder="Es. Senise">
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Classe</th>
+              <th>Posizione</th>
+              <th>Punteggio</th>
+              <th>Provincia 1</th>
+              <th>Provincia 2</th>
+              <th>Comuni preferiti</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+      <p id="results-count" class="results-count"></p>
+    </section>
+
+    <section class="panel compact">
+      <h2>Trasparenza del progetto</h2>
+      <p>Il codice sorgente è pubblico. I risultati sono consultabili e scaricabili da chiunque. Il progetto non è collegato al Ministero dell’Istruzione, all’USR Basilicata o ad altre amministrazioni pubbliche.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Dati cartografici: ISTAT / Openpolis, licenza CC BY 4.0. Mappa: Leaflet e OpenStreetMap.</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -10,10 +10,31 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="welcome-modal" id="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title" hidden>
+    <div class="welcome-modal__backdrop" data-close-welcome></div>
+    <div class="welcome-modal__panel" role="document">
+      <button class="welcome-modal__close" type="button" aria-label="Chiudi" data-close-welcome>×</button>
+      <p class="eyebrow">Benvenuto</p>
+      <h2 id="welcome-title">Prima di iniziare</h2>
+      <p>I dati sono inseriti volontariamente dagli utenti, non sono verificati e hanno valore esclusivamente orientativo.</p>
+      <button class="primary welcome-modal__confirm" type="button" data-close-welcome>Ho capito</button>
+    </div>
+  </div>
   <header class="site-header">
     <div class="container">
       <p class="eyebrow">Progetto aperto e non ufficiale</p>
-      <h1>PNRR3 Basilicata</h1>
+      <div class="brand-lockup">
+        <img
+          class="region-emblem"
+          src="https://upload.wikimedia.org/wikipedia/commons/0/07/Regione-Basilicata-Stemma.svg"
+          alt="Stemma della Regione Basilicata"
+          width="56"
+          height="72"
+          loading="eager"
+          decoding="async"
+        >
+        <h1>PNRR3 Basilicata</h1>
+      </div>
       <p class="lead">Raccolta anonima delle preferenze territoriali dei vincitori del concorso Infanzia e Primaria.</p>
       <p class="notice">I dati sono inseriti volontariamente dagli utenti, non sono verificati e hanno valore esclusivamente orientativo.</p>
     </div>
@@ -78,6 +99,7 @@
           </div>
 
           <ol id="selected-municipalities" class="selected-list"></ol>
+          <button type="button" id="toggle-selected-municipalities" class="text-button" hidden>Mostra tutte le preferenze</button>
         </div>
 
         <label class="consent">
@@ -121,7 +143,7 @@
         <span><i class="dot adee"></i>ADEE – Primaria sostegno</span>
       </div>
 
-      <div id="map" aria-label="Mappa dei comuni della Basilicata"></div>
+      <div id="map" aria-label="Mappa dei comuni della Basilicata"><div class="map-placeholder">La mappa si caricherà quando raggiungerai questa sezione.</div></div>
       <p class="map-note">Il colore del comune indica la classe più rappresentata; l’intensità cresce con il numero di preferenze.</p>
     </section>
 
@@ -194,14 +216,6 @@
   <footer>
     <div class="container">
       <p>Dati cartografici: ISTAT / Openpolis, licenza CC BY 4.0. Mappa: Leaflet e OpenStreetMap.</p>
-      <p class="project-credit">
-  Progetto nato da un’idea di
-  <a href="https://www.carlomagni.it" target="_blank" rel="noopener noreferrer">
-    Carlo Magni
-  </a>
-  e del gruppo WhatsApp
-  <span>“Concorso PNRR3 Basilicata Infanzia e Primaria”</span>.
-</p>
     </div>
   </footer>
 

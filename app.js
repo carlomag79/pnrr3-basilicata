@@ -20,12 +20,23 @@ let geojsonData = null;
 let rows = [];
 let selectedMunicipalities = [];
 let municipalityLayer = null;
+let selectedMunicipalitiesExpanded = false;
 
-const map = L.map("map", { scrollWheelZoom: false }).setView([40.49, 16.08], 8);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+let map = null;
+let mapReady = false;
+
+function initMap() {
+  if (mapReady) return;
+  const mapElement = document.querySelector("#map");
+  mapElement.innerHTML = "";
+  map = L.map("map", { scrollWheelZoom: false }).setView([40.49, 16.08], 8);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  mapReady = true;
+  drawMap();
+}
 
 function getFeatureName(feature) {
   const p = feature.properties || {};
@@ -191,14 +202,25 @@ function populateMunicipalityOptions() {
 
 function renderSelectedMunicipalities() {
   const list = document.querySelector("#selected-municipalities");
+  const toggleButton = document.querySelector("#toggle-selected-municipalities");
   list.innerHTML = "";
 
-  selectedMunicipalities.forEach((name, index) => {
+  const visibleItems = selectedMunicipalitiesExpanded
+    ? selectedMunicipalities
+    : selectedMunicipalities.slice(0, 8);
+
+  visibleItems.forEach((name, index) => {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>${index + 1}.</strong> ${escapeHtml(name)}
-      <button class="remove-municipality" type="button" data-index="${index}" aria-label="Rimuovi ${escapeHtml(name)}">Rimuovi</button>`;
+    li.innerHTML = `<span class="selected-position">${index + 1}</span><span>${escapeHtml(name)}</span>
+      <button class="remove-municipality" type="button" data-index="${index}" aria-label="Rimuovi ${escapeHtml(name)}">×</button>`;
     list.appendChild(li);
   });
+
+  const hasHiddenItems = selectedMunicipalities.length > 8;
+  toggleButton.hidden = !hasHiddenItems;
+  toggleButton.textContent = selectedMunicipalitiesExpanded
+    ? "Mostra meno"
+    : `Mostra altre ${selectedMunicipalities.length - 8}`;
 
   document.querySelector("#counter").textContent = `${selectedMunicipalities.length} / 20`;
   populateMunicipalityOptions();
@@ -235,7 +257,7 @@ function dominantClass(count) {
 }
 
 function drawMap() {
-  if (!geojsonData) return;
+  if (!geojsonData || !mapReady || !map) return;
   if (municipalityLayer) municipalityLayer.remove();
 
   const filter = document.querySelector("#map-filter").value;
@@ -392,9 +414,22 @@ function renderEligibilityBar(value, classCode) {
 
 function renderMunicipalitiesWithEligibility(row, selectedClass) {
   const candidatures = getRelevantCandidatures(row, selectedClass);
+  const rowKey = String(row.id ?? Math.random()).replace(/[^a-zA-Z0-9_-]/g, "");
 
   return `
-    <div class="municipality-preferences">
+    <div class="municipality-toggle-group" data-municipality-group>
+      <div class="municipality-toggle-list">
+        ${(row.comuni || []).map((municipality, index) => `
+          <button
+            type="button"
+            class="municipality-toggle"
+            data-municipality-toggle="${rowKey}-${index}"
+            aria-expanded="false"
+          >
+            <span>${index + 1}</span>${escapeHtml(municipality)}
+          </button>
+        `).join("")}
+      </div>
       ${(row.comuni || []).map((municipality, index) => {
         const estimates = candidatures.map(candidature => {
           const value = calculateEligibility(row, candidature, municipality, index);
@@ -402,10 +437,10 @@ function renderMunicipalitiesWithEligibility(row, selectedClass) {
         }).join("");
 
         return `
-          <div class="municipality-preference-item">
-            <div class="municipality-name">
-              <span class="preference-number">${index + 1}</span>
-              <strong>${escapeHtml(municipality)}</strong>
+          <div class="municipality-toggle-panel" data-municipality-panel="${rowKey}-${index}" hidden>
+            <div class="municipality-toggle-panel__title">
+              <strong>${index + 1}. ${escapeHtml(municipality)}</strong>
+              <span>Stima di eleggibilità</span>
             </div>
             <div class="eligibility-list">${estimates}</div>
           </div>
@@ -526,6 +561,34 @@ document.querySelector("#selected-municipalities").addEventListener("click", eve
   renderSelectedMunicipalities();
 });
 
+
+document.querySelector("#toggle-selected-municipalities").addEventListener("click", () => {
+  selectedMunicipalitiesExpanded = !selectedMunicipalitiesExpanded;
+  renderSelectedMunicipalities();
+});
+
+document.querySelector("#results-body").addEventListener("click", event => {
+  const button = event.target.closest("[data-municipality-toggle]");
+  if (!button) return;
+
+  const group = button.closest("[data-municipality-group]");
+  const key = button.dataset.municipalityToggle;
+  const panel = group.querySelector(`[data-municipality-panel="${key}"]`);
+  const wasOpen = button.getAttribute("aria-expanded") === "true";
+
+  group.querySelectorAll("[data-municipality-toggle]").forEach(item => {
+    item.setAttribute("aria-expanded", "false");
+  });
+  group.querySelectorAll("[data-municipality-panel]").forEach(item => {
+    item.hidden = true;
+  });
+
+  if (!wasOpen) {
+    button.setAttribute("aria-expanded", "true");
+    panel.hidden = false;
+  }
+});
+
 document.querySelector("#candidate-form").addEventListener("submit", async event => {
   event.preventDefault();
   if (!supabaseClient) return showMessage("Supabase non è ancora configurato.", true);
@@ -556,6 +619,7 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
 
   event.target.reset();
   selectedMunicipalities = [];
+  selectedMunicipalitiesExpanded = false;
   document.querySelector("#candidatures-list").innerHTML = "";
   addCandidatureRow();
   renderSelectedMunicipalities();
@@ -572,12 +636,60 @@ document.querySelector("#refresh-data").addEventListener("click", async () => {
   try { await loadRows(); } catch (error) { showMessage(error.message, true); }
 });
 
+function initWelcomeModal() {
+  const modal = document.querySelector("#welcome-modal");
+  if (!modal) return;
+
+  const close = () => {
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    try { sessionStorage.setItem("pnrr3-welcome-seen", "1"); } catch (_) {}
+  };
+
+  let alreadySeen = false;
+  try { alreadySeen = sessionStorage.getItem("pnrr3-welcome-seen") === "1"; } catch (_) {}
+
+  if (!alreadySeen) {
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+  }
+
+  modal.querySelectorAll("[data-close-welcome]").forEach(element => {
+    element.addEventListener("click", close);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !modal.hidden) close();
+  });
+}
+
+function observeMap() {
+  const mapElement = document.querySelector("#map");
+  if (!("IntersectionObserver" in window)) {
+    initMap();
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      initMap();
+      observer.disconnect();
+    }
+  }, { rootMargin: "240px 0px" });
+
+  observer.observe(mapElement);
+}
+
 (async function start() {
   try {
+    initWelcomeModal();
     addCandidatureRow();
     initSupabase();
-    await loadGeoJSON();
-    if (supabaseClient) await loadRows();
+    observeMap();
+    await Promise.all([
+      loadGeoJSON(),
+      supabaseClient ? loadRows() : Promise.resolve()
+    ]);
   } catch (error) {
     console.error(error);
     showMessage(error.message || "Errore durante l’avvio dell’applicazione.", true);

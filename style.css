@@ -186,3 +186,42 @@ footer { padding: 26px 0 40px; color: var(--muted); font-size: .86rem; }
 @media (max-width: 760px) {
   .candidature-row { grid-template-columns: 1fr; }
 }
+
+
+/* Tabella pubblica: allineamento colonne multiclasse */
+.results-table {
+  table-layout: fixed;
+}
+
+.results-table .col-candidatures {
+  width: 28%;
+}
+
+.results-table .col-province {
+  width: 10%;
+}
+
+.results-table .col-municipalities {
+  width: 52%;
+}
+
+.results-table th,
+.results-table td {
+  vertical-align: top;
+}
+
+.results-table th {
+  white-space: normal;
+}
+
+.results-table .municipalities-cell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .results-table {
+    min-width: 920px;
+    table-layout: fixed;
+  }
+}

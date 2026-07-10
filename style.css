@@ -230,3 +230,19 @@ footer { padding: 26px 0 40px; color: var(--muted); font-size: .86rem; }
 #position-sort {
   min-width: 240px;
 }
+
+.project-credit {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.project-credit a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.project-credit a:hover {
+  text-decoration: underline;
+}

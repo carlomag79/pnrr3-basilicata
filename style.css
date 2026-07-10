@@ -225,3 +225,8 @@ footer { padding: 26px 0 40px; color: var(--muted); font-size: .86rem; }
     table-layout: fixed;
   }
 }
+
+
+#position-sort {
+  min-width: 240px;
+}

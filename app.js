@@ -274,14 +274,51 @@ function drawMap() {
   try { map.fitBounds(municipalityLayer.getBounds(), { padding: [12, 12] }); } catch (_) {}
 }
 
+function getRelevantCandidatures(row, selectedClass) {
+  const candidatures = row.candidature || [];
+  return selectedClass === "ALL"
+    ? candidatures
+    : candidatures.filter(item => item.classe === selectedClass);
+}
+
+function getRowPositionForSort(row, selectedClass, direction) {
+  const relevant = getRelevantCandidatures(row, selectedClass);
+  const positions = relevant
+    .map(item => Number(item.posizione))
+    .filter(value => Number.isFinite(value));
+
+  if (!positions.length) return Number.POSITIVE_INFINITY;
+
+  return direction === "desc"
+    ? Math.max(...positions)
+    : Math.min(...positions);
+}
+
 function filteredRows() {
   const cls = document.querySelector("#table-class-filter").value;
   const query = normalizeName(document.querySelector("#municipality-search").value);
-  return rows.filter(row => {
-    const classOk = cls === "ALL" || rowHasClass(row, cls);
-    const municipalityOk = !query || (row.comuni || []).some(name => normalizeName(name).includes(query));
+  const sortDirection = document.querySelector("#position-sort").value;
+
+  const filtered = rows.filter(row => {
+    const classOk = cls === "ALL" || getRelevantCandidatures(row, cls).length > 0;
+    const municipalityOk = !query || (row.comuni || []).some(name =>
+      normalizeName(name).includes(query)
+    );
     return classOk && municipalityOk;
   });
+
+  if (sortDirection === "asc" || sortDirection === "desc") {
+    filtered.sort((a, b) => {
+      const positionA = getRowPositionForSort(a, cls, sortDirection);
+      const positionB = getRowPositionForSort(b, cls, sortDirection);
+
+      return sortDirection === "asc"
+        ? positionA - positionB
+        : positionB - positionA;
+    });
+  }
+
+  return filtered;
 }
 
 function renderCandidaturesSummary(candidatures) {
@@ -298,15 +335,17 @@ function renderCandidaturesSummary(candidatures) {
 function renderTable() {
   const body = document.querySelector("#results-body");
   const data = filteredRows();
+  const selectedClass = document.querySelector("#table-class-filter").value;
   body.innerHTML = "";
 
   if (!data.length) {
     body.innerHTML = '<tr><td colspan="4">Nessun dato corrispondente ai filtri.</td></tr>';
   } else {
     data.forEach(row => {
+      const visibleCandidatures = getRelevantCandidatures(row, selectedClass);
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${renderCandidaturesSummary(row.candidature || [])}</td>
+        <td>${renderCandidaturesSummary(visibleCandidatures)}</td>
         <td>${escapeHtml(row.provincia_1)}</td>
         <td>${escapeHtml(row.provincia_2 || "—")}</td>
         <td class="municipalities-cell">${(row.comuni || []).map((name, i) => `${i + 1}. ${escapeHtml(name)}`).join(" · ")}</td>
@@ -320,11 +359,14 @@ function renderTable() {
 
 function downloadCsv() {
   const data = filteredRows();
+  const selectedClass = document.querySelector("#table-class-filter").value;
   const header = ["classi_posizioni_punteggi", "provincia_1", "provincia_2", "comuni"];
   const lines = [
     header.join(";"),
     ...data.map(row => [
-      (row.candidature || []).map(item => `${item.classe}: posizione ${item.posizione}, punteggio ${item.punteggio}`).join(" | "),
+      getRelevantCandidatures(row, selectedClass)
+        .map(item => `${item.classe}: posizione ${item.posizione}, punteggio ${item.punteggio}`)
+        .join(" | "),
       row.provincia_1,
       row.provincia_2 || "",
       (row.comuni || []).join(" | ")

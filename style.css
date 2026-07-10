@@ -231,18 +231,85 @@ footer { padding: 26px 0 40px; color: var(--muted); font-size: .86rem; }
   min-width: 240px;
 }
 
-.project-credit {
-  margin: 0 0 8px;
+
+/* Stima visiva di eleggibilità */
+.municipality-preferences { display: grid; gap: 14px; }
+
+.municipality-preference-item {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fbfcfc;
+}
+
+.municipality-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.preference-number {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--accent);
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.eligibility-list { display: grid; gap: 8px; }
+
+.eligibility {
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: #fff;
+  border: 1px solid #e5eaec;
+}
+
+.eligibility-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 5px;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.eligibility-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8edef;
+}
+
+.eligibility-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.eligibility-fill.AAAA { background: var(--aaaa); }
+.eligibility-fill.ADAA { background: var(--adaa); }
+.eligibility-fill.EEEE { background: var(--eeee); }
+.eligibility-fill.ADEE { background: var(--adee); }
+
+.eligibility small {
+  display: block;
+  margin-top: 5px;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: .72rem;
 }
 
-.project-credit a {
-  color: var(--accent);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.project-credit a:hover {
-  text-decoration: underline;
+.eligibility-note {
+  margin-top: 12px;
+  padding: 11px 13px;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+  background: #f6f9fa;
+  font-size: .84rem;
 }

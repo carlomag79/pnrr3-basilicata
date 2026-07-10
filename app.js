@@ -321,6 +321,100 @@ function filteredRows() {
   return filtered;
 }
 
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function eligibilityLabel(value) {
+  if (value >= 75) return "Alta";
+  if (value >= 50) return "Media";
+  if (value >= 25) return "Bassa";
+  return "Molto bassa";
+}
+
+function calculateEligibility(row, candidature, municipality, preferenceIndex) {
+  const currentPosition = Number(candidature.posizione);
+  if (!Number.isFinite(currentPosition)) return null;
+
+  const betterRanked = rows.filter(otherRow => {
+    if (otherRow.id === row.id) return false;
+
+    const sameMunicipality = (otherRow.comuni || []).some(
+      name => normalizeName(name) === normalizeName(municipality)
+    );
+    if (!sameMunicipality) return false;
+
+    const matching = (otherRow.candidature || []).find(
+      item => item.classe === candidature.classe
+    );
+
+    return matching && Number(matching.posizione) < currentPosition;
+  }).length;
+
+  const sameMunicipalityTotal = rows.filter(otherRow =>
+    (otherRow.comuni || []).some(
+      name => normalizeName(name) === normalizeName(municipality)
+    ) &&
+    (otherRow.candidature || []).some(
+      item => item.classe === candidature.classe
+    )
+  ).length;
+
+  const preferencePenalty = preferenceIndex * 2.25;
+  const competitionPenalty = betterRanked * 8;
+  const crowdPenalty = Math.max(
+    0,
+    sameMunicipalityTotal - betterRanked - 1
+  ) * 1.25;
+
+  return Math.round(
+    clamp(95 - preferencePenalty - competitionPenalty - crowdPenalty, 5, 95)
+  );
+}
+
+function renderEligibilityBar(value, classCode) {
+  const label = eligibilityLabel(value);
+
+  return `
+    <div class="eligibility" title="Stima orientativa basata sui dati inseriti dagli utenti">
+      <div class="eligibility-head">
+        <span>${classCode}</span>
+        <strong>${value}%</strong>
+      </div>
+      <div class="eligibility-track" aria-hidden="true">
+        <span class="eligibility-fill ${classCode}" style="width:${value}%"></span>
+      </div>
+      <small>Eleggibilità ${label.toLowerCase()}</small>
+    </div>
+  `;
+}
+
+function renderMunicipalitiesWithEligibility(row, selectedClass) {
+  const candidatures = getRelevantCandidatures(row, selectedClass);
+
+  return `
+    <div class="municipality-preferences">
+      ${(row.comuni || []).map((municipality, index) => {
+        const estimates = candidatures.map(candidature => {
+          const value = calculateEligibility(row, candidature, municipality, index);
+          return value === null ? "" : renderEligibilityBar(value, candidature.classe);
+        }).join("");
+
+        return `
+          <div class="municipality-preference-item">
+            <div class="municipality-name">
+              <span class="preference-number">${index + 1}</span>
+              <strong>${escapeHtml(municipality)}</strong>
+            </div>
+            <div class="eligibility-list">${estimates}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
 function renderCandidaturesSummary(candidatures) {
   return `<div class="candidature-summary">${
     candidatures.map(item => `
@@ -348,7 +442,7 @@ function renderTable() {
         <td>${renderCandidaturesSummary(visibleCandidatures)}</td>
         <td>${escapeHtml(row.provincia_1)}</td>
         <td>${escapeHtml(row.provincia_2 || "—")}</td>
-        <td class="municipalities-cell">${(row.comuni || []).map((name, i) => `${i + 1}. ${escapeHtml(name)}`).join(" · ")}</td>
+        <td class="municipalities-cell">${renderMunicipalitiesWithEligibility(row, selectedClass)}</td>
       `;
       body.appendChild(tr);
     });

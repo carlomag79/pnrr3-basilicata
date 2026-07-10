@@ -816,3 +816,26 @@ footer p {
     transition-duration: .01ms !important;
   }
 }
+
+.project-credit {
+  margin: 6px 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.project-credit a {
+  color: var(--accent-dark);
+  font-weight: 400;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.project-credit a:hover {
+  color: var(--accent);
+}
+
+.project-credit span {
+  color: var(--ink-soft);
+}

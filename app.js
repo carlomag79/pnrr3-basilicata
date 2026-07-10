@@ -602,32 +602,6 @@ document.querySelector("#refresh-data").addEventListener("click", async () => {
   try { await loadRows(); } catch (error) { showMessage(error.message, true); }
 });
 
-function initWelcomeModal() {
-  const modal = document.querySelector("#welcome-modal");
-  if (!modal) return;
-
-  const close = () => {
-    modal.hidden = true;
-    document.body.classList.remove("modal-open");
-    try { sessionStorage.setItem("pnrr3-welcome-seen", "1"); } catch (_) {}
-  };
-
-  let alreadySeen = false;
-  try { alreadySeen = sessionStorage.getItem("pnrr3-welcome-seen") === "1"; } catch (_) {}
-
-  if (!alreadySeen) {
-    modal.hidden = false;
-    document.body.classList.add("modal-open");
-  }
-
-  modal.querySelectorAll("[data-close-welcome]").forEach(element => {
-    element.addEventListener("click", close);
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !modal.hidden) close();
-  });
-}
 
 function observeMap() {
   const mapElement = document.querySelector("#map");
@@ -681,7 +655,6 @@ function initWelcomePopup() {
 (async function start() {
   try {
     initWelcomePopup();
-    initWelcomeModal();
     addCandidatureRow();
     initSupabase();
     observeMap();

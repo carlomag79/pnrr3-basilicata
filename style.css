@@ -816,7 +816,173 @@ footer p {
     transition-duration: .01ms !important;
   }
 }
-\n\n/* Modern refresh — flatter, faster, more compact */\n:root {\n  --radius-sm: 2px;\n  --radius-md: 4px;\n  --radius-lg: 6px;\n  --paper: #f5f6f4;\n  --surface-soft: #f7f9f8;\n}\n\n.site-header {\n  padding: 64px 0 54px;\n  background: linear-gradient(115deg, #173f52 0%, #285f73 62%, #2f7580 100%);\n}\n\n.site-header::after { display: none; }\n\n.brand-lockup {\n  display: flex;\n  align-items: center;\n  gap: 18px;\n}\n\n.region-emblem {\n  width: 52px;\n  height: 66px;\n  object-fit: contain;\n  padding: 5px;\n  background: rgba(255,255,255,.96);\n  border: 1px solid rgba(255,255,255,.7);\n  box-shadow: 0 8px 24px rgba(0,0,0,.12);\n}\n\n.panel {\n  border-radius: 4px;\n  box-shadow: 0 1px 0 rgba(24,33,38,.03);\n}\n\n.candidatures-box,\n.preferences-box,\n.filters,\n.table-wrap,\n#map { border-radius: 3px; }\n\nbutton, input, select { border-radius: 2px; }\n\n.selected-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n  margin: 16px 0 0;\n  padding: 0;\n  list-style: none;\n}\n\n.selected-list li {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  padding: 6px 7px 6px 6px;\n  border-radius: 2px;\n  background: #fff;\n}\n\n.selected-position {\n  display: inline-grid;\n  place-items: center;\n  min-width: 22px;\n  height: 22px;\n  padding-inline: 4px;\n  color: #fff;\n  background: var(--accent);\n  font-size: .7rem;\n  font-weight: 800;\n}\n\n.remove-municipality {\n  float: none;\n  display: inline-grid;\n  place-items: center;\n  width: 22px;\n  height: 22px;\n  padding: 0;\n  font-size: 1rem;\n  line-height: 1;\n}\n\n.text-button {\n  min-height: auto;\n  margin-top: 10px;\n  padding: 0;\n  color: var(--accent);\n  background: transparent;\n  border: 0;\n  font-size: .82rem;\n}\n\n.text-button:hover { text-decoration: underline; }\n\n.municipality-toggle-group { display: grid; gap: 12px; }\n\n.municipality-toggle-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 7px;\n}\n\n.municipality-toggle {\n  min-height: 34px;\n  padding: 6px 9px;\n  color: var(--ink-soft);\n  background: #fff;\n  border: 1px solid var(--line);\n  border-radius: 2px;\n  font-size: .78rem;\n  font-weight: 650;\n}\n\n.municipality-toggle span {\n  margin-right: 6px;\n  color: var(--muted);\n  font-variant-numeric: tabular-nums;\n}\n\n.municipality-toggle:hover,\n.municipality-toggle[aria-expanded="true"] {\n  color: var(--accent-dark);\n  background: var(--accent-soft);\n  border-color: #b7cbd3;\n}\n\n.municipality-toggle-panel {\n  padding: 13px 14px;\n  background: var(--surface-soft);\n  border-left: 3px solid var(--accent);\n}\n\n.municipality-toggle-panel__title {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 10px;\n}\n\n.municipality-toggle-panel__title span {\n  color: var(--muted);\n  font-size: .72rem;\n}\n\n.map-placeholder {\n  min-height: 420px;\n  display: grid;\n  place-items: center;\n  padding: 30px;\n  color: var(--muted);\n  text-align: center;\n}\n\n/* Welcome modal */\nbody.modal-open { overflow: hidden; }\n\n.welcome-modal[hidden] { display: none; }\n\n.welcome-modal {\n  position: fixed;\n  inset: 0;\n  z-index: 9999;\n  display: grid;\n  place-items: center;\n  padding: 20px;\n}\n\n.welcome-modal__backdrop {\n  position: absolute;\n  inset: 0;\n  background: rgba(11, 26, 33, .68);\n  backdrop-filter: blur(4px);\n}\n\n.welcome-modal__panel {\n  position: relative;\n  z-index: 1;\n  width: min(520px, 100%);\n  padding: 30px;\n  color: var(--ink);\n  background: #fff;\n  border: 1px solid rgba(255,255,255,.4);\n  border-radius: 3px;\n  box-shadow: 0 24px 80px rgba(0,0,0,.24);\n}\n\n.welcome-modal__panel h2 {\n  margin: 0 0 12px;\n  font-size: clamp(1.7rem, 5vw, 2.4rem);\n  letter-spacing: -.035em;\n}\n\n.welcome-modal__panel p:not(.eyebrow) {\n  margin: 0 0 22px;\n  color: var(--ink-soft);\n}\n\n.welcome-modal__close {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  width: 36px;\n  min-height: 36px;\n  padding: 0;\n  color: var(--muted);\n  background: transparent;\n  border: 0;\n  font-size: 1.55rem;\n}\n\n.welcome-modal__confirm { width: 100%; }\n\n@media (max-width: 580px) {\n  .brand-lockup { align-items: flex-start; gap: 12px; }\n  .region-emblem { width: 42px; height: 54px; }\n  .welcome-modal__panel { padding: 26px 20px 20px; }\n  .municipality-toggle-panel__title { flex-direction: column; gap: 2px; }\n}\n
+
+
+/* Modern refresh — flatter, faster, more compact */
+:root {
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --paper: #f5f6f4;
+  --surface-soft: #f7f9f8;
+}
+
+.site-header {
+  padding: 64px 0 54px;
+  background: linear-gradient(115deg, #173f52 0%, #285f73 62%, #2f7580 100%);
+}
+
+.site-header::after { display: none; }
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.region-emblem {
+  width: 52px;
+  height: 66px;
+  object-fit: contain;
+  padding: 5px;
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(255,255,255,.7);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.panel {
+  border-radius: 4px;
+  box-shadow: 0 1px 0 rgba(24,33,38,.03);
+}
+
+.candidatures-box,
+.preferences-box,
+.filters,
+.table-wrap,
+#map { border-radius: 3px; }
+
+button, input, select { border-radius: 2px; }
+
+.selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selected-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 7px 6px 6px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.selected-position {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 4px;
+  color: #fff;
+  background: var(--accent);
+  font-size: .7rem;
+  font-weight: 800;
+}
+
+.remove-municipality {
+  float: none;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.text-button {
+  min-height: auto;
+  margin-top: 10px;
+  padding: 0;
+  color: var(--accent);
+  background: transparent;
+  border: 0;
+  font-size: .82rem;
+}
+
+.text-button:hover { text-decoration: underline; }
+
+.municipality-toggle-group { display: grid; gap: 12px; }
+
+.municipality-toggle-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.municipality-toggle {
+  min-height: 34px;
+  padding: 6px 9px;
+  color: var(--ink-soft);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font-size: .78rem;
+  font-weight: 650;
+}
+
+.municipality-toggle span {
+  margin-right: 6px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.municipality-toggle:hover,
+.municipality-toggle[aria-expanded="true"] {
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  border-color: #b7cbd3;
+}
+
+.municipality-toggle-panel {
+  padding: 13px 14px;
+  background: var(--surface-soft);
+  border-left: 3px solid var(--accent);
+}
+
+.municipality-toggle-panel__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.municipality-toggle-panel__title span {
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.map-placeholder {
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 580px) {
+  .brand-lockup { align-items: flex-start; gap: 12px; }
+  .region-emblem { width: 42px; height: 54px; }
+  .welcome-modal__panel { padding: 26px 20px 20px; }
+  .municipality-toggle-panel__title { flex-direction: column; gap: 2px; }
+}
+
 
 /* Popup di benvenuto in sovraimpressione */
 body.popup-open {
@@ -1114,4 +1280,79 @@ body.popup-open {
 
 body.popup-open {
   overflow: hidden !important;
+}
+
+
+/* Pulizia definitiva del vecchio avviso */
+#welcome-modal,
+.welcome-modal {
+  display: none !important;
+}
+
+/* Brand: stemma sempre a sinistra */
+.site-brand {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 18px !important;
+}
+
+.site-brand__logo {
+  display: block !important;
+  width: 68px !important;
+  height: 86px !important;
+  flex: 0 0 68px !important;
+  margin: 0 !important;
+  object-fit: contain !important;
+}
+
+.site-brand h1 {
+  margin: 0 !important;
+}
+
+/* Unico popup, centrato nella viewport */
+#welcome-popup {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 20px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: auto !important;
+}
+
+#welcome-popup[hidden] {
+  display: none !important;
+}
+
+#welcome-popup .welcome-popup__backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+}
+
+#welcome-popup .welcome-popup__dialog {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: auto !important;
+}
+
+@media (max-width: 580px) {
+  .site-brand {
+    gap: 12px !important;
+  }
+
+  .site-brand__logo {
+    width: 48px !important;
+    height: 62px !important;
+    flex-basis: 48px !important;
+  }
 }

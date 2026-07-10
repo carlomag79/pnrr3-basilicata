@@ -1005,3 +1005,113 @@ body.popup-open {
     gap: 9px;
   }
 }
+
+
+/* FIX DEFINITIVO: logo a sinistra del titolo */
+.site-brand {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 18px !important;
+  width: 100%;
+}
+
+.site-brand__logo {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: clamp(58px, 7vw, 82px) !important;
+  height: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  object-fit: contain;
+}
+
+.site-brand h1 {
+  display: block !important;
+  margin: 0 !important;
+  min-width: 0;
+}
+
+@media (max-width: 580px) {
+  .site-brand {
+    gap: 12px !important;
+  }
+
+  .site-brand__logo {
+    width: 52px !important;
+  }
+
+  .site-brand h1 {
+    font-size: clamp(2.15rem, 11vw, 3.35rem) !important;
+  }
+}
+
+/* FIX DEFINITIVO: popup in overlay sopra tutta la pagina */
+#welcome-popup.welcome-popup {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  overflow: auto !important;
+  isolation: isolate;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+
+#welcome-popup.welcome-popup[hidden] {
+  display: none !important;
+}
+
+#welcome-popup.welcome-popup.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#welcome-popup .welcome-popup__backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: rgba(14, 24, 30, .68) !important;
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+#welcome-popup .welcome-popup__dialog {
+  position: relative !important;
+  z-index: 1 !important;
+  width: min(520px, calc(100vw - 32px)) !important;
+  max-height: calc(100dvh - 40px) !important;
+  overflow: auto !important;
+  margin: auto !important;
+  padding: 30px !important;
+  background: #fff !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .28) !important;
+  transform: translateY(8px);
+  transition: transform .18s ease;
+}
+
+#welcome-popup.is-visible .welcome-popup__dialog {
+  transform: translateY(0);
+}
+
+body.popup-open {
+  overflow: hidden !important;
+}

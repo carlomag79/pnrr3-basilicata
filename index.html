@@ -24,16 +24,17 @@
     <div class="container">
       <p class="eyebrow">Progetto aperto e non ufficiale</p>
       <div class="brand-lockup">
+        
+        <div class="site-brand">
         <img
-          class="region-emblem"
-          src="https://upload.wikimedia.org/wikipedia/commons/0/07/Regione-Basilicata-Stemma.svg"
+          class="site-brand__logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Regione-Basilicata-Stemma.svg"
           alt="Stemma della Regione Basilicata"
-          width="56"
-          height="72"
-          loading="eager"
-          decoding="async"
+          width="78"
+          height="78"
         >
         <h1>PNRR3 Basilicata</h1>
+      </div>
       </div>
       <p class="lead">Raccolta anonima delle preferenze territoriali dei vincitori del concorso Infanzia e Primaria.</p>
       <p class="notice">I dati sono inseriti volontariamente dagli utenti, non sono verificati e hanno valore esclusivamente orientativo.</p>
@@ -228,9 +229,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
-
   <div id="welcome-popup" class="welcome-popup" role="dialog" aria-modal="true" aria-labelledby="welcome-popup-title" hidden>
-    <div class="welcome-popup__backdrop" data-popup-close></div>
+    <button type="button" class="welcome-popup__backdrop" aria-label="Chiudi avviso" data-popup-close></button>
     <div class="welcome-popup__dialog">
       <button type="button" class="welcome-popup__close" aria-label="Chiudi" data-popup-close>×</button>
       <p class="eyebrow">Benvenuto</p>

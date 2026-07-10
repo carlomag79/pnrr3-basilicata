@@ -472,6 +472,7 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
 document.querySelector("#map-filter").addEventListener("change", drawMap);
 document.querySelector("#table-class-filter").addEventListener("change", renderTable);
 document.querySelector("#municipality-search").addEventListener("input", renderTable);
+document.querySelector("#position-sort").addEventListener("change", renderTable);
 document.querySelector("#download-csv").addEventListener("click", downloadCsv);
 document.querySelector("#refresh-data").addEventListener("click", async () => {
   try { await loadRows(); } catch (error) { showMessage(error.message, true); }

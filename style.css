@@ -826,7 +826,7 @@ footer p {
 
 .project-credit a {
   color: var(--accent-dark);
-  font-weight: 400;
+  font-weight: 300;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;

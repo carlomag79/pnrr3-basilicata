@@ -24,6 +24,10 @@ let selectedMunicipalitiesExpanded = false;
 
 let map = null;
 let mapReady = false;
+let geojsonPromise = null;
+let eligibilityIndex = new Map();
+let visibleResultsLimit = 20;
+const RESULTS_PAGE_SIZE = 20;
 
 function initMap() {
   if (mapReady) return;
@@ -89,25 +93,84 @@ function initSupabase() {
   return true;
 }
 
-async function loadGeoJSON() {
-  const response = await fetch(GEOJSON_URL);
-  if (!response.ok) throw new Error("Impossibile caricare i confini comunali.");
-  geojsonData = await response.json();
-  populateMunicipalityOptions();
-  drawMap();
+async function ensureGeoJSON() {
+  if (geojsonData) return geojsonData;
+  if (geojsonPromise) return geojsonPromise;
+
+  geojsonPromise = fetch(GEOJSON_URL, { cache: "force-cache" })
+    .then(response => {
+      if (!response.ok) throw new Error("Impossibile caricare i comuni della Basilicata.");
+      return response.json();
+    })
+    .then(data => {
+      geojsonData = data;
+      populateMunicipalityOptions();
+      if (mapReady) drawMap();
+      return geojsonData;
+    })
+    .catch(error => {
+      geojsonPromise = null;
+      throw error;
+    });
+
+  return geojsonPromise;
+}
+
+function buildEligibilityIndex() {
+  eligibilityIndex = new Map();
+
+  rows.forEach(row => {
+    const municipalities = [...new Set((row.comuni || []).map(normalizeName))];
+
+    (row.candidature || []).forEach(candidature => {
+      const position = Number(candidature.posizione);
+      if (!Number.isFinite(position)) return;
+
+      municipalities.forEach(municipality => {
+        const key = `${candidature.classe}|${municipality}`;
+        if (!eligibilityIndex.has(key)) eligibilityIndex.set(key, []);
+        eligibilityIndex.get(key).push(position);
+      });
+    });
+  });
+
+  eligibilityIndex.forEach(positions => positions.sort((a, b) => a - b));
+}
+
+function countPositionsBefore(sortedPositions, currentPosition) {
+  let low = 0;
+  let high = sortedPositions.length;
+
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (sortedPositions[middle] < currentPosition) low = middle + 1;
+    else high = middle;
+  }
+
+  return low;
 }
 
 async function loadRows() {
   if (!supabaseClient) return;
+
+  const body = document.querySelector("#results-body");
+  if (body && !rows.length) {
+    body.innerHTML = '<tr class="loading-row"><td colspan="4">Caricamento dei risultati…</td></tr>';
+  }
+
   const { data, error } = await supabaseClient
     .from("candidati")
-    .select("*")
+    .select("id,candidature,classe_concorso,posizione,punteggio,provincia_1,provincia_2,comuni,created_at")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
+
   rows = (data || []).map(normalizeRow);
+  buildEligibilityIndex();
+  visibleResultsLimit = RESULTS_PAGE_SIZE;
   renderTable();
-  drawMap();
+
+  if (mapReady && geojsonData) drawMap();
 }
 
 function candidatureOptions(selected = "") {
@@ -359,29 +422,10 @@ function calculateEligibility(row, candidature, municipality, preferenceIndex) {
   const currentPosition = Number(candidature.posizione);
   if (!Number.isFinite(currentPosition)) return null;
 
-  const betterRanked = rows.filter(otherRow => {
-    if (otherRow.id === row.id) return false;
-
-    const sameMunicipality = (otherRow.comuni || []).some(
-      name => normalizeName(name) === normalizeName(municipality)
-    );
-    if (!sameMunicipality) return false;
-
-    const matching = (otherRow.candidature || []).find(
-      item => item.classe === candidature.classe
-    );
-
-    return matching && Number(matching.posizione) < currentPosition;
-  }).length;
-
-  const sameMunicipalityTotal = rows.filter(otherRow =>
-    (otherRow.comuni || []).some(
-      name => normalizeName(name) === normalizeName(municipality)
-    ) &&
-    (otherRow.candidature || []).some(
-      item => item.classe === candidature.classe
-    )
-  ).length;
+  const key = `${candidature.classe}|${normalizeName(municipality)}`;
+  const positions = eligibilityIndex.get(key) || [];
+  const betterRanked = countPositionsBefore(positions, currentPosition);
+  const sameMunicipalityTotal = positions.length;
 
   const preferencePenalty = preferenceIndex * 2.25;
   const competitionPenalty = betterRanked * 8;
@@ -452,12 +496,17 @@ function renderTable() {
   const body = document.querySelector("#results-body");
   const data = filteredRows();
   const selectedClass = document.querySelector("#table-class-filter").value;
+  const visibleData = data.slice(0, visibleResultsLimit);
+  const loadMoreButton = document.querySelector("#load-more-results");
+
   body.innerHTML = "";
 
   if (!data.length) {
     body.innerHTML = '<tr><td colspan="4">Nessun dato corrispondente ai filtri.</td></tr>';
   } else {
-    data.forEach(row => {
+    const fragment = document.createDocumentFragment();
+
+    visibleData.forEach(row => {
       const visibleCandidatures = getRelevantCandidatures(row, selectedClass);
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -466,11 +515,18 @@ function renderTable() {
         <td>${escapeHtml(row.provincia_2 || "—")}</td>
         <td class="municipalities-cell">${renderMunicipalitiesWithEligibility(row, selectedClass)}</td>
       `;
-      body.appendChild(tr);
+      fragment.appendChild(tr);
     });
+
+    body.appendChild(fragment);
   }
 
-  document.querySelector("#results-count").textContent = `${data.length} compilazioni visualizzate su ${rows.length}.`;
+  document.querySelector("#results-count").textContent =
+    `${Math.min(visibleData.length, data.length)} risultati mostrati su ${data.length} (${rows.length} compilazioni totali).`;
+
+  if (loadMoreButton) {
+    loadMoreButton.hidden = visibleData.length >= data.length;
+  }
 }
 
 function downloadCsv() {
@@ -526,10 +582,27 @@ document.querySelector("#candidatures-list").addEventListener("click", event => 
 });
 
 document.querySelectorAll("#provincia_1, #provincia_2").forEach(el => {
-  el.addEventListener("change", () => {
+  el.addEventListener("change", async () => {
     const p1 = document.querySelector("#provincia_1").value;
     const p2 = document.querySelector("#provincia_2").value;
-    if (p1 && p2 && p1 === p2) document.querySelector("#provincia_2").value = "";
+
+    if (p1 && p2 && p1 === p2) {
+      document.querySelector("#provincia_2").value = "";
+    }
+
+    const select = document.querySelector("#municipality-select");
+    if ((p1 || p2) && !geojsonData) {
+      select.disabled = true;
+      select.innerHTML = '<option value="">Caricamento comuni…</option>';
+      try {
+        await ensureGeoJSON();
+      } catch (error) {
+        select.innerHTML = '<option value="">Errore nel caricamento dei comuni</option>';
+        showMessage(error.message, true);
+        return;
+      }
+    }
+
     populateMunicipalityOptions();
   });
 });
@@ -594,9 +667,18 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
 });
 
 document.querySelector("#map-filter").addEventListener("change", drawMap);
-document.querySelector("#table-class-filter").addEventListener("change", renderTable);
-document.querySelector("#municipality-search").addEventListener("input", renderTable);
-document.querySelector("#position-sort").addEventListener("change", renderTable);
+document.querySelector("#table-class-filter").addEventListener("change", () => {
+  visibleResultsLimit = RESULTS_PAGE_SIZE;
+  renderTable();
+});
+document.querySelector("#municipality-search").addEventListener("input", () => {
+  visibleResultsLimit = RESULTS_PAGE_SIZE;
+  renderTable();
+});
+document.querySelector("#position-sort").addEventListener("change", () => {
+  visibleResultsLimit = RESULTS_PAGE_SIZE;
+  renderTable();
+});
 document.querySelector("#download-csv").addEventListener("click", downloadCsv);
 document.querySelector("#refresh-data").addEventListener("click", async () => {
   try { await loadRows(); } catch (error) { showMessage(error.message, true); }
@@ -605,17 +687,30 @@ document.querySelector("#refresh-data").addEventListener("click", async () => {
 
 function observeMap() {
   const mapElement = document.querySelector("#map");
+  if (!mapElement) return;
+
+  const startMap = async () => {
+    mapElement.innerHTML = '<div class="map-loading">Caricamento della mappa…</div>';
+    try {
+      await ensureGeoJSON();
+      initMap();
+    } catch (error) {
+      mapElement.innerHTML = '<div class="map-loading">Mappa momentaneamente non disponibile.</div>';
+      console.error(error);
+    }
+  };
+
   if (!("IntersectionObserver" in window)) {
-    initMap();
+    startMap();
     return;
   }
 
   const observer = new IntersectionObserver(entries => {
     if (entries.some(entry => entry.isIntersecting)) {
-      initMap();
+      startMap();
       observer.disconnect();
     }
-  }, { rootMargin: "240px 0px" });
+  }, { rootMargin: "180px 0px" });
 
   observer.observe(mapElement);
 }
@@ -625,7 +720,6 @@ function initWelcomePopup() {
   const popup = document.querySelector("#welcome-popup");
   if (!popup) return;
 
-  const storageKey = "pnrr3WelcomeSeen";
   const showPopup = () => {
     popup.hidden = false;
     document.body.classList.add("popup-open");
@@ -635,7 +729,6 @@ function initWelcomePopup() {
   const closePopup = () => {
     popup.classList.remove("is-visible");
     document.body.classList.remove("popup-open");
-    sessionStorage.setItem(storageKey, "1");
     window.setTimeout(() => {
       popup.hidden = true;
     }, 180);
@@ -649,7 +742,7 @@ function initWelcomePopup() {
     if (event.key === "Escape" && !popup.hidden) closePopup();
   });
 
-  if (!sessionStorage.getItem(storageKey)) showPopup();
+  showPopup();
 }
 
 (async function start() {
@@ -658,10 +751,7 @@ function initWelcomePopup() {
     addCandidatureRow();
     initSupabase();
     observeMap();
-    await Promise.all([
-      loadGeoJSON(),
-      supabaseClient ? loadRows() : Promise.resolve()
-    ]);
+    if (supabaseClient) await loadRows();
   } catch (error) {
     console.error(error);
     showMessage(error.message || "Errore durante l’avvio dell’applicazione.", true);

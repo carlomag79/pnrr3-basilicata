@@ -984,77 +984,6 @@ button, input, select { border-radius: 2px; }
 }
 
 
-/* Popup di benvenuto in sovraimpressione */
-body.popup-open {
-  overflow: hidden;
-}
-
-.welcome-popup[hidden] {
-  display: none;
-}
-
-.welcome-popup {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  opacity: 0;
-  transition: opacity .18s ease;
-}
-
-.welcome-popup.is-visible {
-  opacity: 1;
-}
-
-.welcome-popup__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(16, 27, 33, .62);
-  backdrop-filter: blur(5px);
-  cursor: pointer;
-}
-
-.welcome-popup__dialog {
-  position: relative;
-  z-index: 1;
-  width: min(520px, 100%);
-  padding: 30px;
-  background: #fff;
-  border: 1px solid var(--line);
-  box-shadow: 0 24px 80px rgba(13, 26, 33, .22);
-}
-
-.welcome-popup__dialog h2 {
-  margin: 0 0 12px;
-  font-size: clamp(1.65rem, 4vw, 2.2rem);
-  letter-spacing: -.03em;
-}
-
-.welcome-popup__dialog p:not(.eyebrow) {
-  margin: 0 0 24px;
-  color: var(--muted);
-}
-
-.welcome-popup__close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  min-height: 36px;
-  padding: 0;
-  color: var(--muted);
-  background: transparent;
-  border: 0;
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-.welcome-popup__confirm {
-  width: 100%;
-}
-
 /* Elegibilità: visualizzazione estesa */
 .municipality-preferences {
   display: grid;
@@ -1213,76 +1142,6 @@ body.popup-open {
   }
 }
 
-/* FIX DEFINITIVO: popup in overlay sopra tutta la pagina */
-#welcome-popup.welcome-popup {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 2147483647 !important;
-  display: grid !important;
-  place-items: center !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  min-height: 100vh !important;
-  padding: 20px !important;
-  margin: 0 !important;
-  overflow: auto !important;
-  isolation: isolate;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .18s ease;
-}
-
-#welcome-popup.welcome-popup[hidden] {
-  display: none !important;
-}
-
-#welcome-popup.welcome-popup.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-#welcome-popup .welcome-popup__backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: -1 !important;
-  display: block !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  min-height: 100vh !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: rgba(14, 24, 30, .68) !important;
-  backdrop-filter: blur(5px);
-  cursor: pointer;
-}
-
-#welcome-popup .welcome-popup__dialog {
-  position: relative !important;
-  z-index: 1 !important;
-  width: min(520px, calc(100vw - 32px)) !important;
-  max-height: calc(100dvh - 40px) !important;
-  overflow: auto !important;
-  margin: auto !important;
-  padding: 30px !important;
-  background: #fff !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 4px !important;
-  box-shadow: 0 28px 90px rgba(0, 0, 0, .28) !important;
-  transform: translateY(8px);
-  transition: transform .18s ease;
-}
-
-#welcome-popup.is-visible .welcome-popup__dialog {
-  transform: translateY(0);
-}
-
-body.popup-open {
-  overflow: hidden !important;
-}
-
-
 /* Pulizia definitiva del vecchio avviso */
 #welcome-modal,
 .welcome-modal {
@@ -1310,53 +1169,6 @@ body.popup-open {
 .site-brand h1 {
   margin: 0 !important;
 }
-
-/* Unico popup, centrato nella viewport */
-#welcome-popup {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 2147483647 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  margin: 0 !important;
-  padding: 20px !important;
-  display: grid !important;
-  place-items: center !important;
-  overflow: auto !important;
-}
-
-#welcome-popup[hidden] {
-  display: none !important;
-}
-
-#welcome-popup .welcome-popup__backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  z-index: 0 !important;
-}
-
-#welcome-popup .welcome-popup__dialog {
-  position: relative !important;
-  z-index: 1 !important;
-  margin: auto !important;
-}
-
-@media (max-width: 580px) {
-  .site-brand {
-    gap: 12px !important;
-  }
-
-  .site-brand__logo {
-    width: 48px !important;
-    height: 62px !important;
-    flex-basis: 48px !important;
-  }
-}
-
 
 /* Prestazioni e caricamento progressivo */
 .loading-row td {
@@ -1398,4 +1210,20 @@ body.popup-open {
   #load-more-results {
     width: 100%;
   }
+}
+
+
+/* Pulsante caricamento progressivo */
+#load-more-results[hidden] {
+  display: none !important;
+}
+
+#load-more-results {
+  min-width: 220px;
+}
+
+#load-more-results:not([hidden]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

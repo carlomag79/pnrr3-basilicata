@@ -525,7 +525,12 @@ function renderTable() {
     `${Math.min(visibleData.length, data.length)} risultati mostrati su ${data.length} (${rows.length} compilazioni totali).`;
 
   if (loadMoreButton) {
-    loadMoreButton.hidden = visibleData.length >= data.length;
+    const hasMoreResults = visibleData.length < data.length;
+    loadMoreButton.hidden = !hasMoreResults;
+    loadMoreButton.disabled = !hasMoreResults;
+    loadMoreButton.textContent = hasMoreResults
+      ? `Mostra altri risultati (${data.length - visibleData.length} rimanenti)`
+      : "Tutti i risultati sono visibili";
   }
 }
 
@@ -679,6 +684,14 @@ document.querySelector("#position-sort").addEventListener("change", () => {
   visibleResultsLimit = RESULTS_PAGE_SIZE;
   renderTable();
 });
+const loadMoreResultsButton = document.querySelector("#load-more-results");
+if (loadMoreResultsButton) {
+  loadMoreResultsButton.addEventListener("click", () => {
+    visibleResultsLimit += RESULTS_PAGE_SIZE;
+    renderTable();
+  });
+}
+
 document.querySelector("#download-csv").addEventListener("click", downloadCsv);
 document.querySelector("#refresh-data").addEventListener("click", async () => {
   try { await loadRows(); } catch (error) { showMessage(error.message, true); }
@@ -716,38 +729,9 @@ function observeMap() {
 }
 
 
-function initWelcomePopup() {
-  const popup = document.querySelector("#welcome-popup");
-  if (!popup) return;
-
-  const showPopup = () => {
-    popup.hidden = false;
-    document.body.classList.add("popup-open");
-    requestAnimationFrame(() => popup.classList.add("is-visible"));
-  };
-
-  const closePopup = () => {
-    popup.classList.remove("is-visible");
-    document.body.classList.remove("popup-open");
-    window.setTimeout(() => {
-      popup.hidden = true;
-    }, 180);
-  };
-
-  popup.querySelectorAll("[data-popup-close]").forEach(element => {
-    element.addEventListener("click", closePopup);
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !popup.hidden) closePopup();
-  });
-
-  showPopup();
-}
 
 (async function start() {
   try {
-    initWelcomePopup();
     addCandidatureRow();
     initSupabase();
     observeMap();

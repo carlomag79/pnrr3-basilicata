@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body id="top">
 <header class="site-header">
     <div class="container">
       <p class="eyebrow">Progetto aperto e non ufficiale</p>
@@ -24,10 +24,7 @@
         <h1>PNRR3 Basilicata</h1>
       </div><p class="lead">Raccolta anonima delle preferenze territoriali dei vincitori del concorso Infanzia e Primaria.</p>
       <p class="notice">I dati sono inseriti volontariamente dagli utenti, non sono verificati e hanno valore esclusivamente orientativo.</p>
-      <nav class="site-nav" aria-label="Navigazione principale">
-        <a href="index.html" aria-current="page">Preferenze</a>
-        <a href="scuole.html">Scuole</a>
-      </nav>
+      <div id="site-navigation" class="site-navigation"></div>
     </div>
   </header>
 
@@ -105,7 +102,7 @@
       </form>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="map-section">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Risultati</p>
@@ -138,7 +135,7 @@
       <p class="map-note">Il colore del comune indica la classe più rappresentata; l’intensità cresce con il numero di preferenze.</p>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="results-section">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Dati aperti</p>
@@ -210,19 +207,11 @@
       <p>Il codice sorgente è pubblico. I risultati sono consultabili e scaricabili da chiunque. Il progetto non è collegato al Ministero dell’Istruzione, all’USR Basilicata o ad altre amministrazioni pubbliche.</p>
     </section>
   </main>
-
-  <footer>
-    <div class="container">
-      <p>Dati cartografici: ISTAT / Openpolis, licenza CC BY 4.0. Mappa: Leaflet e OpenStreetMap.</p>
-      <p class="project-credit">
-        Progetto nato da un’idea di
-        <a href="https://carlomagni.it" target="_blank" rel="noopener noreferrer">Carlo Magni</a>
-        e del gruppo WhatsApp “Concorso PNRR3 Basilicata Infanzia e Primaria”.
-      </p>
-    </div>
-  </footer>
+  <footer id="site-footer"></footer>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="site-shell.js"></script>
+  <script src="scuole-index.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>

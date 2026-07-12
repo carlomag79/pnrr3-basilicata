@@ -70,7 +70,12 @@ function normalizeName(value) {
 
 async function loadSchoolsIndex() {
   try {
-    const response = await fetch("scuole-index.json", { cache: "force-cache" });
+    if (window.SCHOOLS_INDEX && typeof window.SCHOOLS_INDEX === "object") {
+      schoolsByMunicipality = new Map(Object.entries(window.SCHOOLS_INDEX));
+      return;
+    }
+
+    const response = await fetch("./scuole-index.json?v=20260712", { cache: "force-cache" });
     if (!response.ok) throw new Error("Impossibile caricare l’elenco delle scuole.");
     const data = await response.json();
     schoolsByMunicipality = new Map(Object.entries(data));
@@ -487,12 +492,12 @@ function renderMunicipalitiesWithEligibility(row, selectedClass) {
 
           if (!matchingSchools.length) {
             return `
-              <div class="school-eligibility-item">
+              <div class="school-eligibility-item school-eligibility-item--fallback">
                 <div class="school-name-row">
                   <span class="class-chip ${candidature.classe}">${candidature.classe}</span>
                   <div>
                     <strong>${escapeHtml(municipality)}</strong>
-                    <small>Nessun plesso corrispondente trovato nel dataset</small>
+                    <small>Stima riferita al comune</small>
                   </div>
                 </div>
                 ${renderEligibilityBar(value, candidature.classe)}

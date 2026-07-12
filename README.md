@@ -55,3 +55,9 @@ File collegati:
 - `scuole.css`: stile della pagina.
 
 Le disponibilità AAAA, ADAA, EEEE e ADEE sono già predisposte nel dataset con valore `null` e potranno essere aggiornate quando saranno pubblicati i posti per singola scuola.
+
+
+## Componenti condivisi
+
+`site-shell.js` genera il menu responsive e il footer comuni a `index.html` e `scuole.html`.
+`scuole-index.js` contiene l’indice leggero dei plessi usato dalla tabella delle eleggibilità senza richieste di rete aggiuntive.

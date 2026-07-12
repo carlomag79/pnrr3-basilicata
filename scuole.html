@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="scuole.css">
 </head>
-<body>
+<body id="top">
   <header class="site-header schools-header">
     <div class="container">
       <p class="eyebrow">Anagrafe scolastica 2026/2027</p>
@@ -19,10 +19,7 @@
         <h1>Scuole</h1>
       </div>
       <p class="lead">Plessi dell’infanzia e primari della Basilicata, con sede effettiva e istituto di riferimento.</p>
-      <nav class="site-nav" aria-label="Navigazione principale">
-        <a href="index.html">Preferenze</a>
-        <a href="scuole.html" aria-current="page">Scuole</a>
-      </nav>
+      <div id="site-navigation" class="site-navigation"></div>
     </div>
   </header>
 
@@ -86,19 +83,9 @@
       </section>
     </section>
   </main>
+  <footer id="site-footer"></footer>
 
-  <footer>
-    <div class="container">
-      <p>Dati scolastici: Ministero dell’Istruzione e del Merito, anagrafe scuole statali 2026/2027.</p>
-      <p>Dati cartografici: ISTAT / Openpolis. Mappa: Leaflet e OpenStreetMap.</p>
-      <p class="project-credit">
-        Progetto nato da un’idea di
-        <a href="https://carlomagni.it" target="_blank" rel="noopener noreferrer">Carlo Magni</a>
-        e del gruppo WhatsApp “Concorso PNRR3 Basilicata Infanzia e Primaria”.
-      </p>
-    </div>
-  </footer>
-
+  <script src="site-shell.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="scuole.js"></script>
 </body>

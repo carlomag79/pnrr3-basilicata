@@ -1,0 +1,55 @@
+GESTIONE RICHIESTE VECCHIE COMPILAZIONI
+
+1. Visualizzare le richieste in attesa:
+
+select
+  id,
+  classe,
+  posizione,
+  punteggio,
+  primo_comune,
+  created_at
+from public.candidati_legacy_claims
+where status = 'pending'
+order by created_at asc;
+
+2. Cercare il record candidato corrispondente:
+
+select
+  c.id,
+  c.candidature,
+  c.provincia_1,
+  c.provincia_2,
+  c.comuni,
+  c.created_at
+from public.candidati c
+where exists (
+  select 1
+  from jsonb_array_elements(c.candidature) as elemento
+  where
+    elemento->>'classe' = 'AAAA'
+    and (elemento->>'posizione')::integer = 10
+    and (elemento->>'punteggio')::numeric = 222.25
+)
+and lower(c.comuni[1]) = lower('Matera');
+
+3. Approvare la richiesta:
+
+select public.approve_legacy_claim_request(
+  ID_RICHIESTA,
+  ID_CANDIDATO
+);
+
+Esempio:
+
+select public.approve_legacy_claim_request(3, 128);
+
+4. Rifiutare una richiesta:
+
+select public.reject_legacy_claim_request(
+  ID_RICHIESTA,
+  'Dati non sufficienti per identificare con certezza la compilazione'
+);
+
+Dopo l'approvazione, l'utente potrà inserire il proprio codice CLAIM
+nel sito e ricevere il codice PNRR3 per modificare la compilazione.

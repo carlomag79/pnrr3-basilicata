@@ -76,3 +76,16 @@ Prima di pubblicare questa versione eseguire in Supabase il file:
 `migration_edit_codes_dashboard.sql`
 
 Le compilazioni create prima della migrazione non possiedono un codice di modifica e continuano a essere gestibili soltanto dall'amministratore tramite Supabase.
+
+
+## Rivendicazione delle compilazioni precedenti
+
+Gli utenti che hanno compilato prima dell'introduzione dei codici possono inviare una richiesta anonima usando classe, posizione, punteggio e primo comune.
+
+Prima di pubblicare questa funzione eseguire:
+
+`migration_legacy_claims.sql`
+
+Le richieste vengono approvate manualmente. Le query operative sono raccolte in:
+
+`GUIDA_APPROVAZIONE_VECCHIE_COMPILAZIONI.txt`

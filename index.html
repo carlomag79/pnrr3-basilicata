@@ -181,6 +181,69 @@
           <p id="manage-message" class="manage-message" role="status"></p>
         </div>
       </div>
+
+        <details class="legacy-claim">
+          <summary>Hai compilato prima dell’introduzione del codice?</summary>
+
+          <div class="legacy-claim__content">
+            <div class="legacy-claim__intro">
+              <h3>Richiedi il codice per una vecchia compilazione</h3>
+              <p>
+                Inserisci i dati con cui avevi compilato il form. La richiesta non viene approvata automaticamente:
+                sarà verificata manualmente e associata al record corretto.
+              </p>
+            </div>
+
+            <div class="legacy-claim__grid">
+              <label>
+                Classe
+                <select id="legacy-class">
+                  <option value="AAAA">AAAA – Infanzia comune</option>
+                  <option value="ADAA">ADAA – Infanzia sostegno</option>
+                  <option value="EEEE">EEEE – Primaria comune</option>
+                  <option value="ADEE">ADEE – Primaria sostegno</option>
+                </select>
+              </label>
+
+              <label>
+                Posizione
+                <input id="legacy-position" type="number" min="1" step="1">
+              </label>
+
+              <label>
+                Punteggio
+                <input id="legacy-score" type="number" min="0" step="0.01">
+              </label>
+
+              <label>
+                Primo comune indicato
+                <input id="legacy-first-municipality" type="text" placeholder="Es. Matera">
+              </label>
+            </div>
+
+            <button type="button" id="submit-legacy-claim" class="secondary">
+              Invia richiesta
+            </button>
+
+            <div id="legacy-request-result" class="legacy-request-result" hidden>
+              <p class="eyebrow">Codice richiesta</p>
+              <code id="legacy-request-code"></code>
+              <p>
+                Conserva questo codice. Dopo la verifica potrai usarlo qui sotto per ottenere il codice di modifica.
+              </p>
+            </div>
+
+            <div class="legacy-status-check">
+              <h3>Controlla una richiesta</h3>
+              <div class="legacy-status-row">
+                <input id="legacy-status-code" type="text" autocomplete="off" placeholder="CLAIM-ABCD-1234">
+                <button type="button" id="check-legacy-status" class="secondary">Controlla stato</button>
+              </div>
+              <div id="legacy-status-result" class="legacy-status-result" hidden></div>
+            </div>
+          </div>
+        </details>
+
     </section>
 
     <section class="panel" id="map-section">

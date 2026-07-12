@@ -341,6 +341,140 @@ function runPositionComparison() {
   `;
 }
 
+
+function generateLegacyRequestCode() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  const token = [...bytes].map(byte => alphabet[byte % alphabet.length]).join("");
+  return `CLAIM-${token.slice(0, 4)}-${token.slice(4)}`;
+}
+
+function normalizeLegacyRequestCode(value) {
+  return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+async function submitLegacyClaim() {
+  if (!supabaseClient) return;
+
+  const classCode = document.querySelector("#legacy-class").value;
+  const position = Number(document.querySelector("#legacy-position").value);
+  const score = Number(document.querySelector("#legacy-score").value);
+  const firstMunicipality = document.querySelector("#legacy-first-municipality").value.trim();
+  const result = document.querySelector("#legacy-request-result");
+
+  if (!Number.isInteger(position) || position < 1 || !Number.isFinite(score) || score < 0 || !firstMunicipality) {
+    result.hidden = false;
+    result.className = "legacy-request-result legacy-request-result--error";
+    result.textContent = "Completa correttamente tutti i campi.";
+    return;
+  }
+
+  const requestCode = generateLegacyRequestCode();
+  const button = document.querySelector("#submit-legacy-claim");
+  button.disabled = true;
+  button.textContent = "Invio in corso…";
+
+  const { data, error } = await supabaseClient.rpc("submit_legacy_claim_request", {
+    p_request_code: requestCode,
+    p_classe: classCode,
+    p_posizione: position,
+    p_punteggio: score,
+    p_primo_comune: firstMunicipality
+  });
+
+  button.disabled = false;
+  button.textContent = "Invia richiesta";
+
+  if (error) {
+    result.hidden = false;
+    result.className = "legacy-request-result legacy-request-result--error";
+    result.textContent = `Richiesta non inviata: ${error.message}`;
+    return;
+  }
+
+  if (!data) {
+    result.hidden = false;
+    result.className = "legacy-request-result legacy-request-result--error";
+    result.textContent = "La richiesta non è stata registrata.";
+    return;
+  }
+
+  result.hidden = false;
+  result.className = "legacy-request-result";
+  document.querySelector("#legacy-request-code").textContent = requestCode;
+  document.querySelector("#legacy-status-code").value = requestCode;
+}
+
+async function checkLegacyClaimStatus() {
+  if (!supabaseClient) return;
+
+  const code = normalizeLegacyRequestCode(
+    document.querySelector("#legacy-status-code").value
+  );
+  const result = document.querySelector("#legacy-status-result");
+
+  if (!/^CLAIM-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+    result.hidden = false;
+    result.className = "legacy-status-result legacy-status-result--error";
+    result.textContent = "Il codice richiesta non è valido.";
+    return;
+  }
+
+  result.hidden = false;
+  result.className = "legacy-status-result";
+  result.textContent = "Controllo in corso…";
+
+  const { data, error } = await supabaseClient.rpc("check_legacy_claim_request", {
+    p_request_code: code
+  });
+
+  if (error) {
+    result.className = "legacy-status-result legacy-status-result--error";
+    result.textContent = `Impossibile controllare la richiesta: ${error.message}`;
+    return;
+  }
+
+  const status = Array.isArray(data) ? data[0] : data;
+
+  if (!status) {
+    result.className = "legacy-status-result legacy-status-result--error";
+    result.textContent = "Richiesta non trovata.";
+    return;
+  }
+
+  if (status.status === "pending") {
+    result.innerHTML = `
+      <strong>Richiesta in attesa di verifica</strong>
+      <p>Non è ancora stata approvata. Riprova più tardi.</p>
+    `;
+    return;
+  }
+
+  if (status.status === "rejected") {
+    result.className = "legacy-status-result legacy-status-result--error";
+    result.innerHTML = `
+      <strong>Richiesta non approvata</strong>
+      <p>${escapeHtml(status.admin_note || "I dati non hanno consentito di identificare con certezza la compilazione.")}</p>
+    `;
+    return;
+  }
+
+  if (status.status === "approved" && status.edit_code) {
+    result.className = "legacy-status-result legacy-status-result--approved";
+    result.innerHTML = `
+      <strong>Richiesta approvata</strong>
+      <p>Il tuo codice di modifica è:</p>
+      <code>${escapeHtml(status.edit_code)}</code>
+      <p>Copialo nella sezione “Modifica la tua compilazione”.</p>
+    `;
+    document.querySelector("#manage-code").value = status.edit_code;
+    return;
+  }
+
+  result.textContent = "Stato della richiesta non riconosciuto.";
+}
+
 function generateEditCode() {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const bytes = new Uint8Array(8);
@@ -983,6 +1117,13 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
   await loadRows();
 });
 
+
+
+document.querySelector("#submit-legacy-claim").addEventListener("click", submitLegacyClaim);
+document.querySelector("#check-legacy-status").addEventListener("click", checkLegacyClaimStatus);
+document.querySelector("#legacy-status-code").addEventListener("keydown", event => {
+  if (event.key === "Enter") checkLegacyClaimStatus();
+});
 
 document.querySelector("#run-comparison").addEventListener("click", runPositionComparison);
 document.querySelector("#comparison-position").addEventListener("keydown", event => {

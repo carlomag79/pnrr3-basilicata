@@ -26,6 +26,7 @@ let map = null;
 let mapReady = false;
 let geojsonPromise = null;
 let eligibilityIndex = new Map();
+let schoolsByMunicipality = new Map();
 let visibleResultsLimit = 20;
 const RESULTS_PAGE_SIZE = 20;
 
@@ -65,6 +66,24 @@ function getFeatureProvince(feature) {
 
 function normalizeName(value) {
   return String(value || "").trim().toLocaleLowerCase("it-IT");
+}
+
+async function loadSchoolsIndex() {
+  try {
+    const response = await fetch("scuole-index.json", { cache: "force-cache" });
+    if (!response.ok) throw new Error("Impossibile caricare l’elenco delle scuole.");
+    const data = await response.json();
+    schoolsByMunicipality = new Map(Object.entries(data));
+  } catch (error) {
+    console.error(error);
+    schoolsByMunicipality = new Map();
+  }
+}
+
+function schoolsForMunicipality(municipality, classCode) {
+  const schools = schoolsByMunicipality.get(normalizeName(municipality)) || [];
+  const wantedType = ["AAAA", "ADAA"].includes(classCode) ? "Infanzia" : "Primaria";
+  return schools.filter(school => school.t === wantedType);
 }
 
 function normalizeRow(row) {
@@ -462,9 +481,37 @@ function renderMunicipalitiesWithEligibility(row, selectedClass) {
   return `
     <div class="municipality-preferences">
       ${(row.comuni || []).map((municipality, index) => {
-        const estimates = candidatures.map(candidature => {
+        const schoolGroups = candidatures.map(candidature => {
           const value = calculateEligibility(row, candidature, municipality, index);
-          return value === null ? "" : renderEligibilityBar(value, candidature.classe);
+          const matchingSchools = schoolsForMunicipality(municipality, candidature.classe);
+
+          if (!matchingSchools.length) {
+            return `
+              <div class="school-eligibility-item">
+                <div class="school-name-row">
+                  <span class="class-chip ${candidature.classe}">${candidature.classe}</span>
+                  <div>
+                    <strong>${escapeHtml(municipality)}</strong>
+                    <small>Nessun plesso corrispondente trovato nel dataset</small>
+                  </div>
+                </div>
+                ${renderEligibilityBar(value, candidature.classe)}
+              </div>
+            `;
+          }
+
+          return matchingSchools.map(school => `
+            <div class="school-eligibility-item">
+              <div class="school-name-row">
+                <span class="class-chip ${candidature.classe}">${candidature.classe}</span>
+                <div>
+                  <strong>${escapeHtml(school.n)} – ${escapeHtml(municipality)}</strong>
+                  <small>${escapeHtml(school.i)}</small>
+                </div>
+              </div>
+              ${renderEligibilityBar(value, candidature.classe)}
+            </div>
+          `).join("");
         }).join("");
 
         return `
@@ -473,7 +520,7 @@ function renderMunicipalitiesWithEligibility(row, selectedClass) {
               <span class="preference-number">${index + 1}</span>
               <strong>${escapeHtml(municipality)}</strong>
             </div>
-            <div class="eligibility-list">${estimates}</div>
+            <div class="eligibility-list">${schoolGroups}</div>
           </div>
         `;
       }).join("")}
@@ -735,6 +782,7 @@ function observeMap() {
     addCandidatureRow();
     initSupabase();
     observeMap();
+    await loadSchoolsIndex();
     if (supabaseClient) await loadRows();
   } catch (error) {
     console.error(error);

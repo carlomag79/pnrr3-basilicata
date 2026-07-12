@@ -1413,3 +1413,252 @@ button, input, select { border-radius: 2px; }
     background: var(--surface-soft);
   }
 }
+
+
+/* Dashboard */
+.dashboard-panel {
+  overflow: hidden;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dashboard-skeleton {
+  grid-column: 1 / -1;
+  padding: 24px;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+}
+
+.stat-card {
+  min-height: 126px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+}
+
+.stat-card--main {
+  color: #fff;
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
+.stat-card--main span,
+.stat-card--main small {
+  color: rgba(255,255,255,.76);
+}
+
+.stat-card--wide {
+  grid-column: span 2;
+}
+
+.stat-card > span:first-child {
+  color: var(--muted);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.stat-card strong {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.stat-card small {
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.comparison-box {
+  margin-top: 24px;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: minmax(220px, .8fr) minmax(0, 1.4fr);
+  gap: 24px;
+  background: #eef3f4;
+  border: 1px solid #d2dde1;
+}
+
+.comparison-copy h3 {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+}
+
+.comparison-copy p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.comparison-form {
+  display: grid;
+  grid-template-columns: 1fr .65fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.comparison-result {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 20px;
+  color: var(--ink);
+  background: #fff;
+  border-left: 4px solid var(--accent);
+}
+
+.comparison-result--error {
+  display: block;
+  color: var(--danger);
+  border-left-color: var(--danger);
+}
+
+.comparison-result__score span {
+  display: block;
+  color: var(--muted);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.comparison-result__score strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.comparison-result__details p {
+  margin: 0 0 5px;
+}
+
+.comparison-result__details small {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* Codice anonimo e gestione compilazione */
+.edit-code-result {
+  margin-top: 22px;
+  padding: 20px;
+  background: #edf6f1;
+  border: 1px solid #bdd8c9;
+  border-left: 4px solid var(--success);
+}
+
+.edit-code-result h3 {
+  margin-bottom: 6px;
+}
+
+.edit-code-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.edit-code-row code {
+  min-width: 0;
+  flex: 1;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #bdd8c9;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  letter-spacing: .08em;
+  overflow-wrap: anywhere;
+}
+
+.manage-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, .8fr) minmax(0, 1.2fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.manage-layout h2 {
+  margin-bottom: 8px;
+}
+
+.manage-layout > div:first-child > p:last-child {
+  color: var(--muted);
+}
+
+.manage-form {
+  padding: 18px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+}
+
+.manage-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.manage-message {
+  min-height: 1.3em;
+  margin: 12px 0 0;
+  font-size: .85rem;
+}
+
+.danger-button {
+  color: #fff;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.danger-button:hover {
+  background: #842e28;
+  border-color: #842e28;
+}
+
+@media (max-width: 980px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .comparison-box,
+  .manage-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-card--wide {
+    grid-column: 1 / -1;
+  }
+
+  .comparison-form {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-result {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-code-row,
+  .manage-actions {
+    flex-direction: column;
+  }
+}

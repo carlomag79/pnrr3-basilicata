@@ -29,6 +29,7 @@ let eligibilityIndex = new Map();
 let schoolsByMunicipality = new Map();
 let visibleResultsLimit = 20;
 const RESULTS_PAGE_SIZE = 20;
+let editingCode = null;
 
 function initMap() {
   if (mapReady) return;
@@ -193,8 +194,256 @@ async function loadRows() {
   buildEligibilityIndex();
   visibleResultsLimit = RESULTS_PAGE_SIZE;
   renderTable();
+  renderDashboard();
 
   if (mapReady && geojsonData) drawMap();
+}
+
+
+function formatMunicipalityName(value) {
+  return String(value || "")
+    .toLocaleLowerCase("it-IT")
+    .replace(/(^|[\s'-])([a-zà-ÿ])/g, (_, prefix, letter) => prefix + letter.toLocaleUpperCase("it-IT"));
+}
+
+function populateComparisonMunicipalities() {
+  const select = document.querySelector("#comparison-municipality");
+  if (!select) return;
+
+  const names = new Set([
+    ...schoolsByMunicipality.keys(),
+    ...rows.flatMap(row => (row.comuni || []).map(normalizeName))
+  ]);
+
+  const current = select.value;
+  select.innerHTML = '<option value="">Seleziona un comune</option>';
+
+  [...names]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, "it"))
+    .forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = formatMunicipalityName(name);
+      select.appendChild(option);
+    });
+
+  if (current && names.has(current)) select.value = current;
+}
+
+function renderDashboard() {
+  const root = document.querySelector("#dashboard-cards");
+  if (!root) return;
+
+  const candidatureCounts = { AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
+  const municipalityCounts = new Map();
+
+  rows.forEach(row => {
+    (row.candidature || []).forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(candidatureCounts, item.classe)) {
+        candidatureCounts[item.classe] += 1;
+      }
+    });
+
+    [...new Set((row.comuni || []).map(normalizeName))].forEach(name => {
+      municipalityCounts.set(name, (municipalityCounts.get(name) || 0) + 1);
+    });
+  });
+
+  const topMunicipality = [...municipalityCounts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "it"))[0];
+
+  const latestDate = rows.length
+    ? new Date(Math.max(...rows.map(row => new Date(row.created_at).getTime())))
+    : null;
+
+  root.innerHTML = `
+    <article class="stat-card stat-card--main">
+      <span>Compilazioni</span>
+      <strong>${rows.length}</strong>
+      <small>record anonimi pubblicati</small>
+    </article>
+    ${Object.entries(candidatureCounts).map(([code, count]) => `
+      <article class="stat-card">
+        <span class="class-chip ${code}">${code}</span>
+        <strong>${count}</strong>
+        <small>candidature registrate</small>
+      </article>
+    `).join("")}
+    <article class="stat-card stat-card--wide">
+      <span>Comune più indicato</span>
+      <strong>${topMunicipality ? escapeHtml(formatMunicipalityName(topMunicipality[0])) : "—"}</strong>
+      <small>${topMunicipality ? `${topMunicipality[1]} compilazioni interessate` : "Dati non disponibili"}</small>
+    </article>
+  `;
+
+  const update = document.querySelector("#dashboard-update");
+  if (update) {
+    update.textContent = latestDate && Number.isFinite(latestDate.getTime())
+      ? `Aggiornato ${latestDate.toLocaleDateString("it-IT")} alle ${latestDate.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`
+      : "Nessun dato disponibile";
+  }
+
+  populateComparisonMunicipalities();
+}
+
+function calculateEligibilityForPosition(classCode, municipality, currentPosition, preferenceIndex = 0) {
+  const key = `${classCode}|${normalizeName(municipality)}`;
+  const positions = eligibilityIndex.get(key) || [];
+  const betterRanked = countPositionsBefore(positions, currentPosition);
+  const equalRanked = positions.filter(position => position === currentPosition).length;
+  const behind = Math.max(0, positions.length - betterRanked - equalRanked);
+
+  const preferencePenalty = preferenceIndex * 2.25;
+  const competitionPenalty = betterRanked * 8;
+  const crowdPenalty = Math.max(0, positions.length - betterRanked) * 1.25;
+  const eligibility = Math.round(
+    clamp(95 - preferencePenalty - competitionPenalty - crowdPenalty, 5, 95)
+  );
+
+  return {
+    total: positions.length,
+    ahead: betterRanked,
+    equal: equalRanked,
+    behind,
+    observedRank: betterRanked + 1,
+    eligibility
+  };
+}
+
+function runPositionComparison() {
+  const classCode = document.querySelector("#comparison-class").value;
+  const position = Number(document.querySelector("#comparison-position").value);
+  const municipality = document.querySelector("#comparison-municipality").value;
+  const result = document.querySelector("#comparison-result");
+
+  if (!Number.isInteger(position) || position < 1 || !municipality) {
+    result.hidden = false;
+    result.className = "comparison-result comparison-result--error";
+    result.textContent = "Inserisci una posizione valida e seleziona un comune.";
+    return;
+  }
+
+  const comparison = calculateEligibilityForPosition(classCode, municipality, position);
+  result.hidden = false;
+  result.className = "comparison-result";
+  result.innerHTML = `
+    <div class="comparison-result__score">
+      <span>Eleggibilità stimata</span>
+      <strong>${comparison.eligibility}%</strong>
+    </div>
+    <div class="comparison-result__details">
+      <p><strong>${comparison.ahead}</strong> candidature risultano meglio posizionate.</p>
+      <p><strong>${comparison.behind}</strong> risultano peggio posizionate.</p>
+      <p>Saresti circa <strong>${comparison.observedRank}°</strong> tra i dati ${classCode} raccolti per ${escapeHtml(formatMunicipalityName(municipality))}.</p>
+      <small>Il confronto usa soltanto le compilazioni presenti sul sito e non tiene ancora conto dei posti disponibili.</small>
+    </div>
+  `;
+}
+
+function generateEditCode() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  const token = [...bytes].map(byte => alphabet[byte % alphabet.length]).join("");
+  return `PNRR3-${token.slice(0, 4)}-${token.slice(4)}`;
+}
+
+function normalizeEditCode(value) {
+  return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function resetCandidateForm({ keepCodeResult = false } = {}) {
+  const form = document.querySelector("#candidate-form");
+  form.reset();
+  selectedMunicipalities = [];
+  selectedMunicipalitiesExpanded = false;
+  document.querySelector("#candidatures-list").innerHTML = "";
+  addCandidatureRow();
+  renderSelectedMunicipalities();
+
+  editingCode = null;
+  document.querySelector("#candidate-submit").textContent = "Invia i dati";
+  document.querySelector("#cancel-edit").hidden = true;
+  document.querySelector("#delete-submission").hidden = true;
+
+  if (!keepCodeResult) {
+    document.querySelector("#edit-code-result").hidden = true;
+  }
+}
+
+function showManageMessage(message, isError = false) {
+  const element = document.querySelector("#manage-message");
+  element.textContent = message;
+  element.className = isError ? "manage-message error" : "manage-message success";
+}
+
+function populateFormFromSubmission(record, code) {
+  document.querySelector("#candidate-form").reset();
+  document.querySelector("#candidatures-list").innerHTML = "";
+
+  (record.candidature || []).forEach(item => addCandidatureRow(item));
+  if (!(record.candidature || []).length) addCandidatureRow();
+
+  document.querySelector("#provincia_1").value = record.provincia_1 || "";
+  document.querySelector("#provincia_2").value = record.provincia_2 || "";
+
+  selectedMunicipalities = Array.isArray(record.comuni) ? [...record.comuni] : [];
+  selectedMunicipalitiesExpanded = false;
+  renderSelectedMunicipalities();
+
+  editingCode = code;
+  document.querySelector("#candidate-submit").textContent = "Salva modifiche";
+  document.querySelector("#cancel-edit").hidden = false;
+  document.querySelector("#delete-submission").hidden = false;
+  document.querySelector("#edit-code-result").hidden = true;
+  showMessage("Compilazione caricata. Modifica i campi e premi “Salva modifiche”.");
+  document.querySelector("#form-section").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function loadSubmissionByCode() {
+  if (!supabaseClient) return showManageMessage("Supabase non è configurato.", true);
+
+  const code = normalizeEditCode(document.querySelector("#manage-code").value);
+  if (!/^PNRR3-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+    return showManageMessage("Il formato del codice non è valido.", true);
+  }
+
+  showManageMessage("Ricerca della compilazione…");
+
+  const { data, error } = await supabaseClient.rpc("get_my_submission", {
+    p_edit_code: code
+  });
+
+  if (error) return showManageMessage(`Impossibile caricare la compilazione: ${error.message}`, true);
+
+  const record = Array.isArray(data) ? data[0] : data;
+  if (!record) return showManageMessage("Codice non riconosciuto.", true);
+
+  document.querySelector("#manage-code").value = code;
+  showManageMessage("Compilazione trovata.");
+  populateFormFromSubmission(record, code);
+}
+
+async function deleteSubmissionByCode() {
+  if (!supabaseClient) return showManageMessage("Supabase non è configurato.", true);
+
+  const code = editingCode || normalizeEditCode(document.querySelector("#manage-code").value);
+  if (!code) return showManageMessage("Carica prima una compilazione.", true);
+  if (!window.confirm("Vuoi davvero cancellare definitivamente questa compilazione?")) return;
+
+  const { data, error } = await supabaseClient.rpc("delete_my_submission", {
+    p_edit_code: code
+  });
+
+  if (error) return showManageMessage(`Cancellazione non riuscita: ${error.message}`, true);
+  if (!data) return showManageMessage("Codice non riconosciuto o compilazione già cancellata.", true);
+
+  resetCandidateForm();
+  document.querySelector("#manage-code").value = "";
+  showManageMessage("Compilazione cancellata.");
+  showMessage("");
+  await loadRows();
 }
 
 function candidatureOptions(selected = "") {
@@ -446,21 +695,12 @@ function calculateEligibility(row, candidature, municipality, preferenceIndex) {
   const currentPosition = Number(candidature.posizione);
   if (!Number.isFinite(currentPosition)) return null;
 
-  const key = `${candidature.classe}|${normalizeName(municipality)}`;
-  const positions = eligibilityIndex.get(key) || [];
-  const betterRanked = countPositionsBefore(positions, currentPosition);
-  const sameMunicipalityTotal = positions.length;
-
-  const preferencePenalty = preferenceIndex * 2.25;
-  const competitionPenalty = betterRanked * 8;
-  const crowdPenalty = Math.max(
-    0,
-    sameMunicipalityTotal - betterRanked - 1
-  ) * 1.25;
-
-  return Math.round(
-    clamp(95 - preferencePenalty - competitionPenalty - crowdPenalty, 5, 95)
-  );
+  return calculateEligibilityForPosition(
+    candidature.classe,
+    municipality,
+    currentPosition,
+    preferenceIndex
+  ).eligibility;
 }
 
 function renderEligibilityBar(value, classCode) {
@@ -697,30 +937,79 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
     return showMessage(error.message, true);
   }
 
-  const submitButton = event.submitter;
+  const submitButton = event.submitter || document.querySelector("#candidate-submit");
   submitButton.disabled = true;
-  showMessage("Invio in corso…");
+  showMessage(editingCode ? "Salvataggio modifiche…" : "Invio in corso…");
 
-  const payload = {
-    candidature,
-    provincia_1: document.querySelector("#provincia_1").value,
-    provincia_2: document.querySelector("#provincia_2").value || null,
-    comuni: selectedMunicipalities
+  const basePayload = {
+    p_candidature: candidature,
+    p_provincia_1: document.querySelector("#provincia_1").value,
+    p_provincia_2: document.querySelector("#provincia_2").value || null,
+    p_comuni: selectedMunicipalities
   };
 
-  const { error } = await supabaseClient.from("candidati").insert(payload);
+  if (editingCode) {
+    const { data, error } = await supabaseClient.rpc("update_my_submission", {
+      ...basePayload,
+      p_edit_code: editingCode
+    });
+
+    submitButton.disabled = false;
+    if (error) return showMessage(`Modifica non riuscita: ${error.message}`, true);
+    if (!data) return showMessage("Codice non riconosciuto. Ricarica la compilazione.", true);
+
+    resetCandidateForm();
+    document.querySelector("#manage-code").value = "";
+    showManageMessage("Modifiche salvate.");
+    showMessage("Compilazione aggiornata correttamente.");
+    await loadRows();
+    return;
+  }
+
+  const editCode = generateEditCode();
+  const { data, error } = await supabaseClient.rpc("submit_candidatura", {
+    ...basePayload,
+    p_edit_code: editCode
+  });
 
   submitButton.disabled = false;
   if (error) return showMessage(`Invio non riuscito: ${error.message}`, true);
+  if (!data) return showMessage("Il database non ha restituito il nuovo record.", true);
 
-  event.target.reset();
-  selectedMunicipalities = [];
-  selectedMunicipalitiesExpanded = false;
-  document.querySelector("#candidatures-list").innerHTML = "";
-  addCandidatureRow();
-  renderSelectedMunicipalities();
-  showMessage("Dati inviati correttamente. Grazie!");
+  resetCandidateForm({ keepCodeResult: true });
+  document.querySelector("#generated-edit-code").textContent = editCode;
+  document.querySelector("#edit-code-result").hidden = false;
+  showMessage("Dati inviati correttamente. Conserva il codice di modifica.");
   await loadRows();
+});
+
+
+document.querySelector("#run-comparison").addEventListener("click", runPositionComparison);
+document.querySelector("#comparison-position").addEventListener("keydown", event => {
+  if (event.key === "Enter") runPositionComparison();
+});
+
+document.querySelector("#load-submission").addEventListener("click", loadSubmissionByCode);
+document.querySelector("#manage-code").addEventListener("keydown", event => {
+  if (event.key === "Enter") loadSubmissionByCode();
+});
+document.querySelector("#delete-submission").addEventListener("click", deleteSubmissionByCode);
+document.querySelector("#cancel-edit").addEventListener("click", () => {
+  resetCandidateForm();
+  showMessage("Modifica annullata.");
+});
+
+document.querySelector("#copy-edit-code").addEventListener("click", async () => {
+  const code = document.querySelector("#generated-edit-code").textContent;
+  try {
+    await navigator.clipboard.writeText(code);
+    document.querySelector("#copy-edit-code").textContent = "Copiato";
+    window.setTimeout(() => {
+      document.querySelector("#copy-edit-code").textContent = "Copia codice";
+    }, 1600);
+  } catch (_) {
+    window.prompt("Copia il codice:", code);
+  }
 });
 
 document.querySelector("#map-filter").addEventListener("change", drawMap);
@@ -788,6 +1077,7 @@ function observeMap() {
     initSupabase();
     observeMap();
     await loadSchoolsIndex();
+    populateComparisonMunicipalities();
     if (supabaseClient) await loadRows();
   } catch (error) {
     console.error(error);

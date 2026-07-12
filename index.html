@@ -29,6 +29,54 @@
   </header>
 
   <main class="container">
+
+    <section class="panel dashboard-panel" id="dashboard-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Quadro generale</p>
+          <h2>Dashboard del concorso</h2>
+        </div>
+        <span class="badge" id="dashboard-update">Dati in aggiornamento</span>
+      </div>
+
+      <div id="dashboard-cards" class="dashboard-cards" aria-live="polite">
+        <div class="dashboard-skeleton">Caricamento statistiche…</div>
+      </div>
+
+      <div class="comparison-box">
+        <div class="comparison-copy">
+          <p class="eyebrow">Simulazione rapida</p>
+          <h3>Confronta la tua posizione</h3>
+          <p>Inserisci classe, posizione e comune per vedere quante candidature risultano davanti e dietro di te nei dati raccolti.</p>
+        </div>
+
+        <div class="comparison-form">
+          <label>
+            Classe
+            <select id="comparison-class">
+              <option value="AAAA">AAAA – Infanzia comune</option>
+              <option value="ADAA">ADAA – Infanzia sostegno</option>
+              <option value="EEEE">EEEE – Primaria comune</option>
+              <option value="ADEE">ADEE – Primaria sostegno</option>
+            </select>
+          </label>
+          <label>
+            Posizione
+            <input id="comparison-position" type="number" min="1" step="1" placeholder="Es. 75">
+          </label>
+          <label>
+            Comune
+            <select id="comparison-municipality">
+              <option value="">Seleziona un comune</option>
+            </select>
+          </label>
+          <button type="button" id="run-comparison" class="primary">Calcola confronto</button>
+        </div>
+
+        <div id="comparison-result" class="comparison-result" hidden aria-live="polite"></div>
+      </div>
+    </section>
+
     <section class="panel" id="form-section">
       <div class="section-heading">
         <div>
@@ -96,10 +144,43 @@
         </label>
 
         <div class="form-actions">
-          <button class="primary" type="submit">Invia i dati</button>
+          <button class="primary" id="candidate-submit" type="submit">Invia i dati</button>
+          <button class="secondary" id="cancel-edit" type="button" hidden>Annulla modifica</button>
           <p id="form-message" role="status"></p>
         </div>
+
+        <div id="edit-code-result" class="edit-code-result" hidden>
+          <p class="eyebrow">Conserva questo codice</p>
+          <h3>La compilazione è modificabile</h3>
+          <p>Questo codice permette di correggere o cancellare la compilazione. Non viene recuperato tramite nome o email.</p>
+          <div class="edit-code-row">
+            <code id="generated-edit-code"></code>
+            <button type="button" id="copy-edit-code" class="secondary">Copia codice</button>
+          </div>
+        </div>
       </form>
+    </section>
+
+
+    <section class="panel compact manage-panel" id="manage-section">
+      <div class="manage-layout">
+        <div>
+          <p class="eyebrow">Correzioni autonome</p>
+          <h2>Modifica la tua compilazione</h2>
+          <p>Inserisci il codice ricevuto dopo l’invio. Potrai aggiornare i dati o cancellare il record senza comunicare informazioni personali.</p>
+        </div>
+        <div class="manage-form">
+          <label>
+            Codice di modifica
+            <input id="manage-code" type="text" inputmode="text" autocomplete="off" placeholder="PNRR3-ABCD-1234">
+          </label>
+          <div class="manage-actions">
+            <button type="button" id="load-submission" class="primary">Carica compilazione</button>
+            <button type="button" id="delete-submission" class="danger-button" hidden>Cancella compilazione</button>
+          </div>
+          <p id="manage-message" class="manage-message" role="status"></p>
+        </div>
+      </div>
     </section>
 
     <section class="panel" id="map-section">

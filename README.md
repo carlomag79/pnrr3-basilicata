@@ -61,3 +61,18 @@ Le disponibilità AAAA, ADAA, EEEE e ADEE sono già predisposte nel dataset con 
 
 `site-shell.js` genera il menu responsive e il footer comuni a `index.html` e `scuole.html`.
 `scuole-index.js` contiene l’indice leggero dei plessi usato dalla tabella delle eleggibilità senza richieste di rete aggiuntive.
+
+
+## Dashboard, confronto e codici di modifica
+
+La home include:
+
+- dashboard riepilogativa;
+- confronto rapido tra posizione, classe e comune;
+- codice anonimo per aggiornare o cancellare le nuove compilazioni.
+
+Prima di pubblicare questa versione eseguire in Supabase il file:
+
+`migration_edit_codes_dashboard.sql`
+
+Le compilazioni create prima della migrazione non possiedono un codice di modifica e continuano a essere gestibili soltanto dall'amministratore tramite Supabase.

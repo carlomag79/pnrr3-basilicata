@@ -1227,3 +1227,55 @@ button, input, select { border-radius: 2px; }
   align-items: center;
   justify-content: center;
 }
+
+
+/* Navigazione */
+.site-nav {
+  display: flex;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.site-nav a {
+  color: rgba(255,255,255,.78);
+  text-decoration: none;
+  font-size: .9rem;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 4px;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: #fff;
+  border-bottom-color: rgba(255,255,255,.9);
+}
+
+/* Scuole associate alle eleggibilità */
+.school-eligibility-item {
+  display: grid;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.school-eligibility-item:last-child {
+  border-bottom: 0;
+}
+
+.school-name-row {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  align-items: start;
+  gap: 9px;
+}
+
+.school-name-row strong,
+.school-name-row small {
+  display: block;
+}
+
+.school-name-row small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: .72rem;
+}

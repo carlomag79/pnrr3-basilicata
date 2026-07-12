@@ -41,3 +41,17 @@ I confini comunali vengono caricati dal progetto open source `openpolis/geojson-
 ## Licenza
 
 Codice distribuito con licenza MIT.
+
+
+## Pagina Scuole
+
+La pagina `scuole.html` mostra i 411 plessi statali dell’infanzia e primari della Basilicata per l’anno scolastico 2026/2027.
+
+File collegati:
+
+- `scuole.json`: anagrafica completa dei plessi;
+- `scuole-index.json`: indice compatto usato nella tabella delle eleggibilità;
+- `scuole.js`: filtri, lista, mappa e geocodifica puntuale su richiesta;
+- `scuole.css`: stile della pagina.
+
+Le disponibilità AAAA, ADAA, EEEE e ADEE sono già predisposte nel dataset con valore `null` e potranno essere aggiornate quando saranno pubblicati i posti per singola scuola.

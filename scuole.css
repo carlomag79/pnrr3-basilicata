@@ -1,0 +1,222 @@
+
+.schools-main {
+  padding-top: 32px;
+}
+
+.schools-toolbar {
+  margin-bottom: 20px;
+}
+
+.schools-filters {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, minmax(150px, .7fr));
+  gap: 12px;
+}
+
+.schools-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, .82fr) minmax(0, 1.6fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.schools-list-panel,
+.schools-map-panel {
+  margin-bottom: 28px;
+}
+
+.schools-list-panel {
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+}
+
+.schools-list-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.schools-list-head h2,
+.schools-list-head p {
+  margin: 0;
+}
+
+.schools-list-head p {
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.schools-list {
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.school-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  gap: 12px;
+  padding: 14px 0;
+  text-align: left;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.school-card:hover,
+.school-card.is-active {
+  background: var(--surface-soft);
+}
+
+.school-card__type {
+  min-width: 68px;
+  padding: 4px 6px;
+  color: #fff;
+  font-size: .68rem;
+  line-height: 1.2;
+  text-align: center;
+  border-radius: 2px;
+}
+
+.school-card__type.infanzia {
+  background: var(--aaaa);
+}
+
+.school-card__type.primaria {
+  background: var(--eeee);
+}
+
+.school-card__body strong,
+.school-card__body span,
+.school-card__body small {
+  display: block;
+}
+
+.school-card__body strong {
+  line-height: 1.3;
+}
+
+.school-card__body span {
+  margin-top: 3px;
+  color: var(--ink-soft);
+  font-size: .82rem;
+}
+
+.school-card__body small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.schools-load-more {
+  width: 100%;
+  margin-top: 14px;
+}
+
+#schools-map {
+  min-height: 720px;
+  border: 1px solid var(--line-strong);
+}
+
+.schools-map-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.school-popup h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.school-popup p {
+  margin: 4px 0;
+  font-size: .82rem;
+}
+
+.school-popup__availability {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.school-popup__availability span {
+  padding: 5px;
+  text-align: center;
+  background: #f2f5f6;
+  font-size: .7rem;
+}
+
+.school-popup__distances {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.school-popup__link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: .78rem;
+}
+
+.school-marker {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.28);
+}
+
+.school-marker.infanzia {
+  background: var(--aaaa);
+}
+
+.school-marker.primaria {
+  background: var(--eeee);
+}
+
+@media (max-width: 980px) {
+  .schools-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .schools-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .schools-list-panel {
+    position: static;
+    max-height: none;
+  }
+
+  .schools-list {
+    max-height: 560px;
+  }
+
+  #schools-map {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 620px) {
+  .schools-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .schools-list {
+    max-height: 500px;
+  }
+
+  #schools-map {
+    min-height: 460px;
+  }
+}

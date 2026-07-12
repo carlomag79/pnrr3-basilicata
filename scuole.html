@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scuole dell’infanzia e primarie in Basilicata</title>
+  <meta name="description" content="Mappa e lista dei plessi di scuola dell’infanzia e primaria della Basilicata per l’anno scolastico 2026/2027.">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="scuole.css">
+</head>
+<body>
+  <header class="site-header schools-header">
+    <div class="container">
+      <p class="eyebrow">Anagrafe scolastica 2026/2027</p>
+      <div class="site-brand">
+        <img class="site-brand__logo" src="https://upload.wikimedia.org/wikipedia/commons/0/07/Regione-Basilicata-Stemma.svg" alt="Stemma della Regione Basilicata" width="78" height="78">
+        <h1>Scuole</h1>
+      </div>
+      <p class="lead">Plessi dell’infanzia e primari della Basilicata, con sede effettiva e istituto di riferimento.</p>
+      <nav class="site-nav" aria-label="Navigazione principale">
+        <a href="index.html">Preferenze</a>
+        <a href="scuole.html" aria-current="page">Scuole</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container schools-main">
+    <section class="schools-toolbar panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Esplora</p>
+          <h2>Trova un plesso</h2>
+        </div>
+        <span id="schools-total" class="badge">Caricamento…</span>
+      </div>
+
+      <div class="schools-filters">
+        <label>
+          Cerca
+          <input id="school-search" type="search" placeholder="Nome scuola, comune, istituto…">
+        </label>
+        <label>
+          Provincia
+          <select id="school-province">
+            <option value="ALL">Tutte</option>
+            <option value="Matera">Matera</option>
+            <option value="Potenza">Potenza</option>
+          </select>
+        </label>
+        <label>
+          Tipologia
+          <select id="school-type">
+            <option value="ALL">Tutte</option>
+            <option value="Infanzia">Infanzia</option>
+            <option value="Primaria">Primaria</option>
+          </select>
+        </label>
+        <label>
+          Comune
+          <select id="school-municipality">
+            <option value="ALL">Tutti</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="schools-layout">
+      <aside class="schools-list-panel panel">
+        <div class="schools-list-head">
+          <h2>Elenco scuole</h2>
+          <p id="schools-count"></p>
+        </div>
+        <div id="schools-list" class="schools-list" aria-live="polite"></div>
+        <button id="schools-load-more" class="secondary schools-load-more" type="button" hidden>Mostra altre scuole</button>
+      </aside>
+
+      <section class="schools-map-panel panel">
+        <div id="schools-map" aria-label="Mappa delle scuole della Basilicata">
+          <div class="map-loading">Caricamento della mappa…</div>
+        </div>
+        <p class="schools-map-note">
+          Le coordinate precise vengono ricercate quando selezioni una scuola. Se l’indirizzo non è disponibile o non viene riconosciuto, la mappa usa il centro del comune come riferimento approssimativo.
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Dati scolastici: Ministero dell’Istruzione e del Merito, anagrafe scuole statali 2026/2027.</p>
+      <p>Dati cartografici: ISTAT / Openpolis. Mappa: Leaflet e OpenStreetMap.</p>
+      <p class="project-credit">
+        Progetto nato da un’idea di
+        <a href="https://carlomagni.it" target="_blank" rel="noopener noreferrer">Carlo Magni</a>
+        e del gruppo WhatsApp “Concorso PNRR3 Basilicata Infanzia e Primaria”.
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="scuole.js"></script>
+</body>
+</html>

@@ -1755,3 +1755,122 @@ button, input, select { border-radius: 2px; }
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Gerarchia visiva delle sezioni */
+.stat-card > .class-chip,
+.stat-card .class-chip {
+  color: #fff !important;
+}
+
+main > .panel {
+  position: relative;
+  overflow: hidden;
+}
+
+main > .panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--section-accent, var(--accent));
+}
+
+.section-dashboard {
+  --section-accent: #315d72;
+  background:
+    linear-gradient(180deg, rgba(49, 93, 114, .045), transparent 180px),
+    var(--surface);
+}
+
+.section-form {
+  --section-accent: var(--eeee);
+  background:
+    linear-gradient(135deg, rgba(38, 117, 109, .055), transparent 42%),
+    var(--surface);
+}
+
+.section-manage {
+  --section-accent: var(--adaa);
+  background:
+    linear-gradient(135deg, rgba(118, 82, 162, .055), transparent 42%),
+    var(--surface);
+}
+
+.section-map {
+  --section-accent: var(--aaaa);
+  background:
+    linear-gradient(180deg, rgba(185, 104, 32, .045), transparent 220px),
+    var(--surface);
+}
+
+.section-results {
+  --section-accent: var(--adee);
+  background:
+    linear-gradient(180deg, rgba(53, 108, 168, .04), transparent 180px),
+    var(--surface);
+}
+
+.section-transparency {
+  --section-accent: #7b878c;
+  background: #f8f9f8;
+}
+
+.section-dashboard .section-heading,
+.section-form .section-heading,
+.section-manage .section-heading,
+.section-map .section-heading,
+.section-results .section-heading {
+  margin-left: -8px;
+  padding-left: 8px;
+}
+
+.section-form .candidatures-box,
+.section-form .preferences-box {
+  background: rgba(255, 255, 255, .76);
+}
+
+.section-manage .manage-form,
+.section-manage .legacy-claim__content {
+  background: rgba(255, 255, 255, .78);
+}
+
+.section-map #map {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.55);
+}
+
+.section-results .table-wrap {
+  box-shadow: 0 8px 28px rgba(25, 39, 47, .045);
+}
+
+.footer-admin-link {
+  margin-top: 14px;
+  font-size: .76rem;
+}
+
+.footer-admin-link a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.footer-admin-link a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+@media (min-width: 900px) {
+  main > .panel {
+    margin-bottom: 32px;
+  }
+
+  .section-dashboard {
+    padding-top: 42px;
+    padding-bottom: 42px;
+  }
+
+  .section-form,
+  .section-results {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}

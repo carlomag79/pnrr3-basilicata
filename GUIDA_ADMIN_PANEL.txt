@@ -1,0 +1,37 @@
+CONFIGURAZIONE AREA AMMINISTRATIVA
+
+1. Esegui in Supabase SQL Editor:
+   migration_admin_panel.sql
+
+2. Vai in:
+   Supabase → Authentication → Users → Add user
+
+3. Crea l'utente amministratore con email e password.
+   Disattiva l'obbligo di conferma email oppure conferma l'utente.
+
+4. Copia l'UUID dell'utente appena creato.
+
+5. Esegui in SQL Editor:
+
+   insert into public.admin_users (user_id)
+   values ('UUID-UTENTE-QUI');
+
+6. Pubblica i file:
+   admin.html
+   admin.js
+   admin.css
+
+7. Apri:
+   https://TUO-ACCOUNT.github.io/pnrr3-basilicata/admin.html
+
+L'area consente di:
+- vedere richieste in attesa, approvate e rifiutate;
+- cercare automaticamente il record compatibile;
+- associare la richiesta al record corretto;
+- generare il codice di modifica;
+- rifiutare la richiesta con una nota visibile all'utente.
+
+SICUREZZA
+Le operazioni amministrative sono eseguite da funzioni SQL che verificano
+auth.uid() nella tabella public.admin_users. La Publishable Key nel browser
+non concede da sola accesso amministrativo.

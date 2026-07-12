@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Area amministrativa – PNRR3 Basilicata</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <div class="container admin-header__inner">
+      <a class="admin-brand" href="index.html">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/07/Regione-Basilicata-Stemma.svg" alt="" width="44" height="56">
+        <span><strong>PNRR3 Basilicata</strong><small>Area amministrativa</small></span>
+      </a>
+      <button id="admin-logout" class="secondary" type="button" hidden>Esci</button>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <section id="admin-login-panel" class="admin-login panel">
+      <p class="eyebrow">Accesso riservato</p>
+      <h1>Gestione richieste</h1>
+      <p>Accedi con l’utente amministratore configurato in Supabase.</p>
+      <form id="admin-login-form" class="admin-login-form">
+        <label>Email
+          <input id="admin-email" type="email" autocomplete="username" required>
+        </label>
+        <label>Password
+          <input id="admin-password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="primary" type="submit">Accedi</button>
+        <p id="admin-login-message" class="admin-message" role="status"></p>
+      </form>
+    </section>
+
+    <div id="admin-app" hidden>
+      <section class="admin-overview">
+        <article class="admin-stat"><span>In attesa</span><strong id="admin-pending-count">0</strong></article>
+        <article class="admin-stat"><span>Approvate</span><strong id="admin-approved-count">0</strong></article>
+        <article class="admin-stat"><span>Rifiutate</span><strong id="admin-rejected-count">0</strong></article>
+        <button id="admin-refresh" class="secondary" type="button">Aggiorna richieste</button>
+      </section>
+
+      <section class="panel admin-requests-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Correzioni e rivendicazioni</p>
+            <h1>Richieste ricevute</h1>
+          </div>
+          <label class="admin-status-filter">Stato
+            <select id="admin-status">
+              <option value="pending">In attesa</option>
+              <option value="approved">Approvate</option>
+              <option value="rejected">Rifiutate</option>
+              <option value="all">Tutte</option>
+            </select>
+          </label>
+        </div>
+        <div id="admin-requests" class="admin-requests">
+          <p class="admin-empty">Caricamento…</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+body.admin-page {
+  min-height: 100vh;
+  background: #eef1f0;
+}
+
+.admin-header {
+  color: #fff;
+  background: #244855;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+
+.admin-header__inner {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.admin-brand img {
+  width: 38px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.admin-brand span {
+  display: grid;
+}
+
+.admin-brand strong {
+  font-size: 1.05rem;
+}
+
+.admin-brand small {
+  color: rgba(255,255,255,.7);
+}
+
+.admin-main {
+  padding-top: 36px;
+  padding-bottom: 70px;
+}
+
+.admin-login {
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+.admin-login h1,
+.admin-requests-panel h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -.045em;
+}
+
+.admin-login > p:not(.eyebrow) {
+  color: var(--muted);
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.admin-message {
+  min-height: 1.3em;
+  margin: 0;
+  color: var(--danger);
+  font-size: .85rem;
+}
+
+.admin-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.admin-stat {
+  min-height: 110px;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fff;
+  border-left: 4px solid var(--accent);
+}
+
+.admin-stat span {
+  color: var(--muted);
+  font-size: .76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.admin-stat strong {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+#admin-refresh {
+  align-self: stretch;
+}
+
+.admin-status-filter {
+  min-width: 170px;
+}
+
+.admin-requests {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-request {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+}
+
+.admin-request[data-status="approved"] {
+  border-left-color: var(--success);
+}
+
+.admin-request[data-status="rejected"] {
+  border-left-color: var(--danger);
+}
+
+.admin-request__head {
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  background: #f7f9f8;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-request__head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.admin-request__head p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.admin-request__status {
+  align-self: flex-start;
+  padding: 4px 7px;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  font-size: .72rem;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.admin-request__body {
+  padding: 18px;
+}
+
+.admin-request__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-fact {
+  padding: 10px;
+  background: #f7f9f8;
+  border: 1px solid var(--line);
+}
+
+.admin-fact span {
+  display: block;
+  color: var(--muted);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.admin-fact strong {
+  display: block;
+  margin-top: 3px;
+}
+
+.admin-request__actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.admin-matches {
+  margin-top: 16px;
+  display: grid;
+  gap: 9px;
+}
+
+.admin-match {
+  padding: 13px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  background: #fbfcfc;
+  border: 1px solid var(--line);
+}
+
+.admin-match input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.admin-match__main strong,
+.admin-match__main span {
+  display: block;
+}
+
+.admin-match__main span,
+.admin-match__meta {
+  color: var(--muted);
+  font-size: .79rem;
+}
+
+.admin-note {
+  margin-top: 12px;
+}
+
+.admin-empty {
+  padding: 25px;
+  color: var(--muted);
+  text-align: center;
+  background: #f7f9f8;
+}
+
+@media (max-width: 800px) {
+  .admin-overview {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #admin-refresh {
+    min-height: 70px;
+  }
+
+  .admin-request__facts {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-match {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .admin-match__meta {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-overview,
+  .admin-request__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-request__head {
+    flex-direction: column;
+  }
+}

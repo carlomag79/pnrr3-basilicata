@@ -5,7 +5,9 @@
   const navigationRoot = document.querySelector("#site-navigation");
   if (navigationRoot) {
     const homeHref = isSchoolsPage ? "index.html" : "#top";
+    const dashboardHref = isSchoolsPage ? "index.html#dashboard-section" : "#dashboard-section";
     const formHref = isSchoolsPage ? "index.html#form-section" : "#form-section";
+    const manageHref = isSchoolsPage ? "index.html#manage-section" : "#manage-section";
     const mapHref = isSchoolsPage ? "index.html#map-section" : "#map-section";
     const resultsHref = isSchoolsPage ? "index.html#results-section" : "#results-section";
 
@@ -16,8 +18,10 @@
       </button>
       <nav id="primary-menu" class="site-nav" aria-label="Navigazione principale">
         <a href="${homeHref}"${!isSchoolsPage ? ' aria-current="page"' : ''}>Home</a>
-        <a href="${formHref}">Compila form</a>
-        <a href="${mapHref}">Mappa delle preferenze</a>
+        <a href="${dashboardHref}">Dashboard</a>
+        <a href="${formHref}">Compila</a>
+        <a href="${manageHref}">Modifica dati</a>
+        <a href="${mapHref}">Mappa</a>
         <a href="${resultsHref}">Risultati</a>
         <a href="scuole.html"${isSchoolsPage ? ' aria-current="page"' : ''}>Scuole</a>
       </nav>
@@ -62,6 +66,7 @@
           <a href="https://carlomagni.it" target="_blank" rel="noopener noreferrer">Carlo Magni</a>
           e del gruppo WhatsApp “Concorso PNRR3 Basilicata Infanzia e Primaria”.
         </p>
+        <p class="footer-admin-link"><a href="admin.html">Area amministrativa</a></p>
       </div>
     `;
   }

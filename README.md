@@ -89,3 +89,16 @@ Prima di pubblicare questa funzione eseguire:
 Le richieste vengono approvate manualmente. Le query operative sono raccolte in:
 
 `GUIDA_APPROVAZIONE_VECCHIE_COMPILAZIONI.txt`
+
+
+## Area amministrativa
+
+La repository include una pagina `admin.html` protetta tramite Supabase Auth.
+
+Prima di utilizzarla:
+
+1. eseguire `migration_admin_panel.sql`;
+2. creare un utente in Supabase Authentication;
+3. aggiungere il suo UUID alla tabella `public.admin_users`.
+
+La procedura completa è descritta in `GUIDA_ADMIN_PANEL.txt`.

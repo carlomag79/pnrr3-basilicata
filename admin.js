@@ -230,21 +230,33 @@ async function rejectRequest(requestId) {
 
 document.querySelector("#admin-login-form").addEventListener("submit", async event => {
   event.preventDefault();
-  const message = document.querySelector("#admin-login-message");
-  message.textContent = "Accesso in corso…";
 
-  const { data, error } = await adminSupabase.auth.signInWithPassword({
-    email: document.querySelector("#admin-email").value.trim(),
-    password: document.querySelector("#admin-password").value
+  const message = document.querySelector("#admin-login-message");
+  const submitButton = event.submitter;
+  const email = document.querySelector("#admin-email").value.trim();
+
+  message.textContent = "Invio del link di accesso…";
+  if (submitButton) submitButton.disabled = true;
+
+  const redirectUrl = new URL("admin.html", window.location.href).href;
+  const { error } = await adminSupabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: redirectUrl,
+      shouldCreateUser: false
+    }
   });
 
+  if (submitButton) submitButton.disabled = false;
+
   if (error) {
-    message.textContent = error.message;
+    message.textContent = error.message.includes("rate limit")
+      ? "Sono state richieste troppe email in poco tempo. Attendi qualche minuto e controlla anche la cartella Spam."
+      : error.message;
     return;
   }
 
-  message.textContent = "";
-  await handleSession(data.session);
+  message.textContent = "Link inviato. Controlla la tua email e aprilo per accedere all’amministrazione.";
 });
 
 logoutButton.addEventListener("click", async () => {

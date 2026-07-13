@@ -23,15 +23,15 @@
     <section id="admin-login-panel" class="admin-login panel">
       <p class="eyebrow">Accesso riservato</p>
       <h1>Gestione richieste</h1>
-      <p>Accedi con l’utente amministratore configurato in Supabase.</p>
+      <p>
+        Inserisci l’email dell’account amministratore. Riceverai un link di accesso:
+        il sito non raccoglie né conserva password.
+      </p>
       <form id="admin-login-form" class="admin-login-form">
         <label>Email
-          <input id="admin-email" type="email" autocomplete="username" required>
+          <input id="admin-email" type="email" autocomplete="email" required>
         </label>
-        <label>Password
-          <input id="admin-password" type="password" autocomplete="current-password" required>
-        </label>
-        <button class="primary" type="submit">Accedi</button>
+        <button class="primary" type="submit">Invia link di accesso</button>
         <p id="admin-login-message" class="admin-message" role="status"></p>
       </form>
     </section>

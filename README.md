@@ -269,3 +269,12 @@ La hotfix:
   comune e stato di associazione;
 - mostra automaticamente i gruppi di duplicati con dettaglio dei singoli record;
 - consente di associare o eliminare un record direttamente dal gruppo duplicati.
+
+
+## Hotfix V3.3 — duplicati e accesso amministrativo
+
+- Corretto l'alias di `jsonb_array_elements()` nella funzione dei duplicati.
+- L'area amministrativa usa ora il Magic Link e non richiede più password.
+- Eseguire `HOTFIX_v3_3_duplicati.sql`.
+- In Supabase Authentication aggiungere anche `admin.html` tra gli URL di
+  redirect consentiti.

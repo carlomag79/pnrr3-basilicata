@@ -1025,7 +1025,48 @@ function rowHasClass(row, classCode) {
 
 function buildCounts(filterClass = "ALL") {
   const counts = {};
+
+  function ensureCount(key) {
+    if (!counts[key]) {
+      counts[key] = {
+        total: 0,
+        AAAA: 0,
+        ADAA: 0,
+        EEEE: 0,
+        ADEE: 0
+      };
+    }
+    return counts[key];
+  }
+
   rows.forEach(row => {
+    const schoolPreferences = rowSchoolPreferences(row);
+
+    if (schoolPreferences.length) {
+      const seenMunicipalities = new Set();
+
+      schoolPreferences.forEach(preference => {
+        if (filterClass !== "ALL" && preference.classe !== filterClass) return;
+
+        const school = schoolFromPreference(preference);
+        if (!school) return;
+
+        const municipality = normalizeName(school.municipality);
+        const count = ensureCount(municipality);
+
+        count[preference.classe] += 1;
+
+        const uniqueKey = `${municipality}|${row.id}`;
+        if (!seenMunicipalities.has(uniqueKey)) {
+          count.total += 1;
+          seenMunicipalities.add(uniqueKey);
+        }
+      });
+
+      return;
+    }
+
+    // Compatibilità con le vecchie compilazioni basate sui comuni.
     const classes = (row.candidature || [])
       .map(item => item.classe)
       .filter(cls => filterClass === "ALL" || cls === filterClass);
@@ -1034,14 +1075,137 @@ function buildCounts(filterClass = "ALL") {
 
     (row.comuni || []).forEach(name => {
       const key = normalizeName(name);
-      if (!counts[key]) counts[key] = { total: 0, AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
-      counts[key].total += 1;
+      const count = ensureCount(key);
+      count.total += 1;
       classes.forEach(cls => {
-        counts[key][cls] = (counts[key][cls] || 0) + 1;
+        count[cls] += 1;
       });
     });
   });
+
   return counts;
+}
+
+function municipalityAvailabilityDetails(municipality, filterClass = "ALL") {
+  const classCodes = filterClass === "ALL"
+    ? ["AAAA", "ADAA", "EEEE", "ADEE"]
+    : [filterClass];
+
+  const result = {
+    totalPosts: 0,
+    classes: {},
+    schools: []
+  };
+
+  classCodes.forEach(classCode => {
+    const schools = schoolsForMunicipality(municipality, classCode);
+    const uniqueAvailability = new Map();
+
+    schools.forEach(school => {
+      const posts = officialPostsForSchool(school, classCode);
+      if (!posts) return;
+
+      const scope = school?.a?.[classCode] || "plesso";
+      const availabilityKey = scope === "istituto_comune"
+        ? `${normalizeName(school.i)}|${classCode}|${posts}`
+        : `${school.c}|${classCode}`;
+
+      if (!uniqueAvailability.has(availabilityKey)) {
+        uniqueAvailability.set(availabilityKey, posts);
+      }
+
+      result.schools.push({
+        classCode,
+        code: school.c,
+        name: school.n,
+        institute: school.i,
+        posts,
+        scope
+      });
+    });
+
+    const classPosts = [...uniqueAvailability.values()]
+      .reduce((sum, posts) => sum + posts, 0);
+
+    result.classes[classCode] = {
+      posts: classPosts,
+      schools: schools.length
+    };
+    result.totalPosts += classPosts;
+  });
+
+  return result;
+}
+
+function renderMapPopup(name, count, availability, filterClass) {
+  const classCodes = filterClass === "ALL"
+    ? ["AAAA", "ADAA", "EEEE", "ADEE"]
+    : [filterClass];
+
+  const classRows = classCodes.map(classCode => {
+    const preferences = count[classCode] || 0;
+    const posts = availability.classes[classCode]?.posts || 0;
+    const ratio = posts > 0
+      ? `${preferences} preferenze / ${posts} posti`
+      : `${preferences} preferenze / nessun posto`;
+
+    return `
+      <div class="map-popup__class-row">
+        <span class="class-chip ${classCode}">${classCode}</span>
+        <span>${ratio}</span>
+      </div>`;
+  }).join("");
+
+  const schoolRows = availability.schools
+    .sort((a, b) =>
+      a.classCode.localeCompare(b.classCode) ||
+      b.posts - a.posts ||
+      a.name.localeCompare(b.name, "it")
+    )
+    .slice(0, 12)
+    .map(school => `
+      <li>
+        <span class="class-chip ${school.classCode}">${school.classCode}</span>
+        <div>
+          <strong>${escapeHtml(school.name)}</strong>
+          <small>${escapeHtml(school.institute)}</small>
+          <span>${school.posts} ${school.posts === 1 ? "posto" : "posti"}${school.scope === "istituto_comune" ? " complessivi nell’istituto/comune" : ""}</span>
+        </div>
+      </li>`)
+    .join("");
+
+  const hiddenSchools = Math.max(0, availability.schools.length - 12);
+
+  return `
+    <div class="map-popup">
+      <h3>${escapeHtml(name)}</h3>
+
+      <div class="map-popup__summary">
+        <div>
+          <span>Utenti interessati</span>
+          <strong>${count.total}</strong>
+        </div>
+        <div>
+          <span>Posti ufficiali</span>
+          <strong>${availability.totalPosts}</strong>
+        </div>
+      </div>
+
+      <div class="map-popup__classes">
+        ${classRows}
+      </div>
+
+      <div class="map-popup__schools">
+        <strong>Scuole e plessi disponibili</strong>
+        ${schoolRows
+          ? `<ul>${schoolRows}</ul>${hiddenSchools ? `<small>Altre ${hiddenSchools} sedi non mostrate nel riepilogo.</small>` : ""}`
+          : '<p>Nessuna sede con disponibilità per il filtro selezionato.</p>'}
+      </div>
+
+      <small class="map-popup__note">
+        Le preferenze derivano dai dati pubblicati dagli utenti; i posti sono quelli ufficiali integrati nel sito.
+      </small>
+    </div>`;
 }
 
 function dominantClass(count) {
@@ -1058,35 +1222,71 @@ function drawMap() {
 
   municipalityLayer = window.L.geoJSON(geojsonData, {
     style: feature => {
-      const count = counts[normalizeName(getFeatureName(feature))];
-      if (!count) return { color: "#9aa8af", weight: 1, fillColor: "#dfe6e9", fillOpacity: 0.28 };
-      const cls = filter === "ALL" ? dominantClass(count) : filter;
+      const municipality = getFeatureName(feature);
+      const count = counts[normalizeName(municipality)] ||
+        { total: 0, AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
+      const availability = municipalityAvailabilityDetails(municipality, filter);
+      const hasPreferences = count.total > 0;
+      const hasAvailability = availability.totalPosts > 0;
+
+      if (!hasPreferences && !hasAvailability) {
+        return {
+          color: "#9aa8af",
+          weight: 1,
+          fillColor: "#dfe6e9",
+          fillOpacity: 0.22
+        };
+      }
+
+      let cls = filter;
+      if (filter === "ALL") {
+        const preferenceTotal =
+          count.AAAA + count.ADAA + count.EEEE + count.ADEE;
+
+        cls = preferenceTotal > 0
+          ? dominantClass(count)
+          : ["AAAA", "ADAA", "EEEE", "ADEE"]
+              .sort((a, b) =>
+                (availability.classes[b]?.posts || 0) -
+                (availability.classes[a]?.posts || 0)
+              )[0];
+      }
+
       return {
         color: "#ffffff",
-        weight: 1.2,
+        weight: 1.25,
         fillColor: CLASS_COLORS[cls],
-        fillOpacity: Math.min(0.32 + count.total * 0.07, 0.9)
+        fillOpacity: hasPreferences
+          ? Math.min(0.38 + count.total * 0.06, 0.9)
+          : 0.28
       };
     },
+
     onEachFeature: (feature, layer) => {
       const name = getFeatureName(feature);
-      const count = counts[normalizeName(name)] || { total: 0, AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
-      layer.bindPopup(`
-        <strong>${escapeHtml(name)}</strong><br>
-        Utenti che lo hanno scelto: <strong>${count.total}</strong><br><br>
-        AAAA: ${count.AAAA}<br>
-        ADAA: ${count.ADAA}<br>
-        EEEE: ${count.EEEE}<br>
-        ADEE: ${count.ADEE}
-      `);
+      const count = counts[normalizeName(name)] ||
+        { total: 0, AAAA: 0, ADAA: 0, EEEE: 0, ADEE: 0 };
+      const availability = municipalityAvailabilityDetails(name, filter);
+
+      layer.bindPopup(
+        renderMapPopup(name, count, availability, filter),
+        {
+          maxWidth: 430,
+          minWidth: 290,
+          className: "preferences-map-popup"
+        }
+      );
+
       layer.on({
-        mouseover: e => e.target.setStyle({ weight: 2.4 }),
-        mouseout: e => municipalityLayer.resetStyle(e.target)
+        mouseover: event => event.target.setStyle({ weight: 2.4 }),
+        mouseout: event => municipalityLayer.resetStyle(event.target)
       });
     }
   }).addTo(map);
 
-  try { map.fitBounds(municipalityLayer.getBounds(), { padding: [12, 12] }); } catch (_) {}
+  try {
+    map.fitBounds(municipalityLayer.getBounds(), { padding: [12, 12] });
+  } catch (_) {}
 }
 
 function getRelevantCandidatures(row, selectedClass) {

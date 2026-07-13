@@ -275,3 +275,82 @@ body.admin-page {
     flex-direction: column;
   }
 }
+
+
+.admin-users-panel,
+.admin-records-panel {
+  margin-bottom: 22px;
+}
+
+.admin-inline-form {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.admin-help {
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.admin-users-list,
+.admin-records,
+.admin-duplicates {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.admin-user-row,
+.admin-record-row {
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.admin-user-row div,
+.admin-record-row__main {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-user-row small,
+.admin-record-row small,
+.admin-record-row span {
+  color: var(--muted);
+}
+
+.admin-record-row__actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.admin-duplicate-summary {
+  padding: 14px;
+  background: #fff8e7;
+  border-left: 4px solid #d09a42;
+}
+
+.admin-duplicate-summary article {
+  padding: 10px 0;
+  display: grid;
+  gap: 3px;
+  border-bottom: 1px solid rgba(208,154,66,.25);
+}
+
+.claim-account-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media(max-width:720px){
+  .admin-inline-form{grid-template-columns:1fr}
+  .admin-user-row,.admin-record-row{align-items:flex-start;flex-direction:column}
+}

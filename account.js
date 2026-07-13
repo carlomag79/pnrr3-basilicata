@@ -47,36 +47,50 @@ async function submitAccountClaim(){
   const position=Number($("#account-claim-position").value);
   const score=Number($("#account-claim-score").value);
   const municipality=$("#account-claim-municipality").value.trim();
+
   if(!Number.isInteger(position)||position<1||!Number.isFinite(score)||score<0||!municipality){
     return setLegacyMessage("Completa correttamente i dati della richiesta.",true);
   }
-  const requestCode=randomCode("CLAIM");
-  const {data,error}=await sb.rpc("submit_legacy_claim_request",{
-    p_request_code:requestCode,
+
+  setLegacyMessage("Invio della richiesta…");
+  const {data,error}=await sb.rpc("submit_my_legacy_claim",{
     p_classe:$("#account-claim-class").value,
     p_posizione:position,
     p_punteggio:score,
     p_primo_comune:municipality
   });
+
   if(error)return setLegacyMessage(error.message,true);
-  $("#account-claim-code").value=requestCode;
-  setLegacyMessage(`Richiesta inviata. Conserva il codice ${requestCode}.`);
+  setLegacyMessage("Richiesta inviata. Dopo l’approvazione il record comparirà automaticamente nella tua area personale.");
+  await checkAccountClaim();
 }
+
 async function checkAccountClaim(){
-  const code=normalizeLegacyCode($("#account-claim-code").value);
-  if(!/^CLAIM-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)){
-    return setLegacyMessage("Inserisci un codice CLAIM valido.",true);
+  const statusRoot=$("#account-claim-status");
+  const {data,error}=await sb.rpc("get_my_legacy_claim");
+  if(error){
+    statusRoot.textContent=error.message;
+    return;
   }
-  const {data,error}=await sb.rpc("check_legacy_claim_request",{p_request_code:code});
-  if(error)return setLegacyMessage(error.message,true);
+
   const status=Array.isArray(data)?data[0]:data;
-  if(!status)return setLegacyMessage("Richiesta non trovata.",true);
-  if(status.status==="pending")return setLegacyMessage("La richiesta è ancora in attesa di verifica.");
-  if(status.status==="rejected")return setLegacyMessage(status.admin_note||"La richiesta non è stata approvata.",true);
-  if(status.status==="approved"&&status.edit_code){
-    $("#account-legacy-code").value=status.edit_code;
-    return setLegacyMessage(`Richiesta approvata. Premi “Importa compilazione” per collegare il codice ${status.edit_code}.`);
+  if(!status){
+    statusRoot.innerHTML="<p>Nessuna richiesta inviata da questo account.</p>";
+    return;
   }
+
+  if(status.status==="pending"){
+    statusRoot.innerHTML="<p><strong>Richiesta in attesa.</strong> Un amministratore deve ancora verificarla.</p>";
+    return;
+  }
+
+  if(status.status==="rejected"){
+    statusRoot.innerHTML=`<p><strong>Richiesta non approvata.</strong> ${esc(status.admin_note||"Controlla i dati e contatta un amministratore.")}</p>`;
+    return;
+  }
+
+  statusRoot.innerHTML="<p><strong>Richiesta approvata.</strong> La compilazione è stata collegata al tuo account.</p>";
+  await loadMine();
 }
 function provinceFromCode(code){return String(code).startsWith("MT")?"Matera":"Potenza"}
 function availablePosts(school, code){const n=Number(school.disponibilita?.[code]);return Number.isFinite(n)&&n>0?n:0}
@@ -169,6 +183,7 @@ async function loadMine(){
 
   const importPanel=$("#legacy-import-panel");
   importPanel.hidden=Boolean(currentSubmission);
+  if(!currentSubmission) await checkAccountClaim();
   $("#legacy-school-note").hidden=!(lastLegacyImport || (currentSubmission && (!currentSubmission.preferenze_scuole || !currentSubmission.preferenze_scuole.length)));
   renderSelected();
 }
@@ -186,7 +201,6 @@ $("#import-legacy-submission").addEventListener("click",importLegacySubmission);
 $("#account-submit-claim").addEventListener("click",submitAccountClaim);
 $("#account-check-claim").addEventListener("click",checkAccountClaim);
 $("#account-legacy-code").addEventListener("keydown",event=>{if(event.key==="Enter")importLegacySubmission()});
-$("#account-claim-code").addEventListener("keydown",event=>{if(event.key==="Enter")checkAccountClaim()});
 
 $("#magic-link-form").addEventListener("submit",async e=>{
   e.preventDefault();

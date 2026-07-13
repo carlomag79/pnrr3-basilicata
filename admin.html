@@ -44,6 +44,42 @@
         <button id="admin-refresh" class="secondary" type="button">Aggiorna richieste</button>
       </section>
 
+      <section class="panel admin-users-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Collaboratori</p>
+            <h1>Amministratori</h1>
+          </div>
+        </div>
+        <form id="admin-add-user-form" class="admin-inline-form">
+          <label>Email del nuovo amministratore
+            <input id="admin-new-user-email" type="email" required placeholder="nome@esempio.it">
+          </label>
+          <button class="primary" type="submit">Aggiungi amministratore</button>
+        </form>
+        <p class="admin-help">L’utente deve essersi registrato almeno una volta al sito con la stessa email.</p>
+        <p id="admin-users-message" class="admin-message"></p>
+        <div id="admin-users-list" class="admin-users-list"></div>
+      </section>
+
+      <section class="panel admin-records-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Controllo dati</p>
+            <h1>Record e possibili duplicati</h1>
+          </div>
+          <button id="admin-load-duplicates" class="secondary" type="button">Cerca duplicati</button>
+        </div>
+        <form id="admin-record-search-form" class="admin-inline-form">
+          <label>Cerca per ID, email, classe, posizione o comune
+            <input id="admin-record-query" type="search" placeholder="Es. 123, EEEE, Senise">
+          </label>
+          <button class="secondary" type="submit">Cerca</button>
+        </form>
+        <div id="admin-duplicates" class="admin-duplicates"></div>
+        <div id="admin-records" class="admin-records"></div>
+      </section>
+
       <section class="panel admin-requests-panel">
         <div class="section-heading">
           <div>

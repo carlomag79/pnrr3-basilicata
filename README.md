@@ -201,3 +201,36 @@ La mappa non dipende più da una sola risorsa esterna:
 È possibile rendere la mappa completamente autonoma aggiungendo alla root del
 repository il file `limits_R_17_municipalities.geojson`; il codice lo userà
 automaticamente come prima fonte.
+
+
+## Popup della mappa
+
+I popup comunali mostrano ora:
+
+- numero di utenti che hanno espresso almeno una preferenza nel comune;
+- posti ufficiali complessivi;
+- confronto preferenze/posti per AAAA, ADAA, EEEE e ADEE;
+- elenco delle scuole e dei plessi disponibili;
+- indicazione dei posti aggregati per istituto/comune nell'Infanzia.
+
+Per i nuovi account, le preferenze sono conteggiate sulla singola scuola e sulla
+classe associata. Le vecchie compilazioni comunali restano incluse con la logica
+storica.
+
+
+## Versione 3: gestione autonoma e multi-amministratore
+
+Eseguire `migration_v3_autonomia_admin.sql`.
+
+Novità:
+
+- i comuni nelle richieste vengono confrontati ignorando maiuscole, accenti,
+  apostrofi, trattini e spazi;
+- le richieste inviate dall'area personale sono collegate all'account;
+- dopo l'approvazione il vecchio record appare automaticamente nell'account,
+  senza passaggio di codici;
+- nuovi inserimenti anonimi bloccati;
+- un record per account;
+- gestione di più amministratori dall'area admin;
+- ricerca record, associazione a email e cancellazione;
+- rilevazione di possibili duplicati per classe, posizione e punteggio.

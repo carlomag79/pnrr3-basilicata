@@ -61,8 +61,9 @@
             <summary>Non hai mai ricevuto un codice?</summary>
             <div class="legacy-claim-account__body">
               <p>
-                Invia una richiesta usando i dati della vecchia compilazione. Dopo la
-                verifica amministrativa riceverai un codice PNRR3 da importare qui.
+                Invia una richiesta dal tuo account. Dopo l’approvazione, la vecchia
+                compilazione verrà collegata automaticamente e comparirà qui:
+                non dovrai copiare o conservare altri codici.
               </p>
               <div class="legacy-claim-fields">
                 <label>Classe
@@ -83,14 +84,11 @@
                   <input id="account-claim-municipality" type="text">
                 </label>
               </div>
-              <button id="account-submit-claim" class="secondary" type="button">Invia richiesta</button>
-
-              <div class="claim-status-box">
-                <label>Hai già un codice richiesta?
-                  <input id="account-claim-code" type="text" autocomplete="off" placeholder="CLAIM-ABCD-1234">
-                </label>
-                <button id="account-check-claim" class="secondary" type="button">Controlla stato</button>
+              <div class="claim-account-actions">
+                <button id="account-submit-claim" class="secondary" type="button">Invia richiesta</button>
+                <button id="account-check-claim" class="secondary" type="button">Aggiorna stato</button>
               </div>
+              <div id="account-claim-status" class="claim-status-box"></div>
             </div>
           </details>
         </div>

@@ -1,0 +1,14 @@
+CONFIGURAZIONE VERSIONE 3
+
+1. Caricare tutti i file aggiornati.
+2. Eseguire in Supabase SQL Editor:
+   migration_v3_autonomia_admin.sql
+3. Per aggiungere un amministratore:
+   - la persona deve registrarsi almeno una volta tramite account.html;
+   - entrare in admin.html con l'account amministratore esistente;
+   - inserire la sua email nella sezione Amministratori.
+4. Le nuove compilazioni sono consentite soltanto dall'area personale.
+5. Le richieste di recupero inviate da utenti autenticati vengono associate
+   direttamente all'account dopo l'approvazione.
+6. La sezione Record e possibili duplicati consente di cercare, associare
+   a un'email o eliminare record duplicati.

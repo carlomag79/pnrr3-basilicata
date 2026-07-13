@@ -2090,3 +2090,39 @@ main > .panel::before {
     flex-direction: column;
   }
 }
+
+
+.map-loading {
+  min-height: 420px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--muted);
+  background: #e8edef;
+}
+
+.map-loading strong {
+  color: var(--ink);
+  font-size: 1.05rem;
+}
+
+.map-loading__spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(49, 93, 114, .18);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: map-spin .8s linear infinite;
+}
+
+.map-loading--error button {
+  margin-top: 4px;
+}
+
+@keyframes map-spin {
+  to { transform: rotate(360deg); }
+}

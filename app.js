@@ -1,5 +1,19 @@
 const CONFIG = window.APP_CONFIG || {};
-const GEOJSON_URL = "https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_R_17_municipalities.geojson";
+const GEOJSON_URLS = [
+  "./limits_R_17_municipalities.geojson",
+  "https://cdn.jsdelivr.net/gh/openpolis/geojson-italy@master/geojson/limits_R_17_municipalities.geojson",
+  "https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_R_17_municipalities.geojson"
+];
+
+const LEAFLET_SCRIPT_URLS = [
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+  "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+];
+
+const LEAFLET_CSS_URLS = [
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+  "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+];
 
 const CLASS_COLORS = {
   AAAA: "#d97706",
@@ -33,12 +47,99 @@ let visibleResultsLimit = 20;
 const RESULTS_PAGE_SIZE = 20;
 let editingCode = null;
 
+function loadExternalScript(url) {
+  return new Promise((resolve, reject) => {
+    const existing = [...document.scripts].find(script => script.src === url);
+    if (existing) {
+      if (window.L) return resolve();
+      existing.addEventListener("load", resolve, { once: true });
+      existing.addEventListener("error", reject, { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = url;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Risorsa non raggiungibile: ${url}`));
+    document.head.appendChild(script);
+  });
+}
+
+function ensureLeafletCss() {
+  const hasLeafletCss = [...document.styleSheets].some(sheet =>
+    String(sheet.href || "").includes("leaflet")
+  );
+  if (hasLeafletCss) return;
+
+  LEAFLET_CSS_URLS.forEach((url, index) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
+    link.dataset.leafletFallback = String(index);
+    document.head.appendChild(link);
+  });
+}
+
+async function ensureLeaflet() {
+  ensureLeafletCss();
+  if (window.L?.map) return window.L;
+
+  let lastError = null;
+  for (const url of LEAFLET_SCRIPT_URLS) {
+    try {
+      await loadExternalScript(url);
+      if (window.L?.map) return window.L;
+    } catch (error) {
+      lastError = error;
+      console.warn(error);
+    }
+  }
+
+  throw lastError || new Error("La libreria della mappa non è disponibile.");
+}
+
+async function fetchJsonWithTimeout(url, timeout = 18000) {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      cache: "no-store",
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} da ${url}`);
+    }
+
+    const data = await response.json();
+    if (!data || data.type !== "FeatureCollection" || !Array.isArray(data.features)) {
+      throw new Error(`GeoJSON non valido da ${url}`);
+    }
+
+    return data;
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
 function initMap() {
-  if (mapReady) return;
+  if (mapReady && map) {
+    window.setTimeout(() => map.invalidateSize(), 80);
+    return;
+  }
+
+  if (!window.L?.map) {
+    throw new Error("Leaflet non è stato caricato.");
+  }
+
   const mapElement = document.querySelector("#map");
+  if (!mapElement) return;
+
   mapElement.innerHTML = "";
-  map = L.map("map", { scrollWheelZoom: false }).setView([40.49, 16.08], 8);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  map = window.L.map("map", { scrollWheelZoom: false }).setView([40.49, 16.08], 8);
+  window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
@@ -253,27 +354,39 @@ function initSupabase() {
   return true;
 }
 
-async function ensureGeoJSON() {
-  if (geojsonData) return geojsonData;
-  if (geojsonPromise) return geojsonPromise;
+async function ensureGeoJSON({ force = false } = {}) {
+  if (geojsonData && !force) return geojsonData;
+  if (geojsonPromise && !force) return geojsonPromise;
 
-  geojsonPromise = fetch(GEOJSON_URL, { cache: "force-cache" })
-    .then(response => {
-      if (!response.ok) throw new Error("Impossibile caricare i comuni della Basilicata.");
-      return response.json();
-    })
-    .then(data => {
-      geojsonData = data;
-      populateMunicipalityOptions();
-      if (mapReady) drawMap();
-      return geojsonData;
-    })
-    .catch(error => {
-      geojsonPromise = null;
-      throw error;
-    });
+  if (force) {
+    geojsonData = null;
+    geojsonPromise = null;
+  }
 
-  return geojsonPromise;
+  geojsonPromise = (async () => {
+    let lastError = null;
+
+    for (const url of GEOJSON_URLS) {
+      try {
+        const data = await fetchJsonWithTimeout(url);
+        geojsonData = data;
+        if (mapReady) drawMap();
+        return geojsonData;
+      } catch (error) {
+        lastError = error;
+        console.warn(`Tentativo GeoJSON fallito: ${url}`, error);
+      }
+    }
+
+    throw lastError || new Error("Confini comunali non disponibili.");
+  })();
+
+  try {
+    return await geojsonPromise;
+  } catch (error) {
+    geojsonPromise = null;
+    throw error;
+  }
 }
 
 function buildEligibilityIndex() {
@@ -943,7 +1056,7 @@ function drawMap() {
   const filter = document.querySelector("#map-filter").value;
   const counts = buildCounts(filter);
 
-  municipalityLayer = L.geoJSON(geojsonData, {
+  municipalityLayer = window.L.geoJSON(geojsonData, {
     style: feature => {
       const count = counts[normalizeName(getFeatureName(feature))];
       if (!count) return { color: "#9aa8af", weight: 1, fillColor: "#dfe6e9", fillOpacity: 0.28 };
@@ -1355,14 +1468,44 @@ function observeMap() {
   const mapElement = document.querySelector("#map");
   if (!mapElement) return;
 
-  const startMap = async () => {
-    mapElement.innerHTML = '<div class="map-loading">Caricamento della mappa…</div>';
+  let loading = false;
+
+  const startMap = async ({ force = false } = {}) => {
+    if (loading) return;
+    loading = true;
+
+    mapElement.innerHTML = `
+      <div class="map-loading">
+        <span class="map-loading__spinner" aria-hidden="true"></span>
+        Caricamento della mappa…
+      </div>`;
+
     try {
-      await ensureGeoJSON();
+      await Promise.all([
+        ensureLeaflet(),
+        ensureGeoJSON({ force })
+      ]);
+
       initMap();
+      drawMap();
+      window.setTimeout(() => map?.invalidateSize(), 120);
     } catch (error) {
-      mapElement.innerHTML = '<div class="map-loading">Mappa momentaneamente non disponibile.</div>';
-      console.error(error);
+      console.error("Errore inizializzazione mappa:", error);
+      mapReady = false;
+      map = null;
+
+      mapElement.innerHTML = `
+        <div class="map-loading map-loading--error">
+          <strong>Mappa momentaneamente non disponibile</strong>
+          <span>Non è stato possibile caricare le risorse cartografiche.</span>
+          <button id="retry-map" class="secondary" type="button">Riprova</button>
+        </div>`;
+
+      mapElement.querySelector("#retry-map")?.addEventListener("click", () => {
+        startMap({ force: true });
+      }, { once: true });
+    } finally {
+      loading = false;
     }
   };
 
@@ -1376,7 +1519,7 @@ function observeMap() {
       startMap();
       observer.disconnect();
     }
-  }, { rootMargin: "180px 0px" });
+  }, { rootMargin: "260px 0px" });
 
   observer.observe(mapElement);
 }

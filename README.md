@@ -186,3 +186,18 @@ Se la migrazione V2 era già stata eseguita, lanciare anche:
 - Inserito uno spazio grafico esplicito tra il numero e il testo dei posti.
 - Il menu mostra `Log in` senza sessione e `Il mio account` quando l'utente
   risulta autenticato tramite Supabase.
+
+
+## Caricamento robusto della mappa
+
+La mappa non dipende più da una sola risorsa esterna:
+
+- Leaflet viene cercato prima su unpkg e poi su jsDelivr;
+- il GeoJSON viene cercato prima localmente, poi su jsDelivr e infine su GitHub Raw;
+- ogni richiesta ha un timeout;
+- in caso di errore compare il pulsante `Riprova`;
+- dopo il caricamento viene forzato il ricalcolo delle dimensioni della mappa.
+
+È possibile rendere la mappa completamente autonoma aggiungendo alla root del
+repository il file `limits_R_17_municipalities.geojson`; il codice lo userà
+automaticamente come prima fonte.

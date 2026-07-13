@@ -86,10 +86,110 @@ async function loadSchoolsIndex() {
   }
 }
 
-function schoolsForMunicipality(municipality, classCode) {
+function schoolProvince(school) {
+  const code = String(school?.c || "").toUpperCase();
+  if (code.startsWith("MT")) return "Matera";
+  if (code.startsWith("PZ")) return "Potenza";
+  return "";
+}
+
+function provinceAvailabilityStatus(province) {
+  return province === "Matera" ? "published" : "pending";
+}
+
+function allSchoolsForMunicipality(municipality, classCode) {
   const schools = schoolsByMunicipality.get(normalizeName(municipality)) || [];
   const wantedType = ["AAAA", "ADAA"].includes(classCode) ? "Infanzia" : "Primaria";
   return schools.filter(school => school.t === wantedType);
+}
+
+function officialPostsForSchool(school, classCode) {
+  const value = Number(school?.d?.[classCode]);
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function municipalityOfficialPosts(municipality, classCode) {
+  const schools = allSchoolsForMunicipality(municipality, classCode);
+  const unique = new Map();
+
+  schools.forEach(school => {
+    const posts = officialPostsForSchool(school, classCode);
+    if (!posts) return;
+
+    const scope = school?.a?.[classCode] || "plesso";
+    const key = scope === "istituto_comune"
+      ? `${normalizeName(school.i)}|${classCode}|${posts}`
+      : `${school.c}|${classCode}`;
+
+    if (!unique.has(key)) unique.set(key, posts);
+  });
+
+  return [...unique.values()].reduce((sum, posts) => sum + posts, 0);
+}
+
+function municipalityAvailabilityState(municipality, classCode) {
+  const schools = allSchoolsForMunicipality(municipality, classCode);
+  const province = schoolProvince(schools[0]);
+
+  if (provinceAvailabilityStatus(province) === "pending") {
+    return { status: "pending", posts: null, province };
+  }
+
+  const posts = municipalityOfficialPosts(municipality, classCode);
+  return {
+    status: posts > 0 ? "available" : "unavailable",
+    posts,
+    province
+  };
+}
+
+function schoolsForMunicipality(municipality, classCode) {
+  const schools = allSchoolsForMunicipality(municipality, classCode);
+  if (!schools.length) return [];
+
+  const state = municipalityAvailabilityState(municipality, classCode);
+  if (state.status === "pending") return schools;
+  if (state.status === "unavailable") return [];
+
+  return schools.filter(school => officialPostsForSchool(school, classCode) > 0);
+}
+
+function selectedClassCodesFromForm() {
+  return [...document.querySelectorAll(".candidature-class")]
+    .map(select => select.value)
+    .filter(Boolean);
+}
+
+function municipalitySelectableForClasses(municipality, classCodes) {
+  if (!classCodes.length) return false;
+  return classCodes.some(classCode => {
+    const state = municipalityAvailabilityState(municipality, classCode);
+    return state.status === "available" || state.status === "pending";
+  });
+}
+
+function sanitizeSelectedMunicipalities({ notify = false } = {}) {
+  const classCodes = selectedClassCodesFromForm();
+  if (!classCodes.length || !selectedMunicipalities.length) return [];
+
+  const removed = selectedMunicipalities.filter(
+    municipality => !municipalitySelectableForClasses(municipality, classCodes)
+  );
+
+  if (removed.length) {
+    selectedMunicipalities = selectedMunicipalities.filter(
+      municipality => !removed.includes(municipality)
+    );
+
+    if (notify) {
+      showMessage(
+        `Sono state rimosse ${removed.length === 1 ? "una preferenza" : `${removed.length} preferenze`} senza disponibilità per le classi selezionate: ${removed.join(", ")}.`,
+        true
+      );
+    }
+  }
+
+  return removed;
 }
 
 function normalizeRow(row) {
@@ -210,27 +310,33 @@ function populateComparisonMunicipalities() {
   const select = document.querySelector("#comparison-municipality");
   if (!select) return;
 
+  const classCode = document.querySelector("#comparison-class")?.value || "AAAA";
   const names = new Set([
     ...schoolsByMunicipality.keys(),
     ...rows.flatMap(row => (row.comuni || []).map(normalizeName))
   ]);
 
+  const selectableNames = [...names].filter(name => {
+    if (!name) return false;
+    const state = municipalityAvailabilityState(name, classCode);
+    return state.status === "available" || state.status === "pending";
+  });
+
   const current = select.value;
   select.innerHTML = '<option value="">Seleziona un comune</option>';
 
-  [...names]
-    .filter(Boolean)
+  selectableNames
     .sort((a, b) => a.localeCompare(b, "it"))
     .forEach(name => {
       const option = document.createElement("option");
       option.value = name;
-      option.textContent = formatMunicipalityName(name);
+      const state = municipalityAvailabilityState(name, classCode);
+      option.textContent = `${formatMunicipalityName(name)}${state.status === "pending" ? " · dati in attesa" : ` · ${state.posts} ${state.posts === 1 ? "posto" : "posti"}`}`;
       select.appendChild(option);
     });
 
-  if (current && names.has(current)) select.value = current;
+  if (current && selectableNames.includes(current)) select.value = current;
 }
-
 function renderDashboard() {
   const root = document.querySelector("#dashboard-cards");
   if (!root) return;
@@ -287,30 +393,69 @@ function renderDashboard() {
   populateComparisonMunicipalities();
 }
 
-function calculateEligibilityForPosition(classCode, municipality, currentPosition, preferenceIndex = 0) {
+function calculateEligibilityForPosition(
+  classCode,
+  municipality,
+  currentPosition,
+  preferenceIndex = 0,
+  officialPostsOverride = undefined
+) {
   const key = `${classCode}|${normalizeName(municipality)}`;
   const positions = eligibilityIndex.get(key) || [];
   const betterRanked = countPositionsBefore(positions, currentPosition);
   const equalRanked = positions.filter(position => position === currentPosition).length;
   const behind = Math.max(0, positions.length - betterRanked - equalRanked);
+  const observedRank = betterRanked + 1;
+
+  const availability = municipalityAvailabilityState(municipality, classCode);
+  const officialPosts = officialPostsOverride === undefined
+    ? availability.posts
+    : officialPostsOverride;
 
   const preferencePenalty = preferenceIndex * 2.25;
-  const competitionPenalty = betterRanked * 8;
-  const crowdPenalty = Math.max(0, positions.length - betterRanked) * 1.25;
-  const eligibility = Math.round(
-    clamp(95 - preferencePenalty - competitionPenalty - crowdPenalty, 5, 95)
-  );
+  let eligibility;
+  let calculationMode;
+
+  if (Number.isFinite(officialPosts) && officialPosts > 0) {
+    calculationMode = "official";
+
+    if (observedRank <= officialPosts) {
+      const margin = officialPosts - observedRank;
+      eligibility = 90 + Math.min(7, margin * 1.5);
+    } else {
+      const coverage = officialPosts / observedRank;
+      eligibility = 85 * Math.pow(coverage, 1.12);
+    }
+
+    const knownCrowdPenalty = Math.min(7, behind * 0.35);
+    eligibility = Math.round(
+      clamp(eligibility - preferencePenalty - knownCrowdPenalty, 5, 97)
+    );
+  } else {
+    calculationMode = availability.status === "pending" ? "preferences_only" : "unavailable";
+    const competitionPenalty = betterRanked * 8;
+    const crowdPenalty = Math.max(0, positions.length - betterRanked) * 1.25;
+    eligibility = availability.status === "unavailable"
+      ? 0
+      : Math.round(clamp(
+          95 - preferencePenalty - competitionPenalty - crowdPenalty,
+          5,
+          95
+        ));
+  }
 
   return {
     total: positions.length,
     ahead: betterRanked,
     equal: equalRanked,
     behind,
-    observedRank: betterRanked + 1,
-    eligibility
+    observedRank,
+    eligibility,
+    officialPosts,
+    availabilityStatus: availability.status,
+    calculationMode
   };
 }
-
 function runPositionComparison() {
   const classCode = document.querySelector("#comparison-class").value;
   const position = Number(document.querySelector("#comparison-position").value);
@@ -325,18 +470,33 @@ function runPositionComparison() {
   }
 
   const comparison = calculateEligibilityForPosition(classCode, municipality, position);
+
+  if (comparison.availabilityStatus === "unavailable") {
+    result.hidden = false;
+    result.className = "comparison-result comparison-result--error";
+    result.textContent = "Il comune non presenta disponibilità ufficiali per questa classe.";
+    return;
+  }
+
   result.hidden = false;
   result.className = "comparison-result";
+  const postsLine = comparison.calculationMode === "official"
+    ? `<p><strong>${comparison.officialPosts}</strong> ${comparison.officialPosts === 1 ? "posto ufficiale disponibile" : "posti ufficiali disponibili"}.</p>`
+    : '<p><strong>Disponibilità non ancora pubblicate</strong> per questa provincia.</p>';
+
   result.innerHTML = `
     <div class="comparison-result__score">
       <span>Eleggibilità stimata</span>
       <strong>${comparison.eligibility}%</strong>
     </div>
     <div class="comparison-result__details">
+      ${postsLine}
       <p><strong>${comparison.ahead}</strong> candidature risultano meglio posizionate.</p>
       <p><strong>${comparison.behind}</strong> risultano peggio posizionate.</p>
       <p>Saresti circa <strong>${comparison.observedRank}°</strong> tra i dati ${classCode} raccolti per ${escapeHtml(formatMunicipalityName(municipality))}.</p>
-      <small>Il confronto usa le compilazioni presenti sul sito. I posti ufficiali sono mostrati separatamente e non modificano ancora la percentuale stimata.</small>
+      <small>${comparison.calculationMode === "official"
+        ? "La stima combina posti ufficiali, posizione, preferenze pubblicate e ordine del comune."
+        : "Stima provvisoria basata sulle preferenze pubblicate, in attesa dei posti ufficiali."}</small>
     </div>
   `;
 }
@@ -524,6 +684,7 @@ function populateFormFromSubmission(record, code) {
 
   selectedMunicipalities = Array.isArray(record.comuni) ? [...record.comuni] : [];
   selectedMunicipalitiesExpanded = false;
+  sanitizeSelectedMunicipalities({ notify: true });
   renderSelectedMunicipalities();
 
   editingCode = code;
@@ -650,15 +811,21 @@ function populateMunicipalityOptions() {
   if (!geojsonData) return;
 
   const provinces = selectedProvinces();
+  const classCodes = selectedClassCodesFromForm();
   const names = geojsonData.features
     .map(feature => ({ name: getFeatureName(feature), province: getFeatureProvince(feature) }))
     .filter(item => item.name && (!provinces.length || provinces.includes(item.province)))
+    .filter(item => municipalitySelectableForClasses(item.name, classCodes))
     .filter(item => !selectedMunicipalities.includes(item.name))
     .sort((a, b) => a.name.localeCompare(b.name, "it"));
 
-  select.innerHTML = provinces.length
-    ? '<option value="">Seleziona un comune</option>'
-    : '<option value="">Seleziona prima almeno una provincia</option>';
+  select.innerHTML = !provinces.length
+    ? '<option value="">Seleziona prima almeno una provincia</option>'
+    : !classCodes.length
+      ? '<option value="">Seleziona prima almeno una classe</option>'
+      : names.length
+        ? '<option value="">Seleziona un comune con disponibilità</option>'
+        : '<option value="">Nessun comune disponibile per i criteri scelti</option>';
 
   names.forEach(item => {
     const option = document.createElement("option");
@@ -667,7 +834,7 @@ function populateMunicipalityOptions() {
     select.appendChild(option);
   });
 
-  select.disabled = provinces.length === 0 || selectedMunicipalities.length >= 20;
+  select.disabled = provinces.length === 0 || classCodes.length === 0 || names.length === 0 || selectedMunicipalities.length >= 20;
 }
 
 function renderSelectedMunicipalities() {
@@ -825,15 +992,20 @@ function eligibilityLabel(value) {
   return "Molto bassa";
 }
 
-function calculateEligibility(row, candidature, municipality, preferenceIndex) {
+function calculateEligibility(row, candidature, municipality, preferenceIndex, school = null) {
   const currentPosition = Number(candidature.posizione);
   if (!Number.isFinite(currentPosition)) return null;
+
+  const schoolPosts = school
+    ? officialPostsForSchool(school, candidature.classe) || undefined
+    : undefined;
 
   return calculateEligibilityForPosition(
     candidature.classe,
     municipality,
     currentPosition,
-    preferenceIndex
+    preferenceIndex,
+    schoolPosts
   ).eligibility;
 }
 
@@ -855,8 +1027,12 @@ function renderEligibilityBar(value, classCode) {
 }
 
 function renderOfficialPosts(school, classCode) {
-  const value = school.d?.[classCode];
-  if (value == null) return '<span class="official-posts official-posts--pending">Posti ufficiali: non pubblicati</span>';
+  const value = officialPostsForSchool(school, classCode);
+  if (!value) {
+    return schoolProvince(school) === "Potenza"
+      ? '<span class="official-posts official-posts--pending">Posti ufficiali: in attesa di pubblicazione</span>'
+      : "";
+  }
   const aggregate = school.a?.[classCode] === "istituto_comune";
   return `<span class="official-posts ${classCode}"><strong>${value}</strong> ${value === 1 ? "posto ufficiale" : "posti ufficiali"}${aggregate ? "*" : ""}</span>${aggregate ? '<small class="official-posts-note">* dato riferito all’istituto nel comune, non al singolo plesso</small>' : ''}`;
 }
@@ -864,57 +1040,58 @@ function renderOfficialPosts(school, classCode) {
 function renderMunicipalitiesWithEligibility(row, selectedClass) {
   const candidatures = getRelevantCandidatures(row, selectedClass);
 
-  return `
-    <div class="municipality-preferences">
-      ${(row.comuni || []).map((municipality, index) => {
-        const schoolGroups = candidatures.map(candidature => {
-          const value = calculateEligibility(row, candidature, municipality, index);
-          const matchingSchools = schoolsForMunicipality(municipality, candidature.classe);
+  const municipalityItems = (row.comuni || []).map((municipality, index) => {
+    const availableCandidatures = candidatures.filter(candidature => {
+      const state = municipalityAvailabilityState(municipality, candidature.classe);
+      return state.status === "available" || state.status === "pending";
+    });
 
-          if (!matchingSchools.length) {
-            return `
-              <div class="school-eligibility-item school-eligibility-item--fallback">
-                <div class="school-name-row">
-                  <span class="class-chip ${candidature.classe}">${candidature.classe}</span>
-                  <div>
-                    <strong>${escapeHtml(municipality)}</strong>
-                    <small>Stima riferita al comune</small>
-                  </div>
-                </div>
-                ${renderEligibilityBar(value, candidature.classe)}
-              </div>
-            `;
-          }
+    if (!availableCandidatures.length) return "";
 
-          return matchingSchools.map(school => `
-            <div class="school-eligibility-item">
-              <div class="school-name-row">
-                <span class="class-chip ${candidature.classe}">${candidature.classe}</span>
-                <div>
-                  <strong>${escapeHtml(school.n)} – ${escapeHtml(municipality)}</strong>
-                  <small>${escapeHtml(school.i)}</small>
-                  ${renderOfficialPosts(school, candidature.classe)}
-                </div>
-              </div>
-              ${renderEligibilityBar(value, candidature.classe)}
-            </div>
-          `).join("");
-        }).join("");
+    const schoolGroups = availableCandidatures.map(candidature => {
+      const matchingSchools = schoolsForMunicipality(municipality, candidature.classe);
+
+      if (!matchingSchools.length) return "";
+
+      return matchingSchools.map(school => {
+        const value = calculateEligibility(row, candidature, municipality, index, school);
+        const pending = municipalityAvailabilityState(municipality, candidature.classe).status === "pending";
 
         return `
-          <div class="municipality-preference-item">
-            <div class="municipality-name">
-              <span class="preference-number">${index + 1}</span>
-              <strong>${escapeHtml(municipality)}</strong>
+          <div class="school-eligibility-item${pending ? " school-eligibility-item--pending" : ""}">
+            <div class="school-name-row">
+              <span class="class-chip ${candidature.classe}">${candidature.classe}</span>
+              <div>
+                <strong>${escapeHtml(school.n)} – ${escapeHtml(municipality)}</strong>
+                <small>${escapeHtml(school.i)}</small>
+                ${renderOfficialPosts(school, candidature.classe)}
+              </div>
             </div>
-            <div class="eligibility-list">${schoolGroups}</div>
+            ${renderEligibilityBar(value, candidature.classe)}
           </div>
         `;
-      }).join("")}
-    </div>
-  `;
-}
+      }).join("");
+    }).join("");
 
+    if (!schoolGroups) return "";
+
+    return `
+      <div class="municipality-preference-item">
+        <div class="municipality-name">
+          <span class="preference-number">${index + 1}</span>
+          <strong>${escapeHtml(municipality)}</strong>
+        </div>
+        <div class="eligibility-list">${schoolGroups}</div>
+      </div>
+    `;
+  }).filter(Boolean);
+
+  if (!municipalityItems.length) {
+    return '<p class="no-available-preferences">Nessuna preferenza con disponibilità attuale per la classe selezionata.</p>';
+  }
+
+  return `<div class="municipality-preferences">${municipalityItems.join("")}</div>`;
+}
 function renderCandidaturesSummary(candidatures) {
   return `<div class="candidature-summary">${
     candidatures.map(item => `
@@ -1079,6 +1256,20 @@ document.querySelector("#candidate-form").addEventListener("submit", async event
     return showMessage(error.message, true);
   }
 
+  const invalidMunicipalities = selectedMunicipalities.filter(
+    municipality => !municipalitySelectableForClasses(
+      municipality,
+      candidature.map(item => item.classe)
+    )
+  );
+
+  if (invalidMunicipalities.length) {
+    return showMessage(
+      `Rimuovi le preferenze senza disponibilità per le classi selezionate: ${invalidMunicipalities.join(", ")}.`,
+      true
+    );
+  }
+
   const submitButton = event.submitter || document.querySelector("#candidate-submit");
   submitButton.disabled = true;
   showMessage(editingCode ? "Salvataggio modifiche…" : "Invio in corso…");
@@ -1131,6 +1322,17 @@ document.querySelector("#submit-legacy-claim").addEventListener("click", submitL
 document.querySelector("#check-legacy-status").addEventListener("click", checkLegacyClaimStatus);
 document.querySelector("#legacy-status-code").addEventListener("keydown", event => {
   if (event.key === "Enter") checkLegacyClaimStatus();
+});
+
+document.querySelector("#candidatures-list").addEventListener("change", event => {
+  if (!event.target.matches(".candidature-class")) return;
+  sanitizeSelectedMunicipalities({ notify: true });
+  renderSelectedMunicipalities();
+});
+
+document.querySelector("#comparison-class").addEventListener("change", () => {
+  populateComparisonMunicipalities();
+  document.querySelector("#comparison-result").hidden = true;
 });
 
 document.querySelector("#run-comparison").addEventListener("click", runPositionComparison);

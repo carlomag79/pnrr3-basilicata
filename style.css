@@ -1891,3 +1891,28 @@ main > .panel::before {
 .official-posts.ADEE { background: var(--adee); }
 .official-posts--pending { color: #68767c; background: #edf0f1; }
 .official-posts-note { display: block; margin-top: 3px; color: var(--muted); font-size: .66rem; }
+
+
+.no-available-preferences {
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border-left: 3px solid var(--line);
+  font-size: .84rem;
+}
+
+.school-eligibility-item--pending {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,.7),
+      rgba(255,255,255,.7) 8px,
+      rgba(238,243,244,.7) 8px,
+      rgba(238,243,244,.7) 16px
+    );
+}
+
+.official-posts--pending {
+  color: #66757b;
+}

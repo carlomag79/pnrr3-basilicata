@@ -113,3 +113,17 @@ La versione include i prospetti della provincia di Matera per infanzia e primari
 - I posti dell'infanzia sono associati ai plessi del medesimo istituto e comune, ma restano contrassegnati come dato aggregato.
 - I posti Montessori, educazione motoria e istruzione per adulti non sono conteggiati come AAAA, ADAA, EEEE o ADEE.
 - Per Potenza lo stato resta `in_attesa`.
+
+
+## Eleggibilità basata sulle disponibilità
+
+La stima integra ora:
+
+- posizione nella graduatoria;
+- candidature meglio posizionate presenti nel database;
+- ordine del comune nelle preferenze;
+- numero di posti ufficiali disponibili.
+
+Per la provincia di Matera, i comuni e i plessi senza disponibilità per le classi selezionate vengono esclusi dal form e dai risultati. Per Potenza, finché i prospetti non sono pubblicati, le scelte restano provvisorie e la stima continua a basarsi sulle preferenze raccolte.
+
+I posti aggregati dell'infanzia vengono conteggiati una sola volta a livello di istituto/comune, evitando di moltiplicarli per il numero dei plessi.

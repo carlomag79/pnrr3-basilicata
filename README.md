@@ -127,3 +127,19 @@ La stima integra ora:
 Per la provincia di Matera, i comuni e i plessi senza disponibilità per le classi selezionate vengono esclusi dal form e dai risultati. Per Potenza, finché i prospetti non sono pubblicati, le scelte restano provvisorie e la stima continua a basarsi sulle preferenze raccolte.
 
 I posti aggregati dell'infanzia vengono conteggiati una sola volta a livello di istituto/comune, evitando di moltiplicarli per il numero dei plessi.
+
+
+## Disponibilità della provincia di Potenza
+
+Sono stati integrati i prospetti post mobilità 2026/27 per Infanzia e Primaria della provincia di Potenza.
+
+Totali rilevanti per il progetto:
+
+- AAAA: 50 posti comuni;
+- ADAA: 7 posti di sostegno;
+- EEEE: 254 posti comuni ordinari;
+- ADEE: 8 posti di sostegno.
+
+Restano separati 3 posti Montessori per l'Infanzia e 6 posti per l'istruzione degli adulti nella Primaria.
+
+Ora entrambe le province hanno dati ufficiali pubblicati: form, verifica, pagina Scuole e calcolo di eleggibilità mostrano soltanto comuni e plessi con disponibilità per la classe selezionata.

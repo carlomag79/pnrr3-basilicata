@@ -94,7 +94,7 @@ function schoolProvince(school) {
 }
 
 function provinceAvailabilityStatus(province) {
-  return province === "Matera" ? "published" : "pending";
+  return ["Matera", "Potenza"].includes(province) ? "published" : "pending";
 }
 
 function allSchoolsForMunicipality(municipality, classCode) {

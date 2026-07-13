@@ -2850,9 +2850,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 5,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 5,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE87001G",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA82404Q",
@@ -2938,11 +2951,35 @@
     "istituto": "I.C. \"Carlucci\" Baragiano-Bella",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 10,
+      "ADAA": 3,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 10,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA82400G",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 3,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA82400G",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA82402N",
@@ -2956,11 +2993,35 @@
     "istituto": "I.C. \"Carlucci\" Baragiano-Bella",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 10,
+      "ADAA": 3,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 10,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA82400G",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 3,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA82400G",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE82402V",
@@ -2976,9 +3037,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 19,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 19,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE82402V",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA81502V",
@@ -3730,11 +3804,24 @@
     "istituto": "I.C. \"Don Bosco\" Francavilla",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 1,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87800X",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA878011",
@@ -3748,11 +3835,24 @@
     "istituto": "I.C. \"Don Bosco\" Francavilla",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 1,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87800X",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE878016",
@@ -3768,9 +3868,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 10,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 10,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE878016",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA874148",
@@ -3820,11 +3933,24 @@
     "istituto": "I.C. Genzano Di Lucania",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA869005",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE86901B",
@@ -4126,11 +4252,24 @@
     "istituto": "I.C.\"Alfieri\" Laurenzana-Albano",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 11,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 11,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA821004",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE82101A",
@@ -4146,9 +4285,33 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
-      "ADEE": null
-    }
+      "EEEE": 12,
+      "ADEE": 2
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 12,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE82101A",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADEE",
+        "posti": 2,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZEE82101A",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA84811L",
@@ -4524,9 +4687,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 28,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 28,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE89201C",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA84002G",
@@ -4541,10 +4717,23 @@
     "sede_direttivo": false,
     "disponibilita": {
       "AAAA": null,
-      "ADAA": null,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA84000D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA84006Q",
@@ -4559,10 +4748,23 @@
     "sede_direttivo": false,
     "disponibilita": {
       "AAAA": null,
-      "ADAA": null,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA84000D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA84005P",
@@ -4577,10 +4779,23 @@
     "sede_direttivo": false,
     "disponibilita": {
       "AAAA": null,
-      "ADAA": null,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA84000D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE84001Q",
@@ -4612,11 +4827,24 @@
     "istituto": "I.C. \"B. Croce\" Marsico Nuovo",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA83300A",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA83301B",
@@ -4630,11 +4858,24 @@
     "istituto": "I.C. \"B. Croce\" Marsico Nuovo",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA83300A",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA83304E",
@@ -4648,11 +4889,24 @@
     "istituto": "I.C. \"B. Croce\" Marsico Nuovo",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA83300A",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE83302N",
@@ -4704,9 +4958,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 4,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 4,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE83301L",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA826029",
@@ -4720,11 +4987,24 @@
     "istituto": "I.Omnicomprensivo Marsicovetere",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA826007",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA826018",
@@ -4738,11 +5018,24 @@
     "istituto": "I.Omnicomprensivo Marsicovetere",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA826007",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA82603A",
@@ -4756,11 +5049,24 @@
     "istituto": "I.Omnicomprensivo Marsicovetere",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA826007",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE82601D",
@@ -4776,9 +5082,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 3,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE82601D",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA857054",
@@ -5010,9 +5329,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 9,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 9,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE84102L",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE84203D",
@@ -5028,9 +5360,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 4,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 4,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE84203D",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE70103A",
@@ -5098,11 +5443,35 @@
     "istituto": "Ic \"G.Racioppi\" Moliterno",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 8,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 8,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA855007",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA855007",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE85501D",
@@ -5118,9 +5487,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 40,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 40,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE85501D",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA857032",
@@ -5206,11 +5588,24 @@
     "istituto": "I.C. \"J. Stella\" Muro Lucano",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA864002",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA864035",
@@ -5224,11 +5619,24 @@
     "istituto": "I.C. \"J. Stella\" Muro Lucano",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA864002",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE864029",
@@ -5244,9 +5652,33 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
-      "ADEE": null
-    }
+      "EEEE": 9,
+      "ADEE": 2
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 9,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE864029",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADEE",
+        "posti": 2,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZEE864029",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA84809D",
@@ -5352,9 +5784,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 3,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE82001E",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA857021",
@@ -5368,11 +5813,24 @@
     "istituto": "I.C. \"S.G. Bosco\" Palazzo S. G.",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 1,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA85700V",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA85701X",
@@ -5386,11 +5844,24 @@
     "istituto": "I.C. \"S.G. Bosco\" Palazzo S. G.",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 1,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA85700V",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE857015",
@@ -5406,9 +5877,33 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
-      "ADEE": null
-    }
+      "EEEE": 20,
+      "ADEE": 1
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 20,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE857015",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADEE",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZEE857015",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA83305G",
@@ -5514,9 +6009,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 3,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE86201L",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA82005D",
@@ -5712,9 +6220,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 1,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE85901R",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA88301C",
@@ -5728,11 +6249,24 @@
     "istituto": "I.C. \"Busciolano\" Potenza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA88300B",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA88304G",
@@ -5746,11 +6280,24 @@
     "istituto": "I.C. \"Busciolano\" Potenza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA88300B",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA88804P",
@@ -5818,11 +6365,36 @@
     "istituto": "I.C. \"L. Sinisgalli\" Potenza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 1,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87900Q",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ],
+    "altre_disponibilita": [
+      {
+        "posti": 3,
+        "codice_tipo_posto": "HN",
+        "denominazione_tipo_posto": "Montessori",
+        "codice_fonte": "PZAA87900Q",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA87901R",
@@ -5836,11 +6408,36 @@
     "istituto": "I.C. \"L. Sinisgalli\" Potenza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 1,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87900Q",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ],
+    "altre_disponibilita": [
+      {
+        "posti": 3,
+        "codice_tipo_posto": "HN",
+        "denominazione_tipo_posto": "Montessori",
+        "codice_fonte": "PZAA87900Q",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA886054",
@@ -5890,11 +6487,24 @@
     "istituto": "I.C. \"Busciolano\" Potenza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA88300B",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA88303E",
@@ -5908,11 +6518,24 @@
     "istituto": "I.C. \"Busciolano\" Potenza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA88300B",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA886043",
@@ -6126,9 +6749,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 3,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE879012",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE888084",
@@ -6324,9 +6960,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 15,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 15,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE815013",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA89505V",
@@ -6450,9 +7099,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 3,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE89501X",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE895021",
@@ -6630,9 +7292,33 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
-      "ADEE": null
-    }
+      "EEEE": 1,
+      "ADEE": 1
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE828015",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADEE",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZEE828015",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA82401L",
@@ -6970,11 +7656,35 @@
     "istituto": "I.C. \"Castronuovo\" S. Arcangelo",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 3,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87400L",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA87400L",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA87407X",
@@ -6988,11 +7698,35 @@
     "istituto": "I.C. \"Castronuovo\" S. Arcangelo",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 3,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87400L",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA87400L",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA87403Q",
@@ -7006,11 +7740,35 @@
     "istituto": "I.C. \"Castronuovo\" S. Arcangelo",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 3,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 3,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA87400L",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA87400L",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE874064",
@@ -7044,9 +7802,33 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
-      "ADEE": null
-    }
+      "EEEE": 22,
+      "ADEE": 2
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 22,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE874031",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADEE",
+        "posti": 2,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZEE874031",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA85506D",
@@ -7132,11 +7914,24 @@
     "istituto": "I.C. Satriano - Brienza",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA81700C",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE81701P",
@@ -7152,9 +7947,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 12,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 12,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE81701P",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA81703G",
@@ -7224,9 +8032,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 14,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 14,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE88503B",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE88504C",
@@ -7366,11 +8187,24 @@
     "istituto": "I.C. Tito",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA863006",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA863039",
@@ -7384,11 +8218,24 @@
     "istituto": "I.C. Tito",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
+      "AAAA": 2,
       "ADAA": null,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 2,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA863006",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE86301C",
@@ -7780,11 +8627,35 @@
     "istituto": "I.C. \"L. De Lorenzo\" Viggiano",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 1,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA83800D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA83800D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZAA83802G",
@@ -7798,11 +8669,35 @@
     "istituto": "I.C. \"L. De Lorenzo\" Viggiano",
     "sede_direttivo": false,
     "disponibilita": {
-      "AAAA": null,
-      "ADAA": null,
+      "AAAA": 1,
+      "ADAA": 1,
       "EEEE": null,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "AAAA",
+        "posti": 1,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZAA83800D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      },
+      {
+        "classe": "ADAA",
+        "posti": 1,
+        "codice_tipo_posto": "EH",
+        "denominazione_tipo_posto": "Sostegno psicofisico",
+        "codice_fonte": "PZAA83800D",
+        "ambito": "istituto_comune",
+        "livello_fonte": "aggregato",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE83801Q",
@@ -7818,9 +8713,22 @@
     "disponibilita": {
       "AAAA": null,
       "ADAA": null,
-      "EEEE": null,
+      "EEEE": 14,
       "ADEE": null
-    }
+    },
+    "disponibilita_ufficiale": [
+      {
+        "classe": "EEEE",
+        "posti": 14,
+        "codice_tipo_posto": "AN",
+        "denominazione_tipo_posto": "Comune",
+        "codice_fonte": "PZEE83801Q",
+        "ambito": "plesso",
+        "livello_fonte": "puntuale",
+        "provincia": "Potenza",
+        "anno_scolastico": "2026/2027"
+      }
+    ]
   },
   {
     "codice": "PZEE83802R",

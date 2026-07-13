@@ -246,7 +246,6 @@ function applyFilters() {
       (municipality === "ALL" || school.comune === municipality) &&
       (availability === "ALL" ||
         (availability === "OFFICIAL" && hasOfficialAvailability(school)) ||
-        (availability === "PENDING" && school.provincia === "Potenza") ||
         (availability === "SPECIAL" && (school.altre_disponibilita || []).length > 0) ||
         (["AAAA", "ADAA", "EEEE", "ADEE"].includes(availability) && Boolean(officialAvailabilityFor(school, availability))));
   });

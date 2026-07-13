@@ -209,10 +209,489 @@
       ]
     },
     "Potenza": {
-      "stato": "in_attesa",
-      "fonte": null,
-      "infanzia": [],
-      "primaria": []
+      "stato": "pubblicato",
+      "fonte": "Prospetti disponibilità post mobilità - Ufficio scolastico provinciale di Potenza",
+      "infanzia": [
+        {
+          "codice": "PZAA821004",
+          "denominazione": "I.C. \"Alfieri\" Laurenzana-Albano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Laurenzana",
+          "posti": 11,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA82400G",
+          "denominazione": "I.C. \"Carlucci\" Baragiano-Bella",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Baragiano",
+          "posti": 10,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA855007",
+          "denominazione": "IC \"G. Racioppi\" Moliterno",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Moliterno",
+          "posti": 8,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA87400L",
+          "denominazione": "I.C. \"Castronuovo\" S. Arcangelo",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Sant'Arcangelo",
+          "posti": 3,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA81700C",
+          "denominazione": "I.C. Satriano - Brienza",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Satriano di Lucania",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA826007",
+          "denominazione": "I.O. Marsicovetere",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Marsicovetere",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA83300A",
+          "denominazione": "I.C. \"B. Croce\" Marsico Nuovo",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Marsico Nuovo",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA863006",
+          "denominazione": "I.C. Tito",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Tito",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA864002",
+          "denominazione": "I.C. \"J. Stella\" Muro Lucano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Muro Lucano",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA869005",
+          "denominazione": "I.C. Genzano di Lucania",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Genzano di Lucania",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA88300B",
+          "denominazione": "I.C. \"Busciolano\" Potenza",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Potenza",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA83800D",
+          "denominazione": "I.C. \"L. De Lorenzo\" Viggiano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Viggiano",
+          "posti": 1,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA85700V",
+          "denominazione": "I.C. \"S.G. Bosco\" Palazzo S. G.",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Palazzo San Gervasio",
+          "posti": 1,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA87800X",
+          "denominazione": "I.C. \"Don Bosco\" Francavilla",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Francavilla in Sinni",
+          "posti": 1,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA87900Q",
+          "denominazione": "I.C. \"L. Sinisgalli\" Potenza",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Potenza",
+          "posti": 1,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "PZAA87900Q",
+          "denominazione": "I.C. \"L. Sinisgalli\" Potenza",
+          "tipo_posto": "HN",
+          "descrizione": "Montessori",
+          "comune": "Potenza",
+          "posti": 3,
+          "classe": null
+        },
+        {
+          "codice": "PZAA82400G",
+          "denominazione": "I.C. \"Carlucci\" Baragiano-Bella",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Baragiano",
+          "posti": 3,
+          "classe": "ADAA"
+        },
+        {
+          "codice": "PZAA83800D",
+          "denominazione": "I.C. \"L. De Lorenzo\" Viggiano",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Viggiano",
+          "posti": 1,
+          "classe": "ADAA"
+        },
+        {
+          "codice": "PZAA84000D",
+          "denominazione": "I.C. \"C. Gennari\" Maratea",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Maratea",
+          "posti": 1,
+          "classe": "ADAA"
+        },
+        {
+          "codice": "PZAA855007",
+          "denominazione": "IC \"G. Racioppi\" Moliterno",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Moliterno",
+          "posti": 1,
+          "classe": "ADAA"
+        },
+        {
+          "codice": "PZAA87400L",
+          "denominazione": "I.C. \"Castronuovo\" S. Arcangelo",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Sant'Arcangelo",
+          "posti": 1,
+          "classe": "ADAA"
+        }
+      ],
+      "primaria": [
+        {
+          "codice": "PZEE85501D",
+          "denominazione": "Primaria - I.C. Moliterno",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Moliterno",
+          "posti": 40,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE89201C",
+          "denominazione": "S.P. \"Matteotti\" - IC Lavello",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Lavello",
+          "posti": 28,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE874031",
+          "denominazione": "S. Brancato - IC S. Arcangelo",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Sant'Arcangelo",
+          "posti": 22,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE857015",
+          "denominazione": "\"Don Bosco\" I.C. Palazzo S. G.",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Palazzo San Gervasio",
+          "posti": 20,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE82402V",
+          "denominazione": "Primaria - Baragiano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Baragiano",
+          "posti": 19,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE815013",
+          "denominazione": "Primaria I.C. Rapolla",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Rapolla",
+          "posti": 15,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE83801Q",
+          "denominazione": "Primaria - I.C. Viggiano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Viggiano",
+          "posti": 14,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE88503B",
+          "denominazione": "I.C. Senise \"S. Pietro\"",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Senise",
+          "posti": 14,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE81701P",
+          "denominazione": "Scuola Primaria - Satriano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Satriano di Lucania",
+          "posti": 12,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE82101A",
+          "denominazione": "Primaria - I.C. Laurenzana",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Laurenzana",
+          "posti": 12,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE878016",
+          "denominazione": "A. Ciancia - IC Francavilla",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Francavilla in Sinni",
+          "posti": 10,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE84102L",
+          "denominazione": "Primaria \"F. S. Nitti\" - Melfi",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Melfi",
+          "posti": 9,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE864029",
+          "denominazione": "Primaria Ada Negri - Muro Lucano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Muro Lucano",
+          "posti": 9,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE87001G",
+          "denominazione": "Morlino - IC S.F. Avigliano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Avigliano",
+          "posti": 5,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE83301L",
+          "denominazione": "Primaria - I.C. Marsico Nuovo",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Marsico Nuovo",
+          "posti": 4,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE84203D",
+          "denominazione": "Primaria IC \"Fer.Mar.\" Melfi",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Melfi",
+          "posti": 4,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE82001E",
+          "denominazione": "P.F. Grimaldi - IC Oppido Lucano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Oppido Lucano",
+          "posti": 3,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE82601D",
+          "denominazione": "Villa d'Agri - Marsicovetere",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Marsicovetere",
+          "posti": 3,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE86201L",
+          "denominazione": "Primaria - I.C. Picerno",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Picerno",
+          "posti": 3,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE879012",
+          "denominazione": "Poggio Tre Galli - Sinisgalli PZ",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Potenza",
+          "posti": 3,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE89501X",
+          "denominazione": "M. Preziuso - IC Ex CD Rionero",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Rionero in Vulture",
+          "posti": 3,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE828015",
+          "denominazione": "Primaria - I.C. Rotonda",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Rotonda",
+          "posti": 1,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZEE85901R",
+          "denominazione": "Pignola-Capoluogo",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Pignola",
+          "posti": 1,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "PZCT71200A",
+          "denominazione": "CPIA PZ - Sede associata Lavello",
+          "tipo_posto": "ZJ",
+          "descrizione": "Corsi di istruzione per adulti",
+          "comune": "Lavello",
+          "posti": 2,
+          "classe": null
+        },
+        {
+          "codice": "PZCT714002",
+          "denominazione": "CPIA PZ - Sede ass. Corleto Perticara",
+          "tipo_posto": "ZJ",
+          "descrizione": "Corsi di istruzione per adulti",
+          "comune": "Corleto Perticara",
+          "posti": 2,
+          "classe": null
+        },
+        {
+          "codice": "PZCT70100X",
+          "denominazione": "CPIA PZ - Sede associata Rionero",
+          "tipo_posto": "ZJ",
+          "descrizione": "Corsi di istruzione per adulti",
+          "comune": "Rionero in Vulture",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "PZCT71100E",
+          "denominazione": "CPIA PZ - Sede associata Senise",
+          "tipo_posto": "ZJ",
+          "descrizione": "Corsi di istruzione per adulti",
+          "comune": "Senise",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "PZEE82101A",
+          "denominazione": "Primaria - I.C. Laurenzana",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Laurenzana",
+          "posti": 2,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "PZEE864029",
+          "denominazione": "Primaria Ada Negri - Muro Lucano",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Muro Lucano",
+          "posti": 2,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "PZEE874031",
+          "denominazione": "S. Brancato - IC S. Arcangelo",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Sant'Arcangelo",
+          "posti": 2,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "PZEE828015",
+          "denominazione": "Primaria - I.C. Rotonda",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Rotonda",
+          "posti": 1,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "PZEE857015",
+          "denominazione": "\"Don Bosco\" I.C. Palazzo S. G.",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Palazzo San Gervasio",
+          "posti": 1,
+          "classe": "ADEE"
+        }
+      ]
     }
   }
 }

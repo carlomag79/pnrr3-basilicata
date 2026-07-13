@@ -5,6 +5,8 @@ let allSchools = [];
 let selectedSchools = [];
 let currentSubmission = null;
 let lastLegacyImport = false;
+let pendingOtpEmail = "";
+let registrationStatus = null;
 
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -168,47 +170,187 @@ async function loadSchools(){
   allSchools=await response.json();
 }
 
+async function getRegistrationStatus(){
+  const {data,error}=await sb.rpc("get_my_registration_request");
+  if(error)throw error;
+  return Array.isArray(data)?data[0]:data;
+}
+
+function showRegistrationState(status){
+  const panel=$("#registration-panel");
+  const editor=$("#account-editor");
+  const legacy=$("#legacy-import-panel");
+  const badge=$("#registration-status-badge");
+  const message=$("#registration-message");
+
+  registrationStatus=status;
+  panel.hidden=false;
+  editor.hidden=true;
+  legacy.hidden=false;
+
+  if(!status){
+    badge.textContent="Da compilare";
+    message.innerHTML="<p>Puoi richiedere l’abilitazione oppure, se avevi già compilato il vecchio form, rivendicare il record esistente qui sotto.</p>";
+    $("#registration-request-form").hidden=false;
+    return;
+  }
+
+  $("#registration-class").value=status.classe;
+  $("#registration-position").value=status.posizione;
+  $("#registration-score").value=status.punteggio;
+
+  if(status.status==="pending"){
+    badge.textContent="In verifica";
+    $("#registration-request-form").hidden=true;
+    message.innerHTML="<p><strong>Richiesta inviata.</strong> Attendi l’approvazione di un amministratore.</p>";
+    return;
+  }
+
+  if(status.status==="rejected"){
+    badge.textContent="Non approvata";
+    $("#registration-request-form").hidden=false;
+    message.innerHTML=`<p><strong>Richiesta non approvata.</strong> ${esc(status.admin_note||"Controlla i dati e invia nuovamente la richiesta.")}</p>`;
+    return;
+  }
+
+  if(status.status==="approved"){
+    badge.textContent="Approvata";
+    panel.hidden=true;
+    editor.hidden=false;
+  }
+}
+
 async function loadMine(){
   const {data,error}=await sb.rpc("get_my_candidatura_v2");
   if(error)throw error;
   currentSubmission=Array.isArray(data)?data[0]:data;
   $("#account-candidatures").innerHTML="";
+
   if(currentSubmission){
+    $("#registration-panel").hidden=true;
+    $("#account-editor").hidden=false;
+    $("#legacy-import-panel").hidden=true;
     (currentSubmission.candidature||[]).forEach(addCandidature);
     selectedSchools=(currentSubmission.preferenze_scuole||[]).map(x=>({classe:x.classe,codice_scuola:x.codice_scuola}));
   }else{
-    addCandidature();
+    const status=await getRegistrationStatus();
+    showRegistrationState(status);
+
+    if(status?.status==="approved"){
+      addCandidature({
+        classe:status.classe,
+        posizione:status.posizione,
+        punteggio:status.punteggio
+      });
+    }else{
+      addCandidature();
+    }
     selectedSchools=[];
+    await checkAccountClaim();
   }
 
-  const importPanel=$("#legacy-import-panel");
-  importPanel.hidden=Boolean(currentSubmission);
-  if(!currentSubmission) await checkAccountClaim();
   $("#legacy-school-note").hidden=!(lastLegacyImport || (currentSubmission && (!currentSubmission.preferenze_scuole || !currentSubmission.preferenze_scuole.length)));
   renderSelected();
 }
 
 async function handleSession(session){
   if(!session){
-    $("#auth-panel").hidden=false;$("#account-app").hidden=true;return;
+    $("#auth-panel").hidden=false;
+    $("#account-app").hidden=true;
+    return;
   }
-  $("#auth-panel").hidden=true;$("#account-app").hidden=false;
+  $("#auth-panel").hidden=true;
+  $("#account-app").hidden=false;
   $("#account-email").textContent=session.user.email||"Utente autenticato";
   await loadMine();
 }
+
+async function requestOtp(email,createUser=true){
+  return sb.auth.signInWithOtp({
+    email,
+    options:{shouldCreateUser:createUser}
+  });
+}
+
+$("#otp-request-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const email=$("#auth-email").value.trim();
+  const message=$("#auth-message");
+  message.textContent="Invio del codice…";
+
+  const {error}=await requestOtp(email,true);
+  if(error){
+    message.textContent=error.message;
+    return;
+  }
+
+  pendingOtpEmail=email;
+  message.textContent="Codice inviato. Controlla anche Spam, Promozioni o la webmail del tuo provider.";
+  $("#otp-request-form").hidden=true;
+  $("#otp-verify-form").hidden=false;
+  $("#auth-otp").focus();
+});
+
+$("#otp-verify-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const token=$("#auth-otp").value.trim().replace(/\s+/g,"");
+  $("#otp-message").textContent="Verifica in corso…";
+
+  const {error}=await sb.auth.verifyOtp({
+    email:pendingOtpEmail,
+    token,
+    type:"email"
+  });
+
+  $("#otp-message").textContent=error?error.message:"Accesso effettuato.";
+});
+
+$("#auth-change-email").addEventListener("click",()=>{
+  pendingOtpEmail="";
+  $("#auth-otp").value="";
+  $("#otp-verify-form").hidden=true;
+  $("#otp-request-form").hidden=false;
+  $("#auth-message").textContent="";
+});
+
+$("#registration-request-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+
+  const posizione=Number($("#registration-position").value);
+  const punteggio=Number($("#registration-score").value);
+  const message=$("#registration-message");
+
+  if(!Number.isInteger(posizione)||posizione<1||!Number.isFinite(punteggio)||punteggio<0){
+    message.innerHTML="<p>Controlla posizione e punteggio.</p>";
+    return;
+  }
+
+  message.innerHTML="<p>Verifica dei dati in corso…</p>";
+  const {data,error}=await sb.rpc("submit_candidate_registration_request",{
+    p_classe:$("#registration-class").value,
+    p_posizione:posizione,
+    p_punteggio:punteggio
+  });
+
+  if(error){
+    message.innerHTML=`<p>${esc(error.message)}</p>`;
+    return;
+  }
+
+  const result=typeof data==="string"?JSON.parse(data):data;
+  if(result.result==="existing_record"){
+    message.innerHTML="<p><strong>Esiste già un record con questi dati.</strong> Non è stata creata una nuova iscrizione. Usa la sezione sottostante per rivendicare la vecchia compilazione.</p>";
+    $("#legacy-import-panel").hidden=false;
+    return;
+  }
+
+  await loadMine();
+});
 
 $("#import-legacy-submission").addEventListener("click",importLegacySubmission);
 $("#account-submit-claim").addEventListener("click",submitAccountClaim);
 $("#account-check-claim").addEventListener("click",checkAccountClaim);
 $("#account-legacy-code").addEventListener("keydown",event=>{if(event.key==="Enter")importLegacySubmission()});
-
-$("#magic-link-form").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const email=$("#auth-email").value.trim();
-  $("#auth-message").textContent="Invio del link…";
-  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:new URL("account.html",window.location.href).href}});
-  $("#auth-message").textContent=error?error.message:"Controlla la tua email: il link di accesso è stato inviato.";
-});
 
 $("#account-logout").addEventListener("click",()=>sb.auth.signOut());
 $("#add-account-candidature").addEventListener("click",()=>{if(document.querySelectorAll(".account-candidature").length<4)addCandidature()});

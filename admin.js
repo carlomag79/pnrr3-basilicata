@@ -5,6 +5,7 @@ const adminSupabase = window.supabase.createClient(
 );
 
 let adminRequests = [];
+let pendingAdminOtpEmail = "";
 
 const loginPanel = document.querySelector("#admin-login-panel");
 const adminApp = document.querySelector("#admin-app");
@@ -59,7 +60,7 @@ async function handleSession(session) {
     loginPanel.hidden = true;
     adminApp.hidden = false;
     logoutButton.hidden = false;
-    await Promise.all([loadAdminRequests(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
+    await Promise.all([loadAdminRequests(), loadRegistrationRequests(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
   } catch (error) {
     loginPanel.hidden = false;
     adminApp.hidden = true;
@@ -230,33 +231,46 @@ async function rejectRequest(requestId) {
 
 document.querySelector("#admin-login-form").addEventListener("submit", async event => {
   event.preventDefault();
+  const message=document.querySelector("#admin-login-message");
+  const email=document.querySelector("#admin-email").value.trim();
+  message.textContent="Invio del codice…";
 
-  const message = document.querySelector("#admin-login-message");
-  const submitButton = event.submitter;
-  const email = document.querySelector("#admin-email").value.trim();
-
-  message.textContent = "Invio del link di accesso…";
-  if (submitButton) submitButton.disabled = true;
-
-  const redirectUrl = new URL("admin.html", window.location.href).href;
-  const { error } = await adminSupabase.auth.signInWithOtp({
+  const {error}=await adminSupabase.auth.signInWithOtp({
     email,
-    options: {
-      emailRedirectTo: redirectUrl,
-      shouldCreateUser: false
-    }
+    options:{shouldCreateUser:false}
   });
 
-  if (submitButton) submitButton.disabled = false;
-
-  if (error) {
-    message.textContent = error.message.includes("rate limit")
-      ? "Sono state richieste troppe email in poco tempo. Attendi qualche minuto e controlla anche la cartella Spam."
-      : error.message;
+  if(error){
+    message.textContent=error.message;
     return;
   }
 
-  message.textContent = "Link inviato. Controlla la tua email e aprilo per accedere all’amministrazione.";
+  pendingAdminOtpEmail=email;
+  message.textContent="Codice inviato. Controlla anche Spam o la webmail.";
+  document.querySelector("#admin-login-form").hidden=true;
+  document.querySelector("#admin-otp-form").hidden=false;
+});
+
+document.querySelector("#admin-otp-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const token=document.querySelector("#admin-otp").value.trim().replace(/\s+/g,"");
+  const message=document.querySelector("#admin-otp-message");
+  message.textContent="Verifica in corso…";
+
+  const {error}=await adminSupabase.auth.verifyOtp({
+    email:pendingAdminOtpEmail,
+    token,
+    type:"email"
+  });
+
+  message.textContent=error?error.message:"Accesso effettuato.";
+});
+
+document.querySelector("#admin-change-email").addEventListener("click",()=>{
+  pendingAdminOtpEmail="";
+  document.querySelector("#admin-otp").value="";
+  document.querySelector("#admin-otp-form").hidden=true;
+  document.querySelector("#admin-login-form").hidden=false;
 });
 
 logoutButton.addEventListener("click", async () => {
@@ -296,6 +310,83 @@ adminSupabase.auth.onAuthStateChange((_event, session) => {
 
 
 
+
+async function loadRegistrationRequests(){
+  const status=document.querySelector("#admin-registration-status")?.value||"pending";
+  const root=document.querySelector("#admin-registration-requests");
+  if(!root)return;
+
+  root.innerHTML='<p class="admin-empty">Caricamento richieste…</p>';
+
+  const [{data,error},{data:countsData,error:countsError}]=await Promise.all([
+    adminSupabase.rpc("admin_list_registration_requests",{p_status:status}),
+    adminSupabase.rpc("admin_registration_counts")
+  ]);
+
+  if(countsData&&!countsError){
+    const counts=Array.isArray(countsData)?countsData[0]:countsData;
+    document.querySelector("#registration-pending-count").textContent=counts.pending_count||0;
+    document.querySelector("#registration-approved-count").textContent=counts.approved_count||0;
+    document.querySelector("#registration-rejected-count").textContent=counts.rejected_count||0;
+  }
+
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  const requests=data||[];
+  root.innerHTML=requests.length?requests.map(request=>`
+    <article class="admin-request" data-registration-id="${request.id}" data-status="${request.status}">
+      <header class="admin-request__head">
+        <div>
+          <h2>${adminEscape(request.email)}</h2>
+          <p>Ricevuta ${adminDate(request.created_at)}</p>
+        </div>
+        <span class="admin-request__status">${statusLabel(request.status)}</span>
+      </header>
+      <div class="admin-request__body">
+        <div class="admin-request__facts">
+          <div class="admin-fact"><span>Classe</span><strong>${adminEscape(request.classe)}</strong></div>
+          <div class="admin-fact"><span>Posizione</span><strong>${request.posizione}</strong></div>
+          <div class="admin-fact"><span>Punteggio</span><strong>${Number(request.punteggio).toLocaleString("it-IT",{minimumFractionDigits:2})}</strong></div>
+          <div class="admin-fact"><span>Record coincidenti</span><strong>${request.existing_matches||0}</strong></div>
+        </div>
+        ${request.admin_note?`<p class="admin-note">${adminEscape(request.admin_note)}</p>`:""}
+        ${request.status==="pending"?`
+          <div class="admin-request__actions">
+            <button class="primary admin-approve-registration" type="button">Approva iscrizione</button>
+            <button class="danger-button admin-reject-registration" type="button">Rifiuta</button>
+          </div>`:`<p class="admin-note">Esaminata ${adminDate(request.reviewed_at)}</p>`}
+      </div>
+    </article>`).join(""):'<p class="admin-empty">Nessuna richiesta per questo filtro.</p>';
+}
+
+document.querySelector("#admin-registration-status")?.addEventListener("change",loadRegistrationRequests);
+
+document.querySelector("#admin-registration-requests")?.addEventListener("click",async event=>{
+  const article=event.target.closest(".admin-request");
+  if(!article)return;
+  const requestId=Number(article.dataset.registrationId);
+
+  if(event.target.closest(".admin-approve-registration")){
+    if(!confirm("Approvare questa nuova iscrizione?"))return;
+    const {error}=await adminSupabase.rpc("admin_approve_registration_request",{p_request_id:requestId});
+    if(error)return alert(error.message);
+    await loadRegistrationRequests();
+  }
+
+  if(event.target.closest(".admin-reject-registration")){
+    const note=prompt("Motivo del rifiuto:","Dati non verificabili o già presenti.");
+    if(note===null)return;
+    const {error}=await adminSupabase.rpc("admin_reject_registration_request",{
+      p_request_id:requestId,
+      p_admin_note:note
+    });
+    if(error)return alert(error.message);
+    await loadRegistrationRequests();
+  }
+});
 
 async function loadAdminUsers(){
   const root=document.querySelector("#admin-users-list");

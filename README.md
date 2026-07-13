@@ -295,3 +295,16 @@ Lo stemma della Regione Basilicata è stato rimosso da tutte le pagine.
 È stato sostituito da un marchio grafico neutro `P3` e da una nota visibile
 che chiarisce che il progetto non è collegato a Ministero, USR, Regione o
 altre amministrazioni pubbliche.
+
+
+## Versione 4 — OTP e registrazione moderata
+
+- accesso tramite codice OTP numerico;
+- account nuovi consentiti;
+- richiesta preventiva con classe, posizione e punteggio;
+- blocco automatico se esiste già un record coincidente;
+- approvazione o rifiuto dall'area amministrativa;
+- nessuna modifica agli utenti e ai record già esistenti.
+
+Eseguire `migration_v4_otp_registrazione_moderata.sql` e configurare il
+template email Supabase affinché mostri `{{ .Token }}`.

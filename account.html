@@ -23,20 +23,64 @@
 
   <main class="container account-main">
     <section id="auth-panel" class="panel auth-panel">
-      <p class="eyebrow">Registrazione leggera</p>
-      <h2>Accedi tramite email</h2>
-      <p>Riceverai un Magic Link. Non servono password, nome, cognome o numero di telefono.</p>
+      <p class="eyebrow">Accesso e registrazione</p>
+      <h2>Accedi tramite codice email</h2>
+      <p>Inserisci la tua email: riceverai un codice numerico da digitare sul sito. Non servono password, nome, cognome o telefono.</p>
       <p class="auth-safety-note">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
-      <form id="magic-link-form" class="auth-form">
+
+      <form id="otp-request-form" class="auth-form">
         <label>Email
           <input id="auth-email" type="email" autocomplete="email" required placeholder="nome@esempio.it">
         </label>
-        <button class="primary" type="submit">Invia link di accesso</button>
+        <button class="primary" type="submit">Invia codice</button>
         <p id="auth-message" role="status"></p>
+      </form>
+
+      <form id="otp-verify-form" class="auth-form auth-code-form" hidden>
+        <label>Codice ricevuto
+          <input id="auth-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required placeholder="123456">
+        </label>
+        <div class="auth-code-actions">
+          <button class="primary" type="submit">Verifica e accedi</button>
+          <button id="auth-change-email" class="secondary" type="button">Cambia email</button>
+        </div>
+        <p id="otp-message" role="status"></p>
       </form>
     </section>
 
     <div id="account-app" hidden>
+      <section id="registration-panel" class="panel registration-panel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Prima registrazione</p>
+            <h2>Richiedi l’abilitazione</h2>
+          </div>
+          <span id="registration-status-badge" class="badge">Da compilare</span>
+        </div>
+        <p>
+          Indica i dati della graduatoria. Il sistema verifica che non esista già
+          un record con la stessa classe, posizione e punteggio. Le nuove iscrizioni
+          vengono abilitate da un amministratore.
+        </p>
+        <form id="registration-request-form" class="registration-request-form">
+          <label>Classe di concorso
+            <select id="registration-class" required>
+              <option value="AAAA">AAAA – Infanzia posto comune</option>
+              <option value="ADAA">ADAA – Infanzia sostegno</option>
+              <option value="EEEE">EEEE – Primaria posto comune</option>
+              <option value="ADEE">ADEE – Primaria sostegno</option>
+            </select>
+          </label>
+          <label>Posizione
+            <input id="registration-position" type="number" min="1" step="1" required>
+          </label>
+          <label>Punteggio
+            <input id="registration-score" type="number" min="0" step="0.01" required>
+          </label>
+          <button class="primary" type="submit">Invia richiesta</button>
+        </form>
+        <div id="registration-message" class="registration-message" role="status"></div>
+      </section>
       <section id="legacy-import-panel" class="panel legacy-import-panel" hidden>
         <div class="section-heading">
           <div>
@@ -106,7 +150,7 @@
         <button id="account-logout" class="secondary" type="button">Esci</button>
       </section>
 
-      <section class="panel account-editor">
+      <section id="account-editor" class="panel account-editor">
         <p id="legacy-school-note" class="legacy-school-note" hidden>La vecchia compilazione è stata importata. Ora seleziona le singole scuole o i plessi: le precedenti preferenze comunali non vengono convertite automaticamente.</p>
         <div class="section-heading">
           <div>

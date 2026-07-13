@@ -33,8 +33,16 @@
         <label>Email
           <input id="admin-email" type="email" autocomplete="email" required>
         </label>
-        <button class="primary" type="submit">Invia link di accesso</button>
+        <button class="primary" type="submit">Invia codice</button>
         <p id="admin-login-message" class="admin-message" role="status"></p>
+      </form>
+      <form id="admin-otp-form" class="admin-login-form" hidden>
+        <label>Codice ricevuto
+          <input id="admin-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required>
+        </label>
+        <button class="primary" type="submit">Verifica e accedi</button>
+        <button id="admin-change-email" class="secondary" type="button">Cambia email</button>
+        <p id="admin-otp-message" class="admin-message" role="status"></p>
       </form>
     </section>
 
@@ -44,6 +52,31 @@
         <article class="admin-stat"><span>Approvate</span><strong id="admin-approved-count">0</strong></article>
         <article class="admin-stat"><span>Rifiutate</span><strong id="admin-rejected-count">0</strong></article>
         <button id="admin-refresh" class="secondary" type="button">Aggiorna richieste</button>
+      </section>
+
+      <section class="panel admin-registration-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Nuovi utenti</p>
+            <h1>Richieste di iscrizione</h1>
+          </div>
+          <label class="admin-status-filter">Stato
+            <select id="admin-registration-status">
+              <option value="pending">In attesa</option>
+              <option value="approved">Approvate</option>
+              <option value="rejected">Rifiutate</option>
+              <option value="all">Tutte</option>
+            </select>
+          </label>
+        </div>
+        <div class="admin-registration-stats">
+          <span><strong id="registration-pending-count">0</strong> in attesa</span>
+          <span><strong id="registration-approved-count">0</strong> approvate</span>
+          <span><strong id="registration-rejected-count">0</strong> rifiutate</span>
+        </div>
+        <div id="admin-registration-requests" class="admin-requests">
+          <p class="admin-empty">Caricamento richieste…</p>
+        </div>
       </section>
 
       <section class="panel admin-users-panel">

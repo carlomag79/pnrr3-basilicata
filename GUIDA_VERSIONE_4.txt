@@ -1,0 +1,19 @@
+VERSIONE 4 — OTP E REGISTRAZIONE MODERATA
+
+1. Caricare i file aggiornati nel repository GitHub.
+2. Eseguire in Supabase SQL Editor:
+   migration_v4_otp_registrazione_moderata.sql
+3. In Supabase aprire:
+   Authentication → Email Templates → Magic Link
+4. Nel template sostituire il link con il codice:
+   {{ .Token }}
+   Il template deve mostrare chiaramente il codice OTP.
+5. Gli utenti già esistenti conservano account, UUID, candidature,
+   preferenze e ruoli amministrativi.
+6. I nuovi utenti possono creare l'account via OTP, ma non possono creare
+   un record prima dell'approvazione amministrativa.
+7. Se classe, posizione e punteggio coincidono con un record esistente,
+   la richiesta non viene creata e l'utente viene indirizzato alla
+   procedura di rivendicazione.
+8. Gli amministratori gestiscono le nuove richieste nella sezione
+   "Richieste di iscrizione" di admin.html.

@@ -85,3 +85,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+.auth-code-form{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.auth-code-actions{display:flex;gap:8px;flex-wrap:wrap}
+.registration-panel{margin-bottom:18px}
+.registration-request-form{display:grid;grid-template-columns:1fr .7fr .7fr auto;gap:12px;align-items:end;margin-top:20px}
+.registration-message{margin-top:15px;padding:12px 14px;background:var(--surface-soft);border-left:4px solid var(--accent)}
+.registration-message:empty{display:none}
+@media(max-width:760px){.registration-request-form{grid-template-columns:1fr}}

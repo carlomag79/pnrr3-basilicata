@@ -494,3 +494,7 @@ body.admin-page {
     display: none;
   }
 }
+
+.admin-registration-panel{margin-bottom:22px}
+.admin-registration-stats{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.admin-registration-stats span{padding:9px 12px;background:var(--surface-soft);border:1px solid var(--line)}

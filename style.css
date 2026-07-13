@@ -2295,3 +2295,17 @@ main > .panel::before {
 .notice--secondary {
   margin-top: 8px;
 }
+
+
+.project-mark {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.project-mark--small {
+  font-size: 1.25rem;
+}
+
+.project-mark--admin {
+  font-size: 1rem;
+}

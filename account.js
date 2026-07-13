@@ -1,3 +1,15 @@
+if (!window.supabase || typeof window.supabase.createClient !== "function") {
+  const startupMessage = document.getElementById("auth-message");
+  if (startupMessage) startupMessage.textContent = "La libreria di accesso non è stata caricata. Ricarica la pagina con Ctrl + F5.";
+  throw new Error("Supabase JS non disponibile");
+}
+
+if (!window.APP_CONFIG?.SUPABASE_URL || !window.APP_CONFIG?.SUPABASE_KEY) {
+  const startupMessage = document.getElementById("auth-message");
+  if (startupMessage) startupMessage.textContent = "Configurazione Supabase non disponibile. Ricarica la pagina.";
+  throw new Error("Configurazione Supabase mancante");
+}
+
 const cfg = window.APP_CONFIG || {};
 const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY);
 
@@ -276,14 +288,20 @@ $("#otp-request-form").addEventListener("submit",async event=>{
   event.preventDefault();
   const email=$("#auth-email").value.trim();
   const message=$("#auth-message");
+  const button=event.submitter;
   message.textContent="Invio del codice…";
+  if(button)button.disabled=true;
 
-  const {error}=await requestOtp(email,true);
-  if(error){
-    message.textContent=error.message;
+  try{
+    const {error}=await requestOtp(email,true);
+    if(error)throw error;
+  }catch(error){
+    message.textContent=error?.message||"Non è stato possibile inviare il codice.";
+    if(button)button.disabled=false;
     return;
   }
 
+  if(button)button.disabled=false;
   pendingOtpEmail=email;
   message.textContent="Codice inviato. Controlla anche Spam, Promozioni o la webmail del tuo provider.";
   $("#otp-request-form").hidden=true;

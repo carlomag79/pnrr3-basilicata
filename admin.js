@@ -1,3 +1,15 @@
+if (!window.supabase || typeof window.supabase.createClient !== "function") {
+  const startupMessage = document.getElementById("admin-login-message");
+  if (startupMessage) startupMessage.textContent = "La libreria di accesso non è stata caricata. Ricarica la pagina con Ctrl + F5.";
+  throw new Error("Supabase JS non disponibile");
+}
+
+if (!window.APP_CONFIG?.SUPABASE_URL || !window.APP_CONFIG?.SUPABASE_KEY) {
+  const startupMessage = document.getElementById("admin-login-message");
+  if (startupMessage) startupMessage.textContent = "Configurazione Supabase non disponibile. Ricarica la pagina.";
+  throw new Error("Configurazione Supabase mancante");
+}
+
 const adminConfig = window.APP_CONFIG || {};
 const adminSupabase = window.supabase.createClient(
   adminConfig.SUPABASE_URL,
@@ -233,18 +245,23 @@ document.querySelector("#admin-login-form").addEventListener("submit", async eve
   event.preventDefault();
   const message=document.querySelector("#admin-login-message");
   const email=document.querySelector("#admin-email").value.trim();
+  const button=event.submitter;
   message.textContent="Invio del codice…";
+  if(button)button.disabled=true;
 
-  const {error}=await adminSupabase.auth.signInWithOtp({
-    email,
-    options:{shouldCreateUser:false}
-  });
-
-  if(error){
-    message.textContent=error.message;
+  try{
+    const {error}=await adminSupabase.auth.signInWithOtp({
+      email,
+      options:{shouldCreateUser:false}
+    });
+    if(error)throw error;
+  }catch(error){
+    message.textContent=error?.message||"Non è stato possibile inviare il codice.";
+    if(button)button.disabled=false;
     return;
   }
 
+  if(button)button.disabled=false;
   pendingAdminOtpEmail=email;
   message.textContent="Codice inviato. Controlla anche Spam o la webmail.";
   document.querySelector("#admin-login-form").hidden=true;

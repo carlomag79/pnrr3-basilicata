@@ -8,6 +8,16 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="account.css">
   <script src="site-shell.js" defer></script>
+<script>
+    window.addEventListener("error", function (event) {
+      var target = document.getElementById("auth-message") || document.getElementById("admin-login-message");
+      if (!target) return;
+      var isResource = event.target && event.target !== window && event.target.tagName;
+      target.textContent = isResource
+        ? "Impossibile caricare una risorsa necessaria. Ricarica la pagina con Ctrl + F5."
+        : "Errore nell’avvio della pagina. Ricarica con Ctrl + F5 oppure svuota la cache del sito.";
+    }, true);
+  </script>
 </head>
 <body>
   <header class="site-header site-header--compact">
@@ -204,8 +214,8 @@
     </div>
   </main>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="account.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="config.js?v=4.1.0" defer></script>
+  <script src="account.js?v=4.1.0" defer></script>
 </body>
 </html>

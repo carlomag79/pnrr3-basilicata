@@ -308,3 +308,12 @@ altre amministrazioni pubbliche.
 
 Eseguire `migration_v4_otp_registrazione_moderata.sql` e configurare il
 template email Supabase affinché mostri `{{ .Token }}`.
+
+
+## Versione 4.1 — correzione caricamento OTP
+
+- cache busting per `account.js`, `admin.js` e `config.js`;
+- CDN jsDelivr ufficialmente supportato da Supabase;
+- caricamento differito e ordinato degli script;
+- messaggi visibili in caso di risorsa o configurazione non caricata;
+- gestione esplicita degli errori durante l’invio del codice.

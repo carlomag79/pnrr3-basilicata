@@ -1,3 +1,7 @@
+-- HOTFIX V3
+-- Il precedente tentativo è stato annullato integralmente dalla transazione.
+-- Eseguire questo file al posto della vecchia migration_v3_autonomia_admin.sql.
+
 -- PNRR3 Basilicata V3
 -- Autonomia utenti, richieste collegate all'account, multi-admin e gestione duplicati.
 -- Eseguire dopo tutte le migrazioni precedenti.

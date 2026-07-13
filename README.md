@@ -234,3 +234,38 @@ Novità:
 - gestione di più amministratori dall'area admin;
 - ricerca record, associazione a email e cancellazione;
 - rilevazione di possibili duplicati per classe, posizione e punteggio.
+
+
+## Correzione migrazione V3
+
+La prima versione tentava di cambiare il tipo di ritorno di due RPC tramite
+`CREATE OR REPLACE FUNCTION`, operazione non ammessa da PostgreSQL.
+
+Usare `HOTFIX_migration_v3_autonomia_admin.sql`: elimina e ricrea soltanto le
+due funzioni interessate, ripristina i permessi e aggiorna la schema cache di
+PostgREST. Poiché la vecchia migrazione era racchiusa in una transazione, il
+fallimento iniziale ha annullato anche la creazione di `admin_search_candidates`.
+
+
+## Hotfix V3.1 — tipi di ritorno RPC
+
+Eseguire `HOTFIX_v3_1_return_types.sql` se nelle sezioni Amministratori,
+Record o Duplicati compare:
+
+`structure of query does not match function result type`
+
+La causa è la differenza tra `varchar` nelle tabelle Auth e `text` dichiarato
+dalle RPC. La hotfix ricrea le funzioni con cast espliciti e ricarica la schema
+cache di PostgREST.
+
+
+## Hotfix V3.2 — ricerca avanzata, duplicati e record compatibili
+
+Eseguire `HOTFIX_v3_2_admin_search_duplicates.sql`.
+
+La hotfix:
+- corregge i tipi restituiti da `admin_find_claim_candidates`;
+- aggiunge una ricerca combinabile per ID, email, classe, posizione, punteggio,
+  comune e stato di associazione;
+- mostra automaticamente i gruppi di duplicati con dettaglio dei singoli record;
+- consente di associare o eliminare un record direttamente dal gruppo duplicati.

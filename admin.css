@@ -354,3 +354,121 @@ body.admin-page {
   .admin-inline-form{grid-template-columns:1fr}
   .admin-user-row,.admin-record-row{align-items:flex-start;flex-direction:column}
 }
+
+
+.admin-duplicate-block,
+.admin-record-search-block {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.admin-subheading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+.admin-subheading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.admin-subheading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.admin-advanced-search {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.admin-search-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-duplicate-group {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 4px solid #d09a42;
+}
+
+.admin-duplicate-group > header {
+  padding: 13px 15px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fff8e7;
+}
+
+.admin-duplicate-group > header div {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-duplicate-group > header span:not(.badge) {
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.admin-duplicate-records {
+  display: grid;
+}
+
+.admin-duplicate-record {
+  padding: 13px 15px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  border-top: 1px solid var(--line);
+}
+
+.admin-duplicate-record > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-duplicate-record span,
+.admin-duplicate-record small {
+  color: var(--muted);
+}
+
+.admin-record-row__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.admin-record-candidatures {
+  margin: 5px 0;
+  font-size: .83rem;
+}
+
+.badge--linked {
+  color: var(--success);
+  background: #eaf5f0;
+}
+
+.badge--unlinked {
+  color: #7a5717;
+  background: #fff4d9;
+}
+
+@media(max-width:980px){
+  .admin-advanced-search{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:620px){
+  .admin-advanced-search{grid-template-columns:1fr}
+  .admin-duplicate-record{align-items:flex-start;flex-direction:column}
+  .admin-subheading{flex-direction:column}
+}

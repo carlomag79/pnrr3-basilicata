@@ -12,3 +12,18 @@ CONFIGURAZIONE VERSIONE 3
    direttamente all'account dopo l'approvazione.
 6. La sezione Record e possibili duplicati consente di cercare, associare
    a un'email o eliminare record duplicati.
+
+
+ERRORE "cannot change return type of existing function"
+
+La migrazione è stata corretta usando DROP FUNCTION prima di ricreare:
+- admin_list_legacy_claims(text)
+- admin_find_claim_candidates(bigint)
+
+Se la precedente esecuzione ha mostrato quell'errore, non è stata applicata
+alcuna modifica perché la transazione è stata annullata. Eseguire quindi:
+
+HOTFIX_migration_v3_autonomia_admin.sql
+
+Al termine ricaricare admin.html. La migrazione invia anche il comando di
+refresh della schema cache di Supabase/PostgREST.

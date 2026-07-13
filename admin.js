@@ -59,7 +59,7 @@ async function handleSession(session) {
     loginPanel.hidden = true;
     adminApp.hidden = false;
     logoutButton.hidden = false;
-    await Promise.all([loadAdminRequests(), loadAdminUsers(), loadAdminRecords('')]);
+    await Promise.all([loadAdminRequests(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
   } catch (error) {
     loginPanel.hidden = false;
     adminApp.hidden = true;
@@ -300,43 +300,108 @@ async function loadAdminUsers(){
     </article>`).join("");
 }
 
-async function loadAdminRecords(query=""){
+function getRecordFilters(){
+  const idValue=document.querySelector("#admin-filter-id")?.value.trim()||"";
+  const positionValue=document.querySelector("#admin-filter-position")?.value.trim()||"";
+  const scoreValue=document.querySelector("#admin-filter-score")?.value.trim()||"";
+
+  return {
+    p_candidate_id:idValue?Number(idValue):null,
+    p_email:(document.querySelector("#admin-filter-email")?.value||"").trim()||null,
+    p_classe:document.querySelector("#admin-filter-class")?.value||null,
+    p_posizione:positionValue?Number(positionValue):null,
+    p_punteggio:scoreValue?Number(scoreValue):null,
+    p_comune:(document.querySelector("#admin-filter-municipality")?.value||"").trim()||null,
+    p_linked_status:document.querySelector("#admin-filter-linked")?.value||"all"
+  };
+}
+
+function renderCandidatureSummary(candidature){
+  return (candidature||[]).map(item=>
+    `${adminEscape(item.classe)} · posizione ${adminEscape(item.posizione)} · ${adminEscape(item.punteggio)} punti`
+  ).join("<br>");
+}
+
+async function loadAdminRecords(){
   const root=document.querySelector("#admin-records");
+  const countRoot=document.querySelector("#admin-record-results-count");
   if(!root)return;
+
   root.innerHTML='<p class="admin-empty">Caricamento record…</p>';
-  const {data,error}=await adminSupabase.rpc("admin_search_candidates",{p_query:query});
-  if(error){root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;return}
-  root.innerHTML=(data||[]).length?(data||[]).map(record=>`
+  countRoot.textContent="";
+
+  const {data,error}=await adminSupabase.rpc("admin_search_candidates_advanced",getRecordFilters());
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  const records=data||[];
+  countRoot.textContent=`${records.length} ${records.length===1?"record trovato":"record trovati"}`;
+
+  root.innerHTML=records.length?records.map(record=>`
     <article class="admin-record-row" data-candidate-id="${record.candidate_id}">
       <div class="admin-record-row__main">
-        <strong>Record #${record.candidate_id}</strong>
-        <span>${record.email ? adminEscape(record.email) : "Non associato a un account"}</span>
-        <small>${adminEscape(JSON.stringify(record.candidature))}</small>
-        <small>${(record.comuni||[]).map(adminEscape).join(" · ")}</small>
+        <div class="admin-record-row__title">
+          <strong>Record #${record.candidate_id}</strong>
+          <span class="badge ${record.email?"badge--linked":"badge--unlinked"}">
+            ${record.email?"Associato":"Non associato"}
+          </span>
+        </div>
+        <span>${record.email?adminEscape(record.email):"Nessun account collegato"}</span>
+        <div class="admin-record-candidatures">${renderCandidatureSummary(record.candidature)}</div>
+        <small>Comuni storici: ${(record.comuni||[]).length?(record.comuni||[]).map(adminEscape).join(" · "):"—"}</small>
         <small>${record.preferences_count} preferenze scolastiche · aggiornato ${adminDate(record.updated_at||record.created_at)}</small>
       </div>
       <div class="admin-record-row__actions">
-        ${record.email ? "" : '<button class="secondary admin-link-record" type="button">Associa a email</button>'}
+        ${record.email?"":'<button class="secondary admin-link-record" type="button">Associa a email</button>'}
         <button class="danger-button admin-delete-record" type="button">Elimina</button>
       </div>
-    </article>`).join(""):'<p class="admin-empty">Nessun record trovato.</p>';
+    </article>`).join(""):'<p class="admin-empty">Nessun record corrisponde ai filtri selezionati.</p>';
 }
 
 async function loadDuplicates(){
   const root=document.querySelector("#admin-duplicates");
+  const countRoot=document.querySelector("#admin-duplicate-count");
+  if(!root)return;
+
   root.innerHTML='<p class="admin-empty">Ricerca dei duplicati…</p>';
-  const {data,error}=await adminSupabase.rpc("admin_find_possible_duplicates");
-  if(error){root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;return}
-  root.innerHTML=(data||[]).length?`
-    <div class="admin-duplicate-summary">
-      <strong>${data.length} gruppi di possibili duplicati</strong>
-      ${(data||[]).map(group=>`
-        <article>
+
+  const {data,error}=await adminSupabase.rpc("admin_find_possible_duplicates_detailed");
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    countRoot.textContent="Errore";
+    return;
+  }
+
+  const groups=data||[];
+  countRoot.textContent=`${groups.length} ${groups.length===1?"gruppo":"gruppi"}`;
+
+  root.innerHTML=groups.length?groups.map((group,index)=>`
+    <article class="admin-duplicate-group">
+      <header>
+        <div>
+          <strong>Gruppo ${index+1}</strong>
           <span>${adminEscape(group.signature)}</span>
-          <strong>Record: ${(group.candidate_ids||[]).join(", ")}</strong>
-          <small>${(group.emails||[]).map(adminEscape).join(" · ")}</small>
-        </article>`).join("")}
-    </div>`:'<p class="admin-empty">Nessun duplicato esatto per classe, posizione e punteggio.</p>';
+        </div>
+        <span class="badge">${group.record_count} record</span>
+      </header>
+      <div class="admin-duplicate-records">
+        ${(group.records||[]).map(record=>`
+          <div class="admin-duplicate-record" data-candidate-id="${record.candidate_id}">
+            <div>
+              <strong>Record #${record.candidate_id}</strong>
+              <span>${record.email?adminEscape(record.email):"Non associato a un account"}</span>
+              <small>${(record.comuni||[]).map(adminEscape).join(" · ")||"Nessun comune storico"}</small>
+              <small>${record.preferences_count||0} preferenze scolastiche · ${adminDate(record.updated_at||record.created_at)}</small>
+            </div>
+            <div class="admin-record-row__actions">
+              ${record.email?"":'<button class="secondary admin-link-duplicate" type="button">Associa</button>'}
+              <button class="danger-button admin-delete-duplicate" type="button">Elimina</button>
+            </div>
+          </div>`).join("")}
+      </div>
+    </article>`).join(""):'<p class="admin-empty">Nessun duplicato esatto rilevato.</p>';
 }
 
 document.querySelector("#admin-add-user-form")?.addEventListener("submit",async event=>{
@@ -360,10 +425,18 @@ document.querySelector("#admin-users-list")?.addEventListener("click",async even
 
 document.querySelector("#admin-record-search-form")?.addEventListener("submit",event=>{
   event.preventDefault();
-  loadAdminRecords(document.querySelector("#admin-record-query").value.trim());
+  loadAdminRecords();
 });
 
-document.querySelector("#admin-load-duplicates")?.addEventListener("click",loadDuplicates);
+document.querySelector("#admin-reset-record-filters")?.addEventListener("click",()=>{
+  document.querySelector("#admin-record-search-form").reset();
+  loadAdminRecords();
+});
+
+document.querySelector("#admin-refresh-records")?.addEventListener("click",()=>{
+  Promise.all([loadAdminRecords(),loadDuplicates()]);
+});
+
 
 document.querySelector("#admin-records")?.addEventListener("click",async event=>{
   const row=event.target.closest(".admin-record-row");
@@ -374,7 +447,7 @@ document.querySelector("#admin-records")?.addEventListener("click",async event=>
     if(!confirm(`Eliminare definitivamente il record #${candidateId}?`))return;
     const {error}=await adminSupabase.rpc("admin_delete_candidate",{p_candidate_id:candidateId});
     if(error)return alert(error.message);
-    await loadAdminRecords(document.querySelector("#admin-record-query").value.trim());
+    await loadAdminRecords();
   }
 
   if(event.target.closest(".admin-link-record")){
@@ -385,6 +458,30 @@ document.querySelector("#admin-records")?.addEventListener("click",async event=>
       p_email:email.trim()
     });
     if(error)return alert(error.message);
-    await loadAdminRecords(document.querySelector("#admin-record-query").value.trim());
+    await loadAdminRecords();
+  }
+});
+
+document.querySelector("#admin-duplicates")?.addEventListener("click",async event=>{
+  const row=event.target.closest(".admin-duplicate-record");
+  if(!row)return;
+  const candidateId=Number(row.dataset.candidateId);
+
+  if(event.target.closest(".admin-delete-duplicate")){
+    if(!confirm(`Eliminare definitivamente il record #${candidateId}?`))return;
+    const {error}=await adminSupabase.rpc("admin_delete_candidate",{p_candidate_id:candidateId});
+    if(error)return alert(error.message);
+    await Promise.all([loadDuplicates(),loadAdminRecords()]);
+  }
+
+  if(event.target.closest(".admin-link-duplicate")){
+    const email=prompt("Email dell’utente registrato:");
+    if(!email)return;
+    const {error}=await adminSupabase.rpc("admin_link_candidate_to_email",{
+      p_candidate_id:candidateId,
+      p_email:email.trim()
+    });
+    if(error)return alert(error.message);
+    await Promise.all([loadDuplicates(),loadAdminRecords()]);
   }
 });

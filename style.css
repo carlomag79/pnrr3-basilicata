@@ -1874,3 +1874,20 @@ main > .panel::before {
     padding-bottom: 40px;
   }
 }
+
+
+.official-posts {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 3px 7px;
+  color: #fff;
+  font-size: .69rem;
+  font-weight: 700;
+}
+.official-posts.AAAA { background: var(--aaaa); }
+.official-posts.ADAA { background: var(--adaa); }
+.official-posts.EEEE { background: var(--eeee); }
+.official-posts.ADEE { background: var(--adee); }
+.official-posts--pending { color: #68767c; background: #edf0f1; }
+.official-posts-note { display: block; margin-top: 3px; color: var(--muted); font-size: .66rem; }

@@ -220,3 +220,85 @@
     min-height: 460px;
   }
 }
+
+
+.availability-status {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.availability-status__item {
+  padding: 16px 18px;
+  display: grid;
+  gap: 3px;
+  background: #fff;
+  border-left: 4px solid #9aa8af;
+  box-shadow: 0 8px 24px rgba(25,39,47,.04);
+}
+
+.availability-status__item.is-published { border-left-color: #2f7d61; }
+.availability-status__item.is-pending { border-left-color: #b8893f; }
+.availability-status__item span { color: var(--muted); font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.availability-status__item small { color: var(--muted); }
+
+.school-card__availability {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.availability-badge {
+  display: inline-flex !important;
+  width: auto !important;
+  padding: 3px 6px;
+  color: #fff !important;
+  font-size: .68rem !important;
+  font-weight: 750;
+  line-height: 1.2;
+}
+.availability-badge.AAAA { background: var(--aaaa); }
+.availability-badge.ADAA { background: var(--adaa); }
+.availability-badge.EEEE { background: var(--eeee); }
+.availability-badge.ADEE { background: var(--adee); }
+.availability-badge.special { background: #6d6254; }
+
+.school-popup__availability span.has-posts {
+  background: #eef7f2;
+  border-color: #b9d7c8;
+}
+
+.school-popup__availability small {
+  display: block;
+  margin-top: 3px;
+  color: #647178;
+  font-size: .62rem;
+  line-height: 1.15;
+}
+
+.school-popup__special {
+  grid-column: 1 / -1;
+  padding: 8px 9px;
+  display: grid;
+  gap: 2px;
+  background: #f3f0eb;
+  border: 1px solid #d8d0c4;
+}
+
+.school-popup__special span,
+.school-popup__source {
+  color: #647178;
+  font-size: .72rem;
+}
+
+.school-popup__source.is-pending {
+  padding: 7px 8px;
+  background: #fff7e8;
+  border-left: 3px solid #b8893f;
+}
+
+@media (max-width: 680px) {
+  .availability-status { grid-template-columns: 1fr; }
+}

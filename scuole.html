@@ -24,6 +24,18 @@
   </header>
 
   <main class="container schools-main">
+    <section class="availability-status" aria-label="Stato delle disponibilità ufficiali">
+      <div class="availability-status__item is-published">
+        <span>Provincia di Matera</span>
+        <strong>Disponibilità pubblicate</strong>
+        <small>Infanzia e primaria - dati acquisiti il 13 luglio 2026</small>
+      </div>
+      <div class="availability-status__item is-pending">
+        <span>Provincia di Potenza</span>
+        <strong>In attesa di pubblicazione</strong>
+        <small>La pagina sarà aggiornata appena saranno disponibili i prospetti ufficiali.</small>
+      </div>
+    </section>
     <section class="schools-toolbar panel">
       <div class="section-heading">
         <div>
@@ -55,6 +67,18 @@
           </select>
         </label>
         <label>
+          Disponibilità
+          <select id="school-availability">
+            <option value="ALL">Tutte le scuole</option>
+            <option value="OFFICIAL">Con disponibilità ufficiali</option>
+            <option value="AAAA">Con posti AAAA</option>
+            <option value="ADAA">Con posti ADAA</option>
+            <option value="EEEE">Con posti EEEE</option>
+            <option value="ADEE">Con posti ADEE</option>
+            <option value="SPECIAL">Con posti speciali</option>
+          </select>
+        </label>
+        <label>
           Comune
           <select id="school-municipality">
             <option value="ALL">Tutti</option>
@@ -79,6 +103,7 @@
         </div>
         <p class="schools-map-note">
           Le coordinate precise vengono ricercate quando selezioni una scuola. Se l’indirizzo non è disponibile o non viene riconosciuto, la mappa usa il centro del comune come riferimento approssimativo.
+          Per l’infanzia, alcuni posti sono pubblicati a livello di istituto e comune: in questi casi il dato non identifica uno specifico plesso.
         </p>
       </section>
     </section>

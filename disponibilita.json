@@ -1,0 +1,218 @@
+{
+  "anno_scolastico": "2026/2027",
+  "aggiornato_al": "2026-07-13",
+  "province": {
+    "Matera": {
+      "stato": "pubblicato",
+      "fonte": "Prospetti posti disponibili per le immissioni in ruolo - Ufficio scolastico provinciale di Matera",
+      "infanzia": [
+        {
+          "codice": "MTAA821007",
+          "denominazione": "I.C. Tricarico",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Tricarico",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "MTAA82300V",
+          "denominazione": "I.C. D.L. Palazzo - Montescaglioso",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Montescaglioso",
+          "posti": 2,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "MTAA82600A",
+          "denominazione": "Semeria-Minozzi-Festa",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Matera",
+          "posti": 8,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "MTAA828002",
+          "denominazione": "IC Enrico Fermi - Matera",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Matera",
+          "posti": 1,
+          "classe": "AAAA"
+        },
+        {
+          "codice": "MTAA83100T",
+          "denominazione": "I.C. L. Milani - Policoro N. 1",
+          "tipo_posto": "HN",
+          "descrizione": "Con metodo Montessori",
+          "comune": "Policoro",
+          "posti": 3,
+          "classe": null
+        },
+        {
+          "codice": "MTAA834009",
+          "denominazione": "I.C. Valsinni - Tursi",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Valsinni",
+          "posti": 2,
+          "classe": "AAAA"
+        }
+      ],
+      "primaria": [
+        {
+          "codice": "MTCT70500A",
+          "denominazione": "CTP Irsina",
+          "tipo_posto": "ZJ",
+          "descrizione": "Corsi di istruzione per adulti",
+          "comune": "Matera",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "MTEE808013",
+          "denominazione": "S.G. Bosco - Grassano",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Grassano",
+          "posti": 1,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "MTEE808013",
+          "denominazione": "S.G. Bosco - Grassano",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Grassano",
+          "posti": 2,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "MTEE81701T",
+          "denominazione": "Largo Europa - Nova Siri",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Nova Siri",
+          "posti": 3,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "MTEE81801N",
+          "denominazione": "F. D'Onofrio - IC Ferrandina",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Ferrandina",
+          "posti": 1,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "MTEE81901D",
+          "denominazione": "Fabrizio De Andre' - Scanzano",
+          "tipo_posto": "EM",
+          "descrizione": "Educazione motoria primaria",
+          "comune": "Scanzano Jonico",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "MTEE823015",
+          "denominazione": "Don L. Palazzo - Montescaglioso",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Montescaglioso",
+          "posti": 1,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "MTEE823015",
+          "denominazione": "Don L. Palazzo - Montescaglioso",
+          "tipo_posto": "EM",
+          "descrizione": "Educazione motoria primaria",
+          "comune": "Montescaglioso",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "MTEE82602N",
+          "denominazione": "Semeria - Matera",
+          "tipo_posto": "EM",
+          "descrizione": "Educazione motoria primaria",
+          "comune": "Matera",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "MTEE82701C",
+          "denominazione": "Aldo Moro-Pascoli MT",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Matera",
+          "posti": 1,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "MTEE829025",
+          "denominazione": "Via Bramante",
+          "tipo_posto": "EM",
+          "descrizione": "Educazione motoria primaria",
+          "comune": "Matera",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "MTEE831014",
+          "denominazione": "L. Milani - Policoro 1",
+          "tipo_posto": "EM",
+          "descrizione": "Educazione motoria primaria",
+          "comune": "Policoro",
+          "posti": 1,
+          "classe": null
+        },
+        {
+          "codice": "MTEE83201X",
+          "denominazione": "Giovanni Paolo II - Policoro 2",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Policoro",
+          "posti": 2,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "MTEE83401G",
+          "denominazione": "Isabella Morra - Valsinni",
+          "tipo_posto": "AN",
+          "descrizione": "Comune",
+          "comune": "Valsinni",
+          "posti": 6,
+          "classe": "EEEE"
+        },
+        {
+          "codice": "MTEE83401G",
+          "denominazione": "Isabella Morra - Valsinni",
+          "tipo_posto": "EH",
+          "descrizione": "Sostegno psicofisico",
+          "comune": "Valsinni",
+          "posti": 1,
+          "classe": "ADEE"
+        },
+        {
+          "codice": "MTEE83401G",
+          "denominazione": "Isabella Morra - Valsinni",
+          "tipo_posto": "EM",
+          "descrizione": "Educazione motoria primaria",
+          "comune": "Valsinni",
+          "posti": 1,
+          "classe": null
+        }
+      ]
+    },
+    "Potenza": {
+      "stato": "in_attesa",
+      "fonte": null,
+      "infanzia": [],
+      "primaria": []
+    }
+  }
+}

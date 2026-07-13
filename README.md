@@ -102,3 +102,14 @@ Prima di utilizzarla:
 3. aggiungere il suo UUID alla tabella `public.admin_users`.
 
 La procedura completa è descritta in `GUIDA_ADMIN_PANEL.txt`.
+
+
+## Disponibilità ufficiali 2026/27
+
+La versione include i prospetti della provincia di Matera per infanzia e primaria.
+
+- `disponibilita.json` contiene le righe ufficiali e lo stato per provincia.
+- I posti della primaria sono associati al codice del singolo plesso.
+- I posti dell'infanzia sono associati ai plessi del medesimo istituto e comune, ma restano contrassegnati come dato aggregato.
+- I posti Montessori, educazione motoria e istruzione per adulti non sono conteggiati come AAAA, ADAA, EEEE o ADEE.
+- Per Potenza lo stato resta `in_attesa`.

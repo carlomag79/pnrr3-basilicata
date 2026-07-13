@@ -336,7 +336,7 @@ function runPositionComparison() {
       <p><strong>${comparison.ahead}</strong> candidature risultano meglio posizionate.</p>
       <p><strong>${comparison.behind}</strong> risultano peggio posizionate.</p>
       <p>Saresti circa <strong>${comparison.observedRank}°</strong> tra i dati ${classCode} raccolti per ${escapeHtml(formatMunicipalityName(municipality))}.</p>
-      <small>Il confronto usa soltanto le compilazioni presenti sul sito e non tiene ancora conto dei posti disponibili.</small>
+      <small>Il confronto usa le compilazioni presenti sul sito. I posti ufficiali sono mostrati separatamente e non modificano ancora la percentuale stimata.</small>
     </div>
   `;
 }
@@ -854,6 +854,13 @@ function renderEligibilityBar(value, classCode) {
   `;
 }
 
+function renderOfficialPosts(school, classCode) {
+  const value = school.d?.[classCode];
+  if (value == null) return '<span class="official-posts official-posts--pending">Posti ufficiali: non pubblicati</span>';
+  const aggregate = school.a?.[classCode] === "istituto_comune";
+  return `<span class="official-posts ${classCode}"><strong>${value}</strong> ${value === 1 ? "posto ufficiale" : "posti ufficiali"}${aggregate ? "*" : ""}</span>${aggregate ? '<small class="official-posts-note">* dato riferito all’istituto nel comune, non al singolo plesso</small>' : ''}`;
+}
+
 function renderMunicipalitiesWithEligibility(row, selectedClass) {
   const candidatures = getRelevantCandidatures(row, selectedClass);
 
@@ -886,6 +893,7 @@ function renderMunicipalitiesWithEligibility(row, selectedClass) {
                 <div>
                   <strong>${escapeHtml(school.n)} – ${escapeHtml(municipality)}</strong>
                   <small>${escapeHtml(school.i)}</small>
+                  ${renderOfficialPosts(school, candidature.classe)}
                 </div>
               </div>
               ${renderEligibilityBar(value, candidature.classe)}

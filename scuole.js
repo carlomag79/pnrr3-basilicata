@@ -63,11 +63,42 @@ function haversineKm([lat1, lon1], [lat2, lon2]) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+function availabilityScopeLabel(scope) {
+  return scope === "plesso" ? "dato del plesso" : "dato aggregato per istituto/comune";
+}
+
+function officialAvailabilityFor(school, code) {
+  return (school.disponibilita_ufficiale || []).find(item => item.classe === code) || null;
+}
+
+function hasOfficialAvailability(school) {
+  return Boolean((school.disponibilita_ufficiale || []).length || (school.altre_disponibilita || []).length);
+}
+
 function formatAvailability(school) {
-  return ["AAAA", "ADAA", "EEEE", "ADEE"].map(code => {
-    const value = school.disponibilita?.[code];
-    return `<span><strong>${code}</strong><br>${value == null ? "—" : value}</span>`;
+  const main = ["AAAA", "ADAA", "EEEE", "ADEE"].map(code => {
+    const item = officialAvailabilityFor(school, code);
+    return `<span class="${item ? "has-posts" : ""}"><strong>${code}</strong><br>${item ? item.posti : "—"}${item ? `<small>${availabilityScopeLabel(item.ambito)}</small>` : ""}</span>`;
   }).join("");
+
+  const special = (school.altre_disponibilita || []).map(item => `
+    <div class="school-popup__special">
+      <strong>${escapeHtml(item.codice_tipo_posto)} - ${escapeHtml(item.denominazione_tipo_posto)}</strong>
+      <span>${item.posti} ${item.posti === 1 ? "posto" : "posti"} · ${availabilityScopeLabel(item.ambito)}</span>
+    </div>
+  `).join("");
+
+  return main + special;
+}
+
+function availabilityBadges(school) {
+  const classes = (school.disponibilita_ufficiale || []).map(item => `
+    <span class="availability-badge ${item.classe}">${item.classe}: ${item.posti}${item.ambito === "istituto_comune" ? "*" : ""}</span>
+  `).join("");
+  const special = (school.altre_disponibilita || []).map(item => `
+    <span class="availability-badge special">${escapeHtml(item.codice_tipo_posto)}: ${item.posti}${item.ambito === "istituto_comune" ? "*" : ""}</span>
+  `).join("");
+  return classes || special ? `<span class="school-card__availability">${classes}${special}</span>` : "";
 }
 
 function popupHtml(school, coordinates, approximate = false) {
@@ -85,6 +116,7 @@ function popupHtml(school, coordinates, approximate = false) {
       <p><strong>Codice:</strong> ${escapeHtml(school.codice)}</p>
       ${approximate ? '<p><em>Posizione cartografica approssimativa.</em></p>' : ""}
       <div class="school-popup__availability">${formatAvailability(school)}</div>
+      ${hasOfficialAvailability(school) ? '<p class="school-popup__source"><strong>Fonte:</strong> prospetti ufficiali disponibilità immissioni in ruolo 2026/27 - USP Matera.</p>' : '<p class="school-popup__source is-pending">Disponibilità ufficiali non ancora pubblicate per questa sede.</p>'}
       <div class="school-popup__distances">
         <p><strong>Distanza in linea d’aria:</strong></p>
         <p>Matera: ${materaDistance} km · Potenza: ${potenzaDistance} km</p>
@@ -197,6 +229,7 @@ function applyFilters() {
   const province = document.querySelector("#school-province").value;
   const type = document.querySelector("#school-type").value;
   const municipality = document.querySelector("#school-municipality").value;
+  const availability = document.querySelector("#school-availability").value;
 
   filteredSchools = schools.filter(school => {
     const haystack = normalize([
@@ -210,7 +243,11 @@ function applyFilters() {
     return (!query || haystack.includes(query)) &&
       (province === "ALL" || school.provincia === province) &&
       (type === "ALL" || school.tipo === type) &&
-      (municipality === "ALL" || school.comune === municipality);
+      (municipality === "ALL" || school.comune === municipality) &&
+      (availability === "ALL" ||
+        (availability === "OFFICIAL" && hasOfficialAvailability(school)) ||
+        (availability === "SPECIAL" && (school.altre_disponibilita || []).length > 0) ||
+        (["AAAA", "ADAA", "EEEE", "ADEE"].includes(availability) && Boolean(officialAvailabilityFor(school, availability))));
   });
 
   visibleLimit = PAGE_SIZE;
@@ -234,6 +271,7 @@ function renderSchools() {
         <strong>${escapeHtml(school.denominazione)}</strong>
         <span>${escapeHtml(school.comune)}${school.indirizzo ? ` · ${escapeHtml(school.indirizzo)}` : ""}</span>
         <small>${escapeHtml(school.istituto)}</small>
+        ${availabilityBadges(school)}
       </span>
     `;
     button.addEventListener("click", () => focusSchool(school));
@@ -296,7 +334,7 @@ async function initMapAndData() {
   document.querySelector("#schools-total").textContent = `${schools.length} plessi`;
 }
 
-document.querySelectorAll("#school-province, #school-type, #school-municipality")
+document.querySelectorAll("#school-province, #school-type, #school-availability, #school-municipality")
   .forEach(element => element.addEventListener("change", applyFilters));
 
 document.querySelector("#school-search").addEventListener("input", applyFilters);

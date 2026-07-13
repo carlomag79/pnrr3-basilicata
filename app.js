@@ -1109,7 +1109,7 @@ function renderOfficialPosts(school, classCode) {
       : "";
   }
   const aggregate = school.a?.[classCode] === "istituto_comune";
-  return `<span class="official-posts ${classCode}"><strong>${value}</strong> ${value === 1 ? "posto ufficiale" : "posti ufficiali"}${aggregate ? "*" : ""}</span>${aggregate ? '<small class="official-posts-note">* dato riferito all’istituto nel comune, non al singolo plesso</small>' : ''}`;
+  return `<span class="official-posts ${classCode}"><strong>${value}</strong><span>${value === 1 ? "posto ufficiale" : "posti ufficiali"}${aggregate ? "*" : ""}</span></span>${aggregate ? '<small class="official-posts-note">* dato riferito all’istituto nel comune, non al singolo plesso</small>' : ''}`;
 }
 
 function renderSchoolPreferencesWithEligibility(row, selectedClass) {

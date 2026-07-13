@@ -19,10 +19,10 @@
       <nav class="site-nav site-nav--desktop" aria-label="Navigazione principale">
         <a href="index.html"${isHome ? ' aria-current="page"' : ""}>Home</a>
         <a href="${homeAnchor("#dashboard-section")}">Dashboard</a>
-        <a href="account.html"${isAccount ? ' aria-current="page"' : ""}>Le mie preferenze</a>
         <a href="${homeAnchor("#map-section")}">Mappa</a>
         <a href="${homeAnchor("#results-section")}">Risultati</a>
         <a href="scuole.html"${isSchools ? ' aria-current="page"' : ""}>Scuole</a>
+        <a href="account.html" class="account-menu-link"${isAccount ? ' aria-current="page"' : ""}>Log in</a>
       </nav>`;
 
     document.querySelector("#mobile-drawer")?.remove();
@@ -41,35 +41,91 @@
         <nav class="mobile-drawer__nav">
           <a href="index.html">Home</a>
           <a href="${homeAnchor("#dashboard-section")}">Dashboard</a>
-          <a href="account.html">Le mie preferenze</a>
           <a href="${homeAnchor("#map-section")}">Mappa delle preferenze</a>
           <a href="${homeAnchor("#results-section")}">Risultati</a>
           <a href="scuole.html">Scuole disponibili</a>
+          <a href="account.html" class="account-menu-link">Log in</a>
         </nav>
       </aside>`;
     document.body.appendChild(drawer);
 
     const toggle = root.querySelector(".menu-toggle");
-    const close = () => {
+
+    function closeMenu() {
       toggle.setAttribute("aria-expanded", "false");
       drawer.hidden = true;
       document.documentElement.classList.remove("menu-open");
       document.body.classList.remove("menu-open");
-    };
-    const open = () => {
+    }
+
+    function openMenu() {
       toggle.setAttribute("aria-expanded", "true");
       drawer.hidden = false;
       document.documentElement.classList.add("menu-open");
       document.body.classList.add("menu-open");
-    };
+    }
 
-    toggle.addEventListener("click", () => drawer.hidden ? open() : close());
-    drawer.querySelector(".mobile-drawer__close").addEventListener("click", close);
-    drawer.querySelector(".mobile-drawer__backdrop").addEventListener("click", close);
-    drawer.querySelectorAll("a").forEach(link => link.addEventListener("click", close));
+    toggle.addEventListener("click", () => drawer.hidden ? openMenu() : closeMenu());
+    drawer.querySelector(".mobile-drawer__close").addEventListener("click", closeMenu);
+    drawer.querySelector(".mobile-drawer__backdrop").addEventListener("click", closeMenu);
+    drawer.querySelectorAll("a").forEach(link => link.addEventListener("click", closeMenu));
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && !drawer.hidden) close();
+      if (event.key === "Escape" && !drawer.hidden) closeMenu();
     });
+
+    function updateAccountMenu(session) {
+      const label = session?.user ? "Il mio account" : "Log in";
+      document.querySelectorAll(".account-menu-link").forEach(link => {
+        link.textContent = label;
+        link.setAttribute(
+          "aria-label",
+          session?.user ? "Apri il mio account" : "Accedi o registrati"
+        );
+      });
+    }
+
+    updateAccountMenu(null);
+
+    if (
+      window.supabase &&
+      window.APP_CONFIG?.SUPABASE_URL &&
+      window.APP_CONFIG?.SUPABASE_KEY
+    ) {
+      try {
+        const authClient = window.supabase.createClient(
+          window.APP_CONFIG.SUPABASE_URL,
+          window.APP_CONFIG.SUPABASE_KEY
+        );
+
+        authClient.auth.getSession().then(({ data }) => {
+          updateAccountMenu(data?.session || null);
+        });
+
+        authClient.auth.onAuthStateChange((_event, session) => {
+          updateAccountMenu(session);
+        });
+      } catch (error) {
+        console.error("Impossibile determinare lo stato dell’account.", error);
+      }
+    }
+
+    const footerRoot =
+      document.querySelector("#site-footer") ||
+      document.querySelector(".site-footer");
+
+    if (footerRoot && footerRoot.dataset.ready !== "true") {
+      footerRoot.dataset.ready = "true";
+      footerRoot.classList.add("site-footer");
+      footerRoot.innerHTML = `
+        <div class="container site-footer__inner">
+          <p>
+            Progetto nato da un’idea di
+            <a href="https://carlomagni.it" target="_blank" rel="noopener noreferrer">Carlo Magni</a>
+            e del gruppo WhatsApp “Concorso PNRR3 Basilicata Infanzia e Primaria”.
+          </p>
+          <p class="footer-admin-link"><a href="admin.html">Area amministrativa</a></p>
+        </div>`;
+    }
   }
 
   if (document.readyState === "loading") {

@@ -176,3 +176,13 @@ scuole disponibili e salvare.
 Se la migrazione V2 era già stata eseguita, lanciare anche:
 
 `migration_v2_import_legacy.sql`
+
+
+## Correzioni mappa, footer e menu account
+
+- Corretto `loadSchoolsIndex()` come funzione asincrona: l'errore bloccava
+  l'inizializzazione della mappa e delle altre funzioni della home.
+- Ripristinato il footer condiviso con crediti e link amministrativo.
+- Inserito uno spazio grafico esplicito tra il numero e il testo dei posti.
+- Il menu mostra `Log in` senza sessione e `Il mio account` quando l'utente
+  risulta autenticato tramite Supabase.

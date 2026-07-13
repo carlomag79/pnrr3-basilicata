@@ -2041,3 +2041,52 @@ main > .panel::before {
     font-size: 3.2rem;
   }
 }
+
+
+.official-posts {
+  gap: .28em;
+  align-items: baseline;
+}
+
+.official-posts > strong,
+.official-posts > span {
+  display: inline-block;
+}
+
+.site-footer {
+  margin-top: 38px;
+  padding: 26px 0;
+  color: rgba(255,255,255,.82);
+  background: var(--accent-dark);
+}
+
+.site-footer__inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  align-items: center;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  color: #fff;
+}
+
+.site-footer .footer-admin-link {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.account-menu-link {
+  font-weight: 750;
+}
+
+@media (max-width: 680px) {
+  .site-footer__inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

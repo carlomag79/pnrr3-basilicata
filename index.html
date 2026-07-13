@@ -77,90 +77,39 @@
       </div>
     </section>
 
-    <section class="panel section-form" id="form-section">
+    <section class="panel section-form account-entry" id="form-section">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Partecipa</p>
-          <h2>Inserisci le tue preferenze</h2>
+          <p class="eyebrow">Area personale</p>
+          <h2>Inserisci e aggiorna le preferenze scolastiche</h2>
         </div>
-        <span class="badge">Nessun nome o email richiesti</span>
+        <span class="badge">Accesso leggero via email</span>
       </div>
 
-      <form id="candidate-form">
-        <div class="candidatures-box">
-          <div class="preferences-head">
-            <div>
-              <h3>Classi di concorso</h3>
-              <p>Aggiungi una o più classi. Per ciascuna indica posizione e punteggio.</p>
-            </div>
-            <button type="button" id="add-candidature" class="secondary">Aggiungi classe</button>
-          </div>
-          <div id="candidatures-list" class="candidatures-list"></div>
+      <div class="account-entry__grid">
+        <div>
+          <h3>Le preferenze ora riguardano scuole e plessi</h3>
+          <p>
+            Accedi tramite Magic Link, indica classe, posizione e punteggio e ordina
+            le singole sedi scolastiche che prenderesti in considerazione.
+          </p>
+          <ul class="feature-list">
+            <li>Nessuna password da ricordare</li>
+            <li>Modifica autonoma in qualsiasi momento</li>
+            <li>Solo scuole con disponibilità ufficiali per la classe scelta</li>
+            <li>Possibilità di attivare gli aggiornamenti ufficiali via email</li>
+          </ul>
         </div>
-
-        <div class="form-grid">
-          <label>
-            Provincia 1
-            <select id="provincia_1" required>
-              <option value="">Seleziona</option>
-              <option value="Potenza">Potenza</option>
-              <option value="Matera">Matera</option>
-            </select>
-          </label>
-
-          <label>
-            Provincia 2
-            <select id="provincia_2">
-              <option value="">Nessuna / non indicata</option>
-              <option value="Potenza">Potenza</option>
-              <option value="Matera">Matera</option>
-            </select>
-          </label>
+        <div class="account-entry__actions">
+          <a class="primary button-link" href="account.html">Accedi o registrati</a>
+          <a class="secondary button-link" href="scuole.html">Consulta le scuole disponibili</a>
+          <small>
+            Le compilazioni precedenti restano modificabili tramite il codice anonimo
+            nella sezione successiva.
+          </small>
         </div>
-
-        <div class="preferences-box">
-          <div class="preferences-head">
-            <div>
-              <h3>Preferenza comuni</h3>
-              <p>Seleziona fino a 20 comuni. Sono disponibili solo i comuni con posti ufficiali per almeno una delle classi inserite.</p>
-            </div>
-            <strong id="counter">0 / 20</strong>
-          </div>
-
-          <div class="add-municipality">
-            <select id="municipality-select" disabled>
-              <option value="">Seleziona prima almeno una provincia</option>
-            </select>
-            <button type="button" id="add-municipality">Aggiungi comune</button>
-          </div>
-
-          <ol id="selected-municipalities" class="selected-list"></ol>
-          <button type="button" id="toggle-selected-municipalities" class="text-button" hidden>Mostra tutte le preferenze</button>
-        </div>
-
-        <label class="consent">
-          <input id="consenso" type="checkbox" required>
-          <span>Comprendo che posizione, punteggio e preferenze saranno pubblicati senza nome, ma potrebbero rendermi indirettamente riconoscibile confrontandoli con graduatorie esterne.</span>
-        </label>
-
-        <div class="form-actions">
-          <button class="primary" id="candidate-submit" type="submit">Invia i dati</button>
-          <button class="secondary" id="cancel-edit" type="button" hidden>Annulla modifica</button>
-          <p id="form-message" role="status"></p>
-        </div>
-
-        <div id="edit-code-result" class="edit-code-result" hidden>
-          <p class="eyebrow">Conserva questo codice</p>
-          <h3>La compilazione è modificabile</h3>
-          <p>Questo codice permette di correggere o cancellare la compilazione. Non viene recuperato tramite nome o email.</p>
-          <div class="edit-code-row">
-            <code id="generated-edit-code"></code>
-            <button type="button" id="copy-edit-code" class="secondary">Copia codice</button>
-          </div>
-        </div>
-      </form>
+      </div>
     </section>
-
 
     <section class="panel compact manage-panel section-manage" id="manage-section">
       <div class="manage-layout">
@@ -326,7 +275,7 @@
               <th>Classi, posizioni e punteggi</th>
               <th>Provincia 1</th>
               <th>Provincia 2</th>
-              <th>Scuole nei comuni preferiti</th>
+              <th>Preferenze scolastiche ed eleggibilità</th>
             </tr>
           </thead>
           <tbody id="results-body">

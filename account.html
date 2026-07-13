@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Le mie preferenze – PNRR3 Basilicata</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <header class="site-header site-header--compact">
+    <div class="container">
+      <div class="site-brand">
+        <img class="site-brand__logo" src="https://upload.wikimedia.org/wikipedia/commons/0/07/Regione-Basilicata-Stemma.svg" alt="" width="58" height="58">
+        <div><p class="eyebrow">PNRR3 Basilicata</p><h1>Le mie preferenze</h1></div>
+      </div>
+      <div id="site-navigation" class="site-navigation"></div>
+    </div>
+  </header>
+
+  <main class="container account-main">
+    <section id="auth-panel" class="panel auth-panel">
+      <p class="eyebrow">Registrazione leggera</p>
+      <h2>Accedi tramite email</h2>
+      <p>Riceverai un Magic Link. Non servono password, nome, cognome o numero di telefono.</p>
+      <form id="magic-link-form" class="auth-form">
+        <label>Email
+          <input id="auth-email" type="email" autocomplete="email" required placeholder="nome@esempio.it">
+        </label>
+        <button class="primary" type="submit">Invia link di accesso</button>
+        <p id="auth-message" role="status"></p>
+      </form>
+    </section>
+
+    <div id="account-app" hidden>
+      <section class="account-toolbar">
+        <div>
+          <p class="eyebrow">Account attivo</p>
+          <strong id="account-email"></strong>
+        </div>
+        <button id="account-logout" class="secondary" type="button">Esci</button>
+      </section>
+
+      <section class="panel account-editor">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Dati graduatoria</p>
+            <h2>Aggiorna la tua partecipazione</h2>
+          </div>
+          <span id="save-status" class="badge">Non salvato</span>
+        </div>
+
+        <form id="account-form">
+          <div id="account-candidatures" class="account-candidatures"></div>
+          <button id="add-account-candidature" class="secondary" type="button">Aggiungi classe</button>
+
+          <div class="school-preferences-editor">
+            <div class="preferences-header">
+              <div>
+                <p class="eyebrow">Ordine delle preferenze</p>
+                <h3>Scuole e plessi</h3>
+                <p>Seleziona una classe, cerca la sede e aggiungila. Puoi riordinare le preferenze con i pulsanti.</p>
+              </div>
+              <span id="school-counter" class="badge">0 / 30</span>
+            </div>
+
+            <div class="school-picker">
+              <label>Classe
+                <select id="school-class-filter"></select>
+              </label>
+              <label>Provincia
+                <select id="school-province-filter">
+                  <option value="">Entrambe</option>
+                  <option value="Matera">Matera</option>
+                  <option value="Potenza">Potenza</option>
+                </select>
+              </label>
+              <label>Cerca scuola, comune o istituto
+                <input id="school-search" type="search" placeholder="Es. Senise, Brancato, Moliterno">
+              </label>
+            </div>
+
+            <div id="school-search-results" class="school-search-results"></div>
+            <div id="selected-schools" class="selected-schools"></div>
+          </div>
+
+          <div class="account-actions">
+            <button class="primary" type="submit">Salva preferenze</button>
+            <button id="delete-account-data" class="danger-button" type="button">Elimina i miei dati</button>
+          </div>
+          <p id="account-message" role="status"></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="site-shell.js"></script>
+  <script src="account.js"></script>
+</body>
+</html>

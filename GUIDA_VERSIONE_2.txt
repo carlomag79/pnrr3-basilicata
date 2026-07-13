@@ -1,0 +1,28 @@
+CONFIGURAZIONE VERSIONE 2
+
+1. Eseguire in Supabase SQL Editor:
+   migration_v2_accounts_schools.sql
+
+2. In Supabase:
+   Authentication → URL Configuration
+
+   Aggiungere tra i Redirect URLs:
+   https://TUO-DOMINIO/account.html
+
+   Per GitHub Pages, ad esempio:
+   https://NOMEUTENTE.github.io/pnrr3-basilicata/account.html
+
+3. In Authentication → Providers → Email:
+   lasciare attivo Email OTP / Magic Link.
+
+4. Caricare tutti i file della repository.
+
+5. Provare:
+   - invio Magic Link;
+   - accesso ad account.html;
+   - selezione delle scuole;
+   - modifica e riordinamento;
+   - salvataggio;
+   - eliminazione dei dati;
+   - menu mobile.
+

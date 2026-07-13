@@ -27,6 +27,8 @@ let mapReady = false;
 let geojsonPromise = null;
 let eligibilityIndex = new Map();
 let schoolsByMunicipality = new Map();
+let schoolsByCode = new Map();
+let schoolEligibilityIndex = new Map();
 let visibleResultsLimit = 20;
 const RESULTS_PAGE_SIZE = 20;
 let editingCode = null;
@@ -73,6 +75,7 @@ async function loadSchoolsIndex() {
   try {
     if (window.SCHOOLS_INDEX && typeof window.SCHOOLS_INDEX === "object") {
       schoolsByMunicipality = new Map(Object.entries(window.SCHOOLS_INDEX));
+      rebuildSchoolCodeIndex();
       return;
     }
 
@@ -80,10 +83,31 @@ async function loadSchoolsIndex() {
     if (!response.ok) throw new Error("Impossibile caricare l’elenco delle scuole.");
     const data = await response.json();
     schoolsByMunicipality = new Map(Object.entries(data));
+    rebuildSchoolCodeIndex();
   } catch (error) {
     console.error(error);
     schoolsByMunicipality = new Map();
   }
+}
+
+function rebuildSchoolCodeIndex() {
+  schoolsByCode = new Map();
+  schoolsByMunicipality.forEach((schools, municipality) => {
+    schools.forEach(school => {
+      schoolsByCode.set(school.c, { ...school, municipality });
+    });
+  });
+}
+
+function schoolFromPreference(preference) {
+  return schoolsByCode.get(preference?.codice_scuola) || null;
+}
+
+function rowSchoolPreferences(row, selectedClass = "") {
+  const preferences = Array.isArray(row.preferenze_scuole) ? row.preferenze_scuole : [];
+  return preferences
+    .filter(item => !selectedClass || item.classe === selectedClass)
+    .sort((a, b) => Number(a.ordine || 0) - Number(b.ordine || 0));
 }
 
 function schoolProvince(school) {
@@ -193,6 +217,17 @@ function sanitizeSelectedMunicipalities({ notify = false } = {}) {
 }
 
 function normalizeRow(row) {
+  if (Array.isArray(row.preferenze_scuole) && row.preferenze_scuole.length) {
+    const schools = row.preferenze_scuole.map(schoolFromPreference).filter(Boolean);
+    const municipalities = [...new Set(schools.map(school => formatMunicipalityName(school.municipality)))];
+    const provinces = [...new Set(schools.map(schoolProvince).filter(Boolean))];
+    row = {
+      ...row,
+      comuni: municipalities,
+      provincia_1: provinces[0] || row.provincia_1 || "—",
+      provincia_2: provinces[1] || null
+    };
+  }
   if (Array.isArray(row.candidature) && row.candidature.length) return row;
   if (row.classe_concorso) {
     return {
@@ -243,6 +278,7 @@ async function ensureGeoJSON() {
 
 function buildEligibilityIndex() {
   eligibilityIndex = new Map();
+  schoolEligibilityIndex = new Map();
 
   rows.forEach(row => {
     const municipalities = [...new Set((row.comuni || []).map(normalizeName))];
@@ -256,10 +292,17 @@ function buildEligibilityIndex() {
         if (!eligibilityIndex.has(key)) eligibilityIndex.set(key, []);
         eligibilityIndex.get(key).push(position);
       });
+
+      rowSchoolPreferences(row, candidature.classe).forEach(preference => {
+        const key = `${candidature.classe}|${preference.codice_scuola}`;
+        if (!schoolEligibilityIndex.has(key)) schoolEligibilityIndex.set(key, []);
+        schoolEligibilityIndex.get(key).push(position);
+      });
     });
   });
 
   eligibilityIndex.forEach(positions => positions.sort((a, b) => a - b));
+  schoolEligibilityIndex.forEach(positions => positions.sort((a, b) => a - b));
 }
 
 function countPositionsBefore(sortedPositions, currentPosition) {
@@ -285,7 +328,7 @@ async function loadRows() {
 
   const { data, error } = await supabaseClient
     .from("candidati")
-    .select("id,candidature,classe_concorso,posizione,punteggio,provincia_1,provincia_2,comuni,created_at")
+    .select("id,candidature,classe_concorso,posizione,punteggio,provincia_1,provincia_2,comuni,preferenze_scuole,updated_at,created_at")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
@@ -992,9 +1035,41 @@ function eligibilityLabel(value) {
   return "Molto bassa";
 }
 
+function calculateSchoolEligibilityForPosition(classCode, school, currentPosition, preferenceIndex = 0) {
+  const key = `${classCode}|${school.c}`;
+  const positions = schoolEligibilityIndex.get(key) || [];
+  const betterRanked = countPositionsBefore(positions, currentPosition);
+  const equalRanked = positions.filter(position => position === currentPosition).length;
+  const behind = Math.max(0, positions.length - betterRanked - equalRanked);
+  const observedRank = betterRanked + 1;
+  const officialPosts = officialPostsForSchool(school, classCode);
+
+  if (!officialPosts) return 0;
+
+  let eligibility;
+  if (observedRank <= officialPosts) {
+    eligibility = 91 + Math.min(6, (officialPosts - observedRank) * 1.25);
+  } else {
+    eligibility = 85 * Math.pow(officialPosts / observedRank, 1.12);
+  }
+
+  eligibility -= preferenceIndex * 1.8;
+  eligibility -= Math.min(6, behind * .3);
+  return Math.round(clamp(eligibility, 5, 97));
+}
+
 function calculateEligibility(row, candidature, municipality, preferenceIndex, school = null) {
   const currentPosition = Number(candidature.posizione);
   if (!Number.isFinite(currentPosition)) return null;
+
+  if (school && Array.isArray(row.preferenze_scuole) && row.preferenze_scuole.length) {
+    return calculateSchoolEligibilityForPosition(
+      candidature.classe,
+      school,
+      currentPosition,
+      preferenceIndex
+    );
+  }
 
   const schoolPosts = school
     ? officialPostsForSchool(school, candidature.classe) || undefined
@@ -1037,7 +1112,49 @@ function renderOfficialPosts(school, classCode) {
   return `<span class="official-posts ${classCode}"><strong>${value}</strong> ${value === 1 ? "posto ufficiale" : "posti ufficiali"}${aggregate ? "*" : ""}</span>${aggregate ? '<small class="official-posts-note">* dato riferito all’istituto nel comune, non al singolo plesso</small>' : ''}`;
 }
 
+function renderSchoolPreferencesWithEligibility(row, selectedClass) {
+  const candidatures = getRelevantCandidatures(row, selectedClass);
+  const preferences = rowSchoolPreferences(row, selectedClass);
+
+  if (!preferences.length) {
+    return '<p class="no-available-preferences">Nessuna preferenza scolastica per la classe selezionata.</p>';
+  }
+
+  const items = preferences.map((preference, index) => {
+    const school = schoolFromPreference(preference);
+    const candidature = candidatures.find(item => item.classe === preference.classe);
+    if (!school || !candidature) return "";
+
+    const value = calculateEligibility(
+      row,
+      candidature,
+      formatMunicipalityName(school.municipality),
+      index,
+      school
+    );
+
+    return `
+      <div class="school-eligibility-item">
+        <div class="school-name-row">
+          <span class="preference-number">${index + 1}</span>
+          <span class="class-chip ${preference.classe}">${preference.classe}</span>
+          <div>
+            <strong>${escapeHtml(school.n)} – ${escapeHtml(formatMunicipalityName(school.municipality))}</strong>
+            <small>${escapeHtml(school.i)}</small>
+            ${renderOfficialPosts(school, preference.classe)}
+          </div>
+        </div>
+        ${renderEligibilityBar(value, preference.classe)}
+      </div>`;
+  }).filter(Boolean);
+
+  return `<div class="eligibility-list">${items.join("")}</div>`;
+}
+
 function renderMunicipalitiesWithEligibility(row, selectedClass) {
+  if (Array.isArray(row.preferenze_scuole) && row.preferenze_scuole.length) {
+    return renderSchoolPreferencesWithEligibility(row, selectedClass);
+  }
   const candidatures = getRelevantCandidatures(row, selectedClass);
 
   const municipalityItems = (row.comuni || []).map((municipality, index) => {
@@ -1157,7 +1274,12 @@ function downloadCsv() {
         .join(" | "),
       row.provincia_1,
       row.provincia_2 || "",
-      (row.comuni || []).join(" | ")
+      (Array.isArray(row.preferenze_scuole) && row.preferenze_scuole.length
+        ? row.preferenze_scuole.map(p => {
+            const school = schoolFromPreference(p);
+            return school ? `${p.classe}: ${school.n} - ${formatMunicipalityName(school.municipality)}` : p.codice_scuola;
+          }).join(" | ")
+        : (row.comuni || []).join(" | "))
     ].map(csvCell).join(";"))
   ];
   const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });

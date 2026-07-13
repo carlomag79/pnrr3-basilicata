@@ -143,3 +143,17 @@ Totali rilevanti per il progetto:
 Restano separati 3 posti Montessori per l'Infanzia e 6 posti per l'istruzione degli adulti nella Primaria.
 
 Ora entrambe le province hanno dati ufficiali pubblicati: form, verifica, pagina Scuole e calcolo di eleggibilità mostrano soltanto comuni e plessi con disponibilità per la classe selezionata.
+
+
+## Versione 2: account e preferenze scolastiche
+
+La compilazione principale avviene ora da `account.html` mediante Magic Link.
+Le preferenze sono associate ai codici delle singole scuole/plessi e possono
+essere aggiornate dall'utente autenticato.
+
+La versione include inoltre:
+
+- menu mobile a pannello fisso;
+
+Eseguire `migration_v2_accounts_schools.sql` e seguire
+`GUIDA_VERSIONE_2.txt`.

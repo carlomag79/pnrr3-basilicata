@@ -279,3 +279,5 @@ adminSupabase.auth.onAuthStateChange((_event, session) => {
   const { data } = await adminSupabase.auth.getSession();
   await handleSession(data.session);
 })();
+
+

@@ -1,4 +1,4 @@
-# PNRR3 Basilicata
+# Vincitori PNRR3 Basilicata Infanzia / Primaria
 
 Piccola web app open source per raccogliere e visualizzare in forma non nominativa le preferenze territoriali dei vincitori del concorso PNRR3 Infanzia e Primaria in Basilicata.
 
@@ -287,3 +287,11 @@ Non utilizza più l'operatore `->>` e quindi evita l'errore
 `operator does not exist: text ->> unknown`.
 
 Eseguire `HOTFIX_v3_4_duplicati.sql` nel SQL Editor di Supabase.
+
+
+## Identità indipendente
+
+Lo stemma della Regione Basilicata è stato rimosso da tutte le pagine.
+È stato sostituito da un marchio grafico neutro `P3` e da una nota visibile
+che chiarisce che il progetto non è collegato a Ministero, USR, Regione o
+altre amministrazioni pubbliche.

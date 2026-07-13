@@ -35,7 +35,7 @@
       <button class="mobile-drawer__backdrop" type="button" aria-label="Chiudi menu"></button>
       <aside class="mobile-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
         <div class="mobile-drawer__head">
-          <strong>PNRR3 Basilicata</strong>
+          <strong>Vincitori PNRR3 Basilicata Infanzia / Primaria</strong>
           <button class="mobile-drawer__close" type="button" aria-label="Chiudi menu">×</button>
         </div>
         <nav class="mobile-drawer__nav">
@@ -121,7 +121,7 @@
           <p>
             Progetto nato da un’idea di
             <a href="https://carlomagni.it" target="_blank" rel="noopener noreferrer">Carlo Magni</a>
-            e del gruppo WhatsApp “Concorso PNRR3 Basilicata Infanzia e Primaria”.
+            e del gruppo WhatsApp “Concorso Vincitori PNRR3 Basilicata Infanzia / Primaria Infanzia e Primaria”.
           </p>
           <p class="footer-admin-link"><a href="admin.html">Area amministrativa</a></p>
         </div>`;

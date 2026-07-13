@@ -2254,3 +2254,44 @@ main > .panel::before {
   font-size: .65rem;
   line-height: 1.35;
 }
+
+
+/* Identità grafica indipendente */
+.project-mark {
+  width: 66px;
+  height: 66px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  font-size: 1.25rem;
+  font-weight: 850;
+  letter-spacing: -.04em;
+}
+
+.project-mark--small {
+  width: 52px;
+  height: 52px;
+  border-radius: 11px;
+  font-size: 1rem;
+}
+
+.project-disclaimer,
+.auth-safety-note {
+  max-width: 860px;
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  color: var(--ink-soft);
+  background: #fff7e6;
+  border-left: 4px solid #d09a42;
+  font-size: .84rem;
+  line-height: 1.45;
+}
+
+.notice--secondary {
+  margin-top: 8px;
+}

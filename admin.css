@@ -472,3 +472,25 @@ body.admin-page {
   .admin-duplicate-record{align-items:flex-start;flex-direction:column}
   .admin-subheading{flex-direction:column}
 }
+
+
+.project-mark--admin {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  font-size: .82rem;
+}
+
+.admin-header__disclaimer {
+  max-width: 620px;
+  margin: 0 auto;
+  color: rgba(255,255,255,.72);
+  font-size: .72rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 900px) {
+  .admin-header__disclaimer {
+    display: none;
+  }
+}

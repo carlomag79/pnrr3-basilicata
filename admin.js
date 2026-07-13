@@ -381,7 +381,8 @@ async function loadDuplicates(){
 
   const {data,error}=await adminSupabase.rpc("admin_find_possible_duplicates_detailed");
   if(error){
-    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    console.error("Errore caricamento duplicati:", error);
+    root.innerHTML=`<p class="admin-empty"><strong>Impossibile caricare i duplicati.</strong><br>${adminEscape(error.message)}</p>`;
     countRoot.textContent="Errore";
     return;
   }

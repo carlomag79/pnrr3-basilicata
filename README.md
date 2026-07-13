@@ -278,3 +278,12 @@ La hotfix:
 - Eseguire `HOTFIX_v3_3_duplicati.sql`.
 - In Supabase Authentication aggiungere anche `admin.html` tra gli URL di
   redirect consentiti.
+
+
+## Hotfix V3.4 — duplicati
+
+La funzione dei duplicati è stata riscritta usando `jsonb_to_recordset()`.
+Non utilizza più l'operatore `->>` e quindi evita l'errore
+`operator does not exist: text ->> unknown`.
+
+Eseguire `HOTFIX_v3_4_duplicati.sql` nel SQL Editor di Supabase.

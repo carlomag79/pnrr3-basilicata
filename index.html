@@ -77,122 +77,46 @@
       </div>
     </section>
 
-    <section class="panel section-form account-entry" id="form-section">
-      <div class="section-heading">
+    <section class="panel section-form account-entry account-entry--featured" id="form-section">
+      <div class="account-entry__visual">
+        <span class="account-entry__step">01</span>
         <div>
           <p class="eyebrow">Area personale</p>
-          <h2>Inserisci e aggiorna le preferenze scolastiche</h2>
+          <h2>Scegli le scuole, ordinale e aggiornale quando vuoi</h2>
+          <p class="account-entry__lead">
+            Le preferenze non sono più legate soltanto ai comuni: puoi selezionare
+            direttamente scuole e plessi con disponibilità ufficiali.
+          </p>
         </div>
-        <span class="badge">Accesso leggero via email</span>
       </div>
 
-      <div class="account-entry__grid">
-        <div>
-          <h3>Le preferenze ora riguardano scuole e plessi</h3>
-          <p>
-            Accedi tramite Magic Link, indica classe, posizione e punteggio e ordina
-            le singole sedi scolastiche che prenderesti in considerazione.
-          </p>
-          <ul class="feature-list">
-            <li>Nessuna password da ricordare</li>
-            <li>Modifica autonoma in qualsiasi momento</li>
-            <li>Solo scuole con disponibilità ufficiali per la classe scelta</li>
-            <li>Possibilità di attivare gli aggiornamenti ufficiali via email</li>
-          </ul>
+      <div class="account-entry__content">
+        <div class="account-entry__benefits">
+          <article>
+            <strong>Accesso semplice</strong>
+            <span>Ricevi un Magic Link via email. Nessuna password da ricordare.</span>
+          </article>
+          <article>
+            <strong>Preferenze precise</strong>
+            <span>Seleziona e ordina fino a 30 scuole o plessi disponibili.</span>
+          </article>
+          <article>
+            <strong>Dati sempre modificabili</strong>
+            <span>Aggiorna posizione, punteggio e preferenze dalla tua area personale.</span>
+          </article>
         </div>
-        <div class="account-entry__actions">
-          <a class="primary button-link" href="account.html">Accedi o registrati</a>
-          <a class="secondary button-link" href="scuole.html">Consulta le scuole disponibili</a>
+
+        <div class="account-entry__cta">
+          <a class="primary button-link account-entry__primary" href="account.html">
+            Accedi alla tua area personale
+          </a>
+          <a class="text-link" href="scuole.html">Prima consulta le scuole disponibili →</a>
           <small>
-            Le compilazioni precedenti restano modificabili tramite il codice anonimo
-            nella sezione successiva.
+            Avevi già compilato il vecchio form? Dopo l’accesso potrai importare la
+            compilazione precedente.
           </small>
         </div>
       </div>
-    </section>
-
-    <section class="panel compact manage-panel section-manage" id="manage-section">
-      <div class="manage-layout">
-        <div>
-          <p class="eyebrow">Correzioni autonome</p>
-          <h2>Modifica la tua compilazione</h2>
-          <p>Inserisci il codice ricevuto dopo l’invio. Potrai aggiornare i dati o cancellare il record senza comunicare informazioni personali.</p>
-        </div>
-        <div class="manage-form">
-          <label>
-            Codice di modifica
-            <input id="manage-code" type="text" inputmode="text" autocomplete="off" placeholder="PNRR3-ABCD-1234">
-          </label>
-          <div class="manage-actions">
-            <button type="button" id="load-submission" class="primary">Carica compilazione</button>
-            <button type="button" id="delete-submission" class="danger-button" hidden>Cancella compilazione</button>
-          </div>
-          <p id="manage-message" class="manage-message" role="status"></p>
-        </div>
-      </div>
-
-        <details class="legacy-claim">
-          <summary>Hai compilato prima dell’introduzione del codice?</summary>
-
-          <div class="legacy-claim__content">
-            <div class="legacy-claim__intro">
-              <h3>Richiedi il codice per una vecchia compilazione</h3>
-              <p>
-                Inserisci i dati con cui avevi compilato il form. La richiesta non viene approvata automaticamente:
-                sarà verificata manualmente e associata al record corretto.
-              </p>
-            </div>
-
-            <div class="legacy-claim__grid">
-              <label>
-                Classe
-                <select id="legacy-class">
-                  <option value="AAAA">AAAA – Infanzia comune</option>
-                  <option value="ADAA">ADAA – Infanzia sostegno</option>
-                  <option value="EEEE">EEEE – Primaria comune</option>
-                  <option value="ADEE">ADEE – Primaria sostegno</option>
-                </select>
-              </label>
-
-              <label>
-                Posizione
-                <input id="legacy-position" type="number" min="1" step="1">
-              </label>
-
-              <label>
-                Punteggio
-                <input id="legacy-score" type="number" min="0" step="0.01">
-              </label>
-
-              <label>
-                Primo comune indicato
-                <input id="legacy-first-municipality" type="text" placeholder="Es. Matera">
-              </label>
-            </div>
-
-            <button type="button" id="submit-legacy-claim" class="secondary">
-              Invia richiesta
-            </button>
-
-            <div id="legacy-request-result" class="legacy-request-result" hidden>
-              <p class="eyebrow">Codice richiesta</p>
-              <code id="legacy-request-code"></code>
-              <p>
-                Conserva questo codice. Dopo la verifica potrai usarlo qui sotto per ottenere il codice di modifica.
-              </p>
-            </div>
-
-            <div class="legacy-status-check">
-              <h3>Controlla una richiesta</h3>
-              <div class="legacy-status-row">
-                <input id="legacy-status-code" type="text" autocomplete="off" placeholder="CLAIM-ABCD-1234">
-                <button type="button" id="check-legacy-status" class="secondary">Controlla stato</button>
-              </div>
-              <div id="legacy-status-result" class="legacy-status-result" hidden></div>
-            </div>
-          </div>
-        </details>
-
     </section>
 
     <section class="panel section-map" id="map-section">

@@ -157,3 +157,22 @@ La versione include inoltre:
 
 Eseguire `migration_v2_accounts_schools.sql` e seguire
 `GUIDA_VERSIONE_2.txt`.
+
+
+## Recupero delle compilazioni precedenti
+
+La vecchia sezione pubblica di correzione è stata rimossa dalla home.
+
+Dopo l'accesso a `account.html`, un utente senza compilazione può:
+
+- importare direttamente un vecchio record tramite codice `PNRR3`;
+- richiedere il codice tramite la procedura `CLAIM` se non lo possiede;
+- associare definitivamente il record al proprio account.
+
+Vengono recuperati classi, posizione e punteggio. Le vecchie preferenze comunali
+non sono convertite automaticamente in plessi: l'utente deve selezionare le
+scuole disponibili e salvare.
+
+Se la migrazione V2 era già stata eseguita, lanciare anche:
+
+`migration_v2_import_legacy.sql`

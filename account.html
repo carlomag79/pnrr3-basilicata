@@ -7,6 +7,7 @@
   <title>Le mie preferenze – PNRR3 Basilicata</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="account.css">
+  <script src="site-shell.js" defer></script>
 </head>
 <body>
   <header class="site-header site-header--compact">
@@ -34,6 +35,69 @@
     </section>
 
     <div id="account-app" hidden>
+      <section id="legacy-import-panel" class="panel legacy-import-panel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Compilazioni precedenti</p>
+            <h2>Importa i dati del vecchio form</h2>
+          </div>
+          <span class="badge">Operazione unica</span>
+        </div>
+
+        <div class="legacy-import-grid">
+          <div class="legacy-import-card">
+            <h3>Hai già un codice PNRR3?</h3>
+            <p>
+              Inseriscilo per collegare la vecchia compilazione al tuo account.
+              Recupereremo classi, posizione e punteggio.
+            </p>
+            <label>Codice di modifica
+              <input id="account-legacy-code" type="text" autocomplete="off" placeholder="PNRR3-ABCD-1234">
+            </label>
+            <button id="import-legacy-submission" class="primary" type="button">Importa compilazione</button>
+          </div>
+
+          <details class="legacy-claim-account">
+            <summary>Non hai mai ricevuto un codice?</summary>
+            <div class="legacy-claim-account__body">
+              <p>
+                Invia una richiesta usando i dati della vecchia compilazione. Dopo la
+                verifica amministrativa riceverai un codice PNRR3 da importare qui.
+              </p>
+              <div class="legacy-claim-fields">
+                <label>Classe
+                  <select id="account-claim-class">
+                    <option value="AAAA">AAAA</option>
+                    <option value="ADAA">ADAA</option>
+                    <option value="EEEE">EEEE</option>
+                    <option value="ADEE">ADEE</option>
+                  </select>
+                </label>
+                <label>Posizione
+                  <input id="account-claim-position" type="number" min="1" step="1">
+                </label>
+                <label>Punteggio
+                  <input id="account-claim-score" type="number" min="0" step="0.01">
+                </label>
+                <label>Primo comune indicato
+                  <input id="account-claim-municipality" type="text">
+                </label>
+              </div>
+              <button id="account-submit-claim" class="secondary" type="button">Invia richiesta</button>
+
+              <div class="claim-status-box">
+                <label>Hai già un codice richiesta?
+                  <input id="account-claim-code" type="text" autocomplete="off" placeholder="CLAIM-ABCD-1234">
+                </label>
+                <button id="account-check-claim" class="secondary" type="button">Controlla stato</button>
+              </div>
+            </div>
+          </details>
+        </div>
+        <p id="legacy-import-message" class="account-feedback" role="status"></p>
+      </section>
+
+      
       <section class="account-toolbar">
         <div>
           <p class="eyebrow">Account attivo</p>
@@ -43,6 +107,7 @@
       </section>
 
       <section class="panel account-editor">
+        <p id="legacy-school-note" class="legacy-school-note" hidden>La vecchia compilazione è stata importata. Ora seleziona le singole scuole o i plessi: le precedenti preferenze comunali non vengono convertite automaticamente.</p>
         <div class="section-heading">
           <div>
             <p class="eyebrow">Dati graduatoria</p>
@@ -97,7 +162,6 @@
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="site-shell.js"></script>
   <script src="account.js"></script>
 </body>
 </html>

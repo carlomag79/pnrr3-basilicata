@@ -26,3 +26,16 @@ CONFIGURAZIONE VERSIONE 2
    - eliminazione dei dati;
    - menu mobile.
 
+
+
+RECUPERO DEI VECCHI RECORD
+
+- Il vecchio pannello di correzione non appare più nella home.
+- Un utente autenticato senza record vede il pannello di importazione.
+- Con un codice PNRR3 può collegare il record al proprio account.
+- Senza codice può inviare e controllare una richiesta CLAIM.
+- Dopo l'importazione deve scegliere le scuole, perché i comuni precedenti
+  non identificano automaticamente un singolo plesso.
+
+Se la migrazione V2 era stata già eseguita, eseguire:
+migration_v2_import_legacy.sql

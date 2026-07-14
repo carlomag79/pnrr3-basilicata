@@ -133,6 +133,18 @@
     </section>
 
     <div id="account-app" hidden>
+      <section id="account-messages-panel" class="panel account-messages-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Comunicazioni</p>
+            <h2>Messaggi dall’amministrazione</h2>
+          </div>
+          <span id="account-unread-messages" class="badge">0 non letti</span>
+        </div>
+        <div id="account-messages-list">
+          <p class="admin-empty">Caricamento messaggi…</p>
+        </div>
+      </section>
       <section id="registration-panel" class="panel registration-panel" hidden>
         <div class="section-heading">
           <div>
@@ -169,7 +181,7 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">Compilazioni precedenti</p>
-            <h2>Importa i dati del vecchio form</h2>
+            <h2>Rivendica la tua compilazione</h2>
           </div>
           <span class="badge">Operazione unica</span>
         </div>
@@ -178,8 +190,8 @@
           <div class="legacy-import-card">
             <h3>Hai già un codice PNRR3?</h3>
             <p>
-              Inseriscilo per collegare la vecchia compilazione al tuo account.
-              Recupereremo classi, posizione e punteggio.
+              Inseriscilo per collegare una compilazione già pubblicata al tuo account.
+              Recupereremo classi, posizione, punteggio e preferenze disponibili.
             </p>
             <label>Codice di modifica
               <input id="account-legacy-code" type="text" autocomplete="off" placeholder="PNRR3-ABCD-1234">
@@ -191,9 +203,9 @@
             <summary>Non hai mai ricevuto un codice?</summary>
             <div class="legacy-claim-account__body">
               <p>
-                Invia una richiesta dal tuo account. Dopo l’approvazione, la vecchia
-                compilazione verrà collegata automaticamente e comparirà qui:
-                non dovrai copiare o conservare altri codici.
+                Inserisci classe, posizione, punteggio e uno dei comuni indicati.
+                L’amministrazione verificherà la richiesta direttamente dal pannello
+                e collegherà il record alla tua area riservata.
               </p>
               <div class="legacy-claim-fields">
                 <label>Classe
@@ -289,7 +301,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.9.0" defer></script>
-  <script src="account.js?v=4.9.0" defer></script>
+  <script src="config.js?v=4.12.0" defer></script>
+  <script src="account.js?v=4.12.0" defer></script>
 </body>
 </html>

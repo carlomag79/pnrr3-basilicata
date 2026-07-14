@@ -375,3 +375,10 @@ Aggiunta la sezione **Utenti registrati** nell’area amministrativa.
 Permette di cercare tutti gli utenti autenticati, filtrare chi ha o non ha un
 record pubblicato, aprire il record collegato e modificarlo oppure creare una
 nuova compilazione direttamente da amministrazione.
+
+## Versione 4.12
+
+La gestione utenti è stata separata nella pagina `admin-users.html`. Sono
+disponibili gestione dell’area riservata, messaggi interni, invio email
+facoltativo tramite Edge Function e rivendicazione dei record per gli utenti
+registrati che non possiedono ancora una compilazione.

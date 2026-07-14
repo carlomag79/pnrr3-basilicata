@@ -26,6 +26,10 @@
         <span><strong>Vincitori PNRR3 Basilicata Infanzia / Primaria</strong><small>Area amministrativa</small></span>
       </a>
       <p class="admin-header__disclaimer">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+      <nav class="admin-page-nav" aria-label="Navigazione amministrativa">
+        <a class="is-active" href="admin.html">Amministrazione</a>
+        <a href="admin-users.html">Utenti</a>
+      </nav>
       <button id="admin-logout" class="secondary" type="button" hidden>Esci</button>
     </div>
   </header>
@@ -125,55 +129,7 @@
         </div>
       </section>
 
-      <section class="panel admin-preregistered-panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Accessi predisposti</p>
-            <h1>Utenti pre-registrati</h1>
-            <p>Prepara una compilazione per un interessato e comunicagli che può accedere con la stessa email.</p>
-          </div>
-          <button id="admin-new-preregistered-user" class="primary" type="button">Crea nuovo utente</button>
-        </div>
-        <div class="admin-registration-stats">
-          <span><strong id="preregistered-waiting-count">0</strong> in attesa di accesso</span>
-          <span><strong id="preregistered-activated-count">0</strong> attivati</span>
-        </div>
-        <div id="admin-preregistered-users" class="admin-users-list">
-          <p class="admin-empty">Caricamento utenti…</p>
-        </div>
-      </section>
-
-      
-      <section class="panel admin-registered-users-panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Ricerca completa</p>
-            <h1>Utenti registrati</h1>
-            <p>Cerca tutti gli utenti che hanno effettuato l’accesso al sito e apri direttamente il loro record, se presente.</p>
-          </div>
-        </div>
-
-        <form id="admin-registered-users-search-form" class="admin-inline-form admin-inline-form--wide">
-          <label>Email o parte dell’email
-            <input id="admin-registered-users-query" type="search" placeholder="es. maria, gmail.com, scuola.it">
-          </label>
-          <label>Stato record
-            <select id="admin-registered-users-linked">
-              <option value="all">Tutti</option>
-              <option value="linked">Con record</option>
-              <option value="unlinked">Senza record</option>
-            </select>
-          </label>
-          <button class="primary" type="submit">Cerca</button>
-          <button id="admin-registered-users-reset" class="secondary" type="button">Azzera</button>
-        </form>
-
-        <div id="admin-registered-users-results" class="admin-users-list">
-          <p class="admin-empty">Caricamento utenti registrati…</p>
-        </div>
-      </section>
-
-<section class="panel admin-users-panel">
+      <section class="panel admin-users-panel">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Collaboratori</p>
@@ -447,7 +403,7 @@
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.11.0" defer></script>
-  <script src="admin.js?v=4.11.1" defer></script>
+  <script src="config.js?v=4.12.0" defer></script>
+  <script src="admin.js?v=4.12.0" defer></script>
 </body>
 </html>

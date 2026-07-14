@@ -123,3 +123,12 @@
 .support-school-picker__heading p{margin:4px 0 0;color:var(--muted)}
 #support-school-results{max-height:300px;margin-top:12px}
 #support-selected-schools{margin-top:14px}
+
+.account-messages-panel{margin-bottom:22px}
+#account-messages-list{display:grid;gap:10px}
+.account-message-card{padding:15px;background:#fff;border:1px solid var(--line)}
+.account-message-card.is-unread{border-left:4px solid var(--accent,#42698e);background:#f7fbfd}
+.account-message-card header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.account-message-card header>div{display:grid;gap:4px}
+.account-message-card header span{color:var(--muted);font-size:.82rem}
+.account-message-card p{margin:12px 0 0;line-height:1.6}

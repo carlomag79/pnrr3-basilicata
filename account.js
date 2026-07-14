@@ -233,6 +233,35 @@ function showRegistrationState(status){
   }
 }
 
+
+async function loadAccountMessages(){
+  const root=$("#account-messages-list");
+  const badge=$("#account-unread-messages");
+  if(!root||!badge)return;
+
+  const {data,error}=await sb.rpc("get_my_user_messages");
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${esc(error.message)}</p>`;
+    return;
+  }
+
+  const messages=data||[];
+  const unread=messages.filter(message=>!message.read_at).length;
+  badge.textContent=`${unread} ${unread===1?"non letto":"non letti"}`;
+
+  root.innerHTML=messages.length?messages.map(message=>`
+    <article class="account-message-card ${message.read_at?"":"is-unread"}" data-message-id="${message.id}">
+      <header>
+        <div>
+          <strong>${esc(message.subject)}</strong>
+          <span>${new Date(message.created_at).toLocaleString("it-IT",{dateStyle:"short",timeStyle:"short"})}</span>
+        </div>
+        ${message.read_at?"":'<button class="secondary account-mark-message-read" type="button">Segna come letto</button>'}
+      </header>
+      <p>${esc(message.body).replaceAll("\\n","<br>")}</p>
+    </article>`).join(""):'<p class="admin-empty">Nessun messaggio ricevuto.</p>';
+}
+
 async function loadMine(){
   const {data,error}=await sb.rpc("get_my_candidatura_v2");
   if(error)throw error;
@@ -277,7 +306,7 @@ async function handleSession(session){
   $("#account-email").textContent=session.user.email||"Utente autenticato";
   const {error:preregisterError}=await sb.rpc("claim_my_preregistered_candidate");
   if(preregisterError)console.warn("Associazione pre-registrazione:",preregisterError.message);
-  await loadMine();
+  await Promise.all([loadMine(),loadAccountMessages()]);
 }
 
 async function signInWithProvider(provider){
@@ -391,6 +420,21 @@ $("#import-legacy-submission").addEventListener("click",importLegacySubmission);
 $("#account-submit-claim").addEventListener("click",submitAccountClaim);
 $("#account-check-claim").addEventListener("click",checkAccountClaim);
 $("#account-legacy-code").addEventListener("keydown",event=>{if(event.key==="Enter")importLegacySubmission()});
+
+
+$("#account-messages-list")?.addEventListener("click",async event=>{
+  const button=event.target.closest(".account-mark-message-read");
+  if(!button)return;
+  const card=button.closest(".account-message-card");
+  const {error}=await sb.rpc("mark_my_user_message_read",{
+    p_message_id:Number(card.dataset.messageId)
+  });
+  if(error){
+    alert(error.message);
+    return;
+  }
+  await loadAccountMessages();
+});
 
 $("#account-logout").addEventListener("click",()=>sb.auth.signOut());
 $("#add-account-candidature").addEventListener("click",()=>{if(document.querySelectorAll(".account-candidature").length<4)addCandidature()});

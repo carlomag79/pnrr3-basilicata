@@ -589,3 +589,29 @@ body.admin-page {
 @media(max-width:900px){
   .admin-inline-form--wide{grid-template-columns:1fr}
 }
+
+.admin-page-nav{display:flex;align-items:center;gap:6px;margin-left:auto}
+.admin-page-nav a{padding:9px 12px;border:1px solid rgba(255,255,255,.25);color:#fff;text-decoration:none;font-weight:800;font-size:.86rem}
+.admin-page-nav a:hover,.admin-page-nav a.is-active{background:#fff;color:#203c4b}
+.admin-section-intro{margin-bottom:22px}
+.admin-section-intro h1{margin:3px 0 7px}
+.admin-section-intro p:last-child{margin-bottom:0;color:var(--muted)}
+.admin-message-compose{display:grid;gap:12px}
+.admin-message-compose textarea{resize:vertical}
+.admin-checkbox-line{display:flex!important;align-items:center;gap:9px;font-weight:800}
+.admin-checkbox-line input{width:18px;height:18px}
+.admin-message-history{display:grid;gap:10px;margin-top:18px}
+.admin-message-card{padding:14px;background:#fff;border:1px solid var(--line)}
+.admin-message-card header{display:flex;justify-content:space-between;gap:14px}
+.admin-message-card header span,.admin-message-card small{color:var(--muted);font-size:.82rem}
+.admin-message-card p{margin:10px 0;line-height:1.55}
+.admin-user-area-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.admin-user-area-grid>div{display:grid;gap:3px;padding:11px;background:#fff;border:1px solid var(--line)}
+.admin-user-area-grid span{color:var(--muted);font-size:.8rem}
+@media(max-width:850px){
+  .admin-header__inner{flex-wrap:wrap}
+  .admin-page-nav{order:3;width:100%;margin-left:0}
+}
+@media(max-width:620px){
+  .admin-user-area-grid{grid-template-columns:1fr}
+}

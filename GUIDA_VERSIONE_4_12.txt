@@ -1,0 +1,69 @@
+VERSIONE 4.12 — PAGINA UTENTI, AREE RISERVATE E MESSAGGI
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_12_admin_utenti_messaggi.sql
+3. La migrazione V4.11 deve essere già installata.
+4. La nuova pagina è:
+   https://pnrr3.carlomagni.it/admin-users.html
+
+ORGANIZZAZIONE DELL’AMMINISTRAZIONE
+La gestione generale resta in admin.html.
+La gestione degli utenti è stata spostata in admin-users.html.
+
+Il menu superiore consente di passare tra:
+- Amministrazione;
+- Utenti.
+
+PAGINA UTENTI
+Contiene:
+- Utenti pre-registrati;
+- Utenti registrati.
+
+Per ogni utente registrato puoi:
+- cercarlo per email;
+- vedere se possiede un record;
+- creare una compilazione se non ne possiede;
+- modificare il record pubblicato;
+- aprire “Gestisci area riservata”;
+- inviare messaggi interni;
+- richiedere anche l’invio di una copia via email.
+
+MESSAGGI INTERNI
+I messaggi vengono sempre salvati nel database e compaiono nella sezione
+“Messaggi dall’amministrazione” dell’area riservata dell’utente.
+
+L’utente può segnare il messaggio come letto.
+L’amministratore vede lo stato letto/non letto.
+
+INVIO EMAIL FACOLTATIVO
+L’invio email richiede la Edge Function inclusa nel pacchetto:
+supabase/functions/send-user-message-email/index.ts
+
+La soluzione usa Resend perché l’invio deve avvenire lato server e nessuna
+chiave privata può essere inserita nei file pubblici del sito.
+
+Configurazione:
+1. Crea e verifica il dominio nel provider email.
+2. In Supabase → Edge Functions crea/deploya:
+   send-user-message-email
+3. Configura i secrets:
+   RESEND_API_KEY
+   EMAIL_FROM
+4. Mantieni la verifica JWT attiva.
+
+EMAIL_FROM deve essere un mittente verificato, per esempio:
+PNRR3 Basilicata <notifiche@pnrr3.carlomagni.it>
+
+Se la funzione email non è configurata, il messaggio interno viene comunque
+salvato; il pannello segnala soltanto che la copia email non è partita.
+
+UTENTI SENZA RECORD
+Un utente autenticato senza record può entrare normalmente nell’area riservata.
+Trova la sezione “Rivendica la tua compilazione” e può:
+- usare un vecchio codice;
+- inviare una richiesta con classe, posizione, punteggio e comune.
+
+L’amministratore può poi verificare e associare o creare il record direttamente
+dal pannello.

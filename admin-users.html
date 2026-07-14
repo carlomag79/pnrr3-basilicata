@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Gestione utenti – Vincitori PNRR3 Basilicata</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <div class="container admin-header__inner">
+      <a class="admin-brand" href="index.html">
+        <span class="project-mark project-mark--admin" aria-hidden="true">🧑‍🏫</span>
+        <span><strong>Vincitori PNRR3 Basilicata Infanzia / Primaria</strong><small>Gestione utenti</small></span>
+      </a>
+      <nav class="admin-page-nav" aria-label="Navigazione amministrativa">
+        <a href="admin.html">Amministrazione</a>
+        <a class="is-active" href="admin-users.html">Utenti</a>
+      </nav>
+      <button id="admin-logout" class="secondary" type="button" hidden>Esci</button>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <section id="admin-login-panel" class="admin-login panel">
+      <p class="eyebrow">Accesso riservato</p>
+      <h1>Gestione richieste</h1>
+      <p>
+        Accedi con Google usando l’email già autorizzata come amministratore.
+        In alternativa puoi richiedere un codice via email.
+      </p>
+      <p class="auth-safety-note">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+      <div class="social-login-grid" aria-label="Accesso amministratore con provider esterno">
+        <button id="admin-login-google" class="social-login-button social-login-google" type="button">
+          <span class="social-login-icon" aria-hidden="true">G</span>
+          <span>Accedi con Google</span>
+        </button>
+      </div>
+      <p id="admin-social-login-message" class="admin-message" role="status"></p>
+      <div class="auth-divider"><span>oppure usa il codice email</span></div>
+
+      <form id="admin-login-form" class="admin-login-form">
+        <label>Email
+          <input id="admin-email" type="email" autocomplete="email" required>
+        </label>
+        <button class="primary" type="submit">Invia codice</button>
+        <p id="admin-login-message" class="admin-message" role="status"></p>
+      </form>
+      <form id="admin-otp-form" class="admin-login-form" hidden>
+        <label>Codice ricevuto
+          <input id="admin-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required>
+        </label>
+        <button class="primary" type="submit">Verifica e accedi</button>
+        <button id="admin-change-email" class="secondary" type="button">Cambia email</button>
+        <p id="admin-otp-message" class="admin-message" role="status"></p>
+      </form>
+    </section>
+
+
+    <div id="admin-app" hidden>
+      <section class="admin-section-intro panel">
+        <p class="eyebrow">Gestione centralizzata</p>
+        <h1>Utenti</h1>
+        <p>Gestisci utenti pre-registrati, account già attivi, aree riservate, compilazioni e comunicazioni.</p>
+      </section>
+      <section class="panel admin-preregistered-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Accessi predisposti</p>
+            <h1>Utenti pre-registrati</h1>
+            <p>Prepara una compilazione per un interessato e comunicagli che può accedere con la stessa email.</p>
+          </div>
+          <button id="admin-new-preregistered-user" class="primary" type="button">Crea nuovo utente</button>
+        </div>
+        <div class="admin-registration-stats">
+          <span><strong id="preregistered-waiting-count">0</strong> in attesa di accesso</span>
+          <span><strong id="preregistered-activated-count">0</strong> attivati</span>
+        </div>
+        <div id="admin-preregistered-users" class="admin-users-list">
+          <p class="admin-empty">Caricamento utenti…</p>
+        </div>
+      </section>
+
+      
+      
+      <section class="panel admin-registered-users-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Ricerca completa</p>
+            <h1>Utenti registrati</h1>
+            <p>Cerca tutti gli utenti che hanno effettuato l’accesso al sito e apri direttamente il loro record, se presente.</p>
+          </div>
+        </div>
+
+        <form id="admin-registered-users-search-form" class="admin-inline-form admin-inline-form--wide">
+          <label>Email o parte dell’email
+            <input id="admin-registered-users-query" type="search" placeholder="es. maria, gmail.com, scuola.it">
+          </label>
+          <label>Stato record
+            <select id="admin-registered-users-linked">
+              <option value="all">Tutti</option>
+              <option value="linked">Con record</option>
+              <option value="unlinked">Senza record</option>
+            </select>
+          </label>
+          <button class="primary" type="submit">Cerca</button>
+          <button id="admin-registered-users-reset" class="secondary" type="button">Azzera</button>
+        </form>
+
+        <div id="admin-registered-users-results" class="admin-users-list">
+          <p class="admin-empty">Caricamento utenti registrati…</p>
+        </div>
+      </section>
+
+
+    </div>
+  </main>
+
+  <dialog id="admin-create-candidate-dialog" class="admin-record-editor">
+    <form id="admin-create-candidate-form" method="dialog">
+      <div class="admin-record-editor__header">
+        <div>
+          <p class="eyebrow">Gestione amministrativa</p>
+          <h2 id="admin-create-candidate-title">Crea compilazione</h2>
+        </div>
+        <button id="admin-close-create-candidate" class="secondary" type="button" aria-label="Chiudi">×</button>
+      </div>
+
+      <div class="admin-record-editor__body">
+        <input id="admin-create-mode" type="hidden">
+        <input id="admin-create-request-id" type="hidden">
+
+        <div class="admin-create-user-grid">
+          <label>Email dell’interessato
+            <input id="admin-create-email" type="email" required>
+          </label>
+          <label>Classe
+            <select id="admin-create-class" required>
+              <option value="AAAA">AAAA</option>
+              <option value="ADAA">ADAA</option>
+              <option value="EEEE">EEEE</option>
+              <option value="ADEE">ADEE</option>
+            </select>
+          </label>
+          <label>Posizione
+            <input id="admin-create-position" type="number" min="1" step="1" required>
+          </label>
+          <label>Punteggio
+            <input id="admin-create-score" type="number" min="0" step="0.01" required>
+          </label>
+        </div>
+
+        <section class="admin-editor-section">
+          <div class="admin-subheading">
+            <div>
+              <h3>Scuole e plessi</h3>
+              <p>Seleziona e ordina le sedi con disponibilità per la classe indicata.</p>
+            </div>
+            <span id="admin-create-school-counter" class="badge">0 / 30</span>
+          </div>
+          <div class="admin-edit-school-picker">
+            <label>Provincia
+              <select id="admin-create-school-province">
+                <option value="">Entrambe</option>
+                <option value="Matera">Matera</option>
+                <option value="Potenza">Potenza</option>
+              </select>
+            </label>
+            <label>Cerca scuola, comune o istituto
+              <input id="admin-create-school-search" type="search" placeholder="Es. Senise, Matera, Brancato">
+            </label>
+          </div>
+          <div id="admin-create-school-results" class="school-search-results"></div>
+          <div id="admin-create-selected-schools" class="selected-schools"></div>
+        </section>
+      </div>
+
+      <div class="admin-record-editor__footer">
+        <p id="admin-create-candidate-message" class="admin-message" role="status"></p>
+        <div>
+          <button id="admin-cancel-create-candidate" class="secondary" type="button">Annulla</button>
+          <button class="primary" type="submit">Crea compilazione</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="admin-record-editor" class="admin-record-editor">
+    <form id="admin-record-editor-form" method="dialog">
+      <div class="admin-record-editor__header">
+        <div>
+          <p class="eyebrow">Gestione record</p>
+          <h2 id="admin-record-editor-title">Modifica record</h2>
+        </div>
+        <button id="admin-close-record-editor" class="secondary" type="button" aria-label="Chiudi">×</button>
+      </div>
+
+      <div class="admin-record-editor__body">
+        <label>Email account associato
+          <input id="admin-edit-record-email" type="email" placeholder="Lascia vuoto per non associare alcun account">
+          <small>L’account deve essere già presente in Supabase Auth.</small>
+        </label>
+
+        <section class="admin-editor-section">
+          <div class="admin-subheading">
+            <div>
+              <h3>Candidature</h3>
+              <p>Puoi gestire fino a quattro classi di concorso.</p>
+            </div>
+            <button id="admin-add-edit-candidature" class="secondary" type="button">Aggiungi classe</button>
+          </div>
+          <div id="admin-edit-candidatures" class="admin-edit-candidatures"></div>
+        </section>
+
+        <section class="admin-editor-section">
+          <div class="admin-subheading">
+            <div>
+              <h3>Preferenze scolastiche</h3>
+              <p>Sono mostrate soltanto scuole o plessi con disponibilità per la classe selezionata.</p>
+            </div>
+            <span id="admin-edit-school-counter" class="badge">0 / 30</span>
+          </div>
+
+          <div class="admin-edit-school-picker">
+            <label>Classe
+              <select id="admin-edit-school-class"></select>
+            </label>
+            <label>Provincia
+              <select id="admin-edit-school-province">
+                <option value="">Entrambe</option>
+                <option value="Matera">Matera</option>
+                <option value="Potenza">Potenza</option>
+              </select>
+            </label>
+            <label>Cerca scuola, comune o istituto
+              <input id="admin-edit-school-search" type="search" placeholder="Es. Senise, Matera, Brancato">
+            </label>
+          </div>
+
+          <div id="admin-edit-school-results" class="school-search-results"></div>
+          <div id="admin-edit-selected-schools" class="selected-schools"></div>
+        </section>
+      </div>
+
+      <div class="admin-record-editor__footer">
+        <p id="admin-record-editor-message" class="admin-message" role="status"></p>
+        <div>
+          <button id="admin-cancel-record-editor" class="secondary" type="button">Annulla</button>
+          <button class="primary" type="submit">Salva modifiche</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+
+
+  <dialog id="admin-user-area-dialog" class="admin-record-editor">
+    <div class="admin-record-editor__header">
+      <div>
+        <p class="eyebrow">Area riservata utente</p>
+        <h2 id="admin-user-area-title">Gestisci utente</h2>
+      </div>
+      <button id="admin-close-user-area" class="secondary" type="button" aria-label="Chiudi">×</button>
+    </div>
+    <div class="admin-record-editor__body">
+      <section id="admin-user-area-summary" class="admin-editor-section"></section>
+      <section class="admin-editor-section">
+        <div class="admin-subheading">
+          <div>
+            <h3>Messaggi all’utente</h3>
+            <p>I messaggi sono visibili nella sua area riservata. Puoi anche richiedere l’invio via email.</p>
+          </div>
+        </div>
+        <form id="admin-user-message-form" class="admin-message-compose">
+          <input id="admin-message-user-id" type="hidden">
+          <label>Oggetto
+            <input id="admin-message-subject" type="text" maxlength="160" required>
+          </label>
+          <label>Messaggio
+            <textarea id="admin-message-body" rows="6" maxlength="5000" required></textarea>
+          </label>
+          <label class="admin-checkbox-line">
+            <input id="admin-message-send-email" type="checkbox">
+            Invia anche una copia via email
+          </label>
+          <button class="primary" type="submit">Invia messaggio</button>
+          <p id="admin-user-message-status" class="admin-message" role="status"></p>
+        </form>
+        <div id="admin-user-message-history" class="admin-message-history"></div>
+      </section>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="config.js?v=4.12.0" defer></script>
+  <script src="admin-users.js?v=4.12.0" defer></script>
+</body>
+</html>

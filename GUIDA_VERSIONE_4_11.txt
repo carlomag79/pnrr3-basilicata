@@ -1,0 +1,33 @@
+VERSIONE 4.11 — RICERCA UTENTI REGISTRATI
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_11_ricerca_utenti_registrati.sql
+3. La migrazione V4.10 deve essere già installata.
+
+NUOVA SEZIONE IN AMMINISTRAZIONE
+È disponibile la sezione “Utenti registrati”.
+
+Da qui puoi:
+- cercare tutti gli utenti che hanno effettuato l’accesso al sito;
+- filtrare per “con record” o “senza record”;
+- aprire direttamente il record pubblicato e modificarlo;
+- creare una nuova compilazione per un utente registrato che non ha ancora un record.
+
+COME SI USA
+1. Vai in Amministrazione → Utenti registrati.
+2. Inserisci una mail o una parte della mail.
+3. Scegli se vedere tutti, solo chi ha già un record o solo chi ne è privo.
+4. Clicca Cerca.
+
+RISULTATI
+Per ogni utente vedrai:
+- email;
+- primo e ultimo accesso;
+- eventuale stato di amministratore;
+- record collegato, se presente.
+
+AZIONI
+- Modifica record → apre l’editor completo del record pubblicato.
+- Crea compilazione → apre il dialogo di creazione record già collegato a quell’email.

@@ -367,3 +367,11 @@ automatica della compilazione al primo accesso con la stessa email.
 
 Aggiunti stati distinti per pubblicazione e associazione account, oltre al
 filtro per individuare le compilazioni con preferenze scolastiche mancanti.
+
+
+## Versione 4.11
+
+Aggiunta la sezione **Utenti registrati** nell’area amministrativa.  
+Permette di cercare tutti gli utenti autenticati, filtrare chi ha o non ha un
+record pubblicato, aprire il record collegato e modificarlo oppure creare una
+nuova compilazione direttamente da amministrazione.

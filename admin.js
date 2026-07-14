@@ -25,6 +25,7 @@ let editingAdminRecord = null;
 let editingAdminPreferences = [];
 let creatingAdminPreferences = [];
 let preregisteredUsersCache = [];
+let registeredUsersCache = [];
 
 const loginPanel = document.querySelector("#admin-login-panel");
 const adminApp = document.querySelector("#admin-app");
@@ -82,7 +83,7 @@ async function handleSession(session) {
     loginPanel.hidden = true;
     adminApp.hidden = false;
     logoutButton.hidden = false;
-    await Promise.all([loadAdminRequests(), loadManualSupportRequests(), loadRegistrationRequests(), loadPreregisteredUsers(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
+    await Promise.all([loadAdminRequests(), loadManualSupportRequests(), loadRegistrationRequests(), loadPreregisteredUsers(), loadRegisteredUsers(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
   } catch (error) {
     loginPanel.hidden = false;
     adminApp.hidden = true;
@@ -790,6 +791,51 @@ async function loadPreregisteredUsers(){
     </article>`).join(""):'<p class="admin-empty">Nessun utente pre-registrato.</p>';
 }
 
+
+async function loadRegisteredUsers(){
+  const root=document.querySelector("#admin-registered-users-results");
+  if(!root)return;
+  root.innerHTML='<p class="admin-empty">Caricamento utenti registrati…</p>';
+
+  const query=(document.querySelector("#admin-registered-users-query")?.value||"").trim()||null;
+  const linked=document.querySelector("#admin-registered-users-linked")?.value||"all";
+
+  const {data,error}=await adminSupabase.rpc("admin_search_registered_users",{
+    p_query:query,
+    p_linked_status:linked
+  });
+
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  registeredUsersCache=data||[];
+
+  root.innerHTML=registeredUsersCache.length?registeredUsersCache.map(user=>`
+    <article class="admin-user-row" data-registered-user-id="${user.user_id}">
+      <div>
+        <strong>${adminEscape(user.email)}</strong>
+        <small>Primo accesso: ${adminDate(user.created_at)}${user.last_sign_in_at?` · ultimo accesso ${adminDate(user.last_sign_in_at)}`:""}</small>
+        <small>
+          ${user.candidate_id
+            ? `Record #${user.candidate_id} · ${adminCandidatureSummary(user.candidature)}`
+            : "Nessun record collegato"}
+        </small>
+      </div>
+      <div class="admin-record-row__actions">
+        ${user.is_admin?'<span class="badge">Amministratore</span>':''}
+        <span class="badge ${user.candidate_id?'badge--linked':'badge--unlinked'}">
+          ${user.candidate_id?'Con record pubblicato':'Senza record'}
+        </span>
+        ${user.candidate_id
+          ? `<button class="secondary admin-open-user-record" type="button">Modifica record</button>`
+          : `<button class="primary admin-create-user-record" type="button">Crea compilazione</button>`}
+      </div>
+    </article>
+  `).join(""):'<p class="admin-empty">Nessun utente corrispondente.</p>';
+}
+
 async function loadAdminUsers(){
   const root=document.querySelector("#admin-users-list");
   if(!root)return;
@@ -1250,6 +1296,7 @@ document.querySelector("#admin-create-candidate-form")?.addEventListener("submit
   await Promise.all([
     loadAdminRequests(),
     loadPreregisteredUsers(),
+    loadRegisteredUsers(),
     loadAdminRecords(),
     loadDuplicates()
   ]);
@@ -1275,7 +1322,37 @@ document.querySelector("#admin-preregistered-users")?.addEventListener("click",a
     if(!confirm(`Eliminare la predisposizione per ${item.email} e il relativo record #${item.candidate_id}?`))return;
     const {error}=await adminSupabase.rpc("admin_delete_preregistered_user",{p_id:Number(item.id)});
     if(error)return alert(error.message);
-    await Promise.all([loadPreregisteredUsers(),loadAdminRecords(),loadDuplicates()]);
+    await Promise.all([loadPreregisteredUsers(),loadRegisteredUsers(),loadAdminRecords(),loadDuplicates()]);
+  }
+});
+
+
+document.querySelector("#admin-registered-users-search-form")?.addEventListener("submit",async event=>{
+  event.preventDefault();
+  await loadRegisteredUsers();
+});
+
+document.querySelector("#admin-registered-users-reset")?.addEventListener("click",async ()=>{
+  document.querySelector("#admin-registered-users-search-form")?.reset();
+  await loadRegisteredUsers();
+});
+
+document.querySelector("#admin-registered-users-results")?.addEventListener("click",async event=>{
+  const row=event.target.closest(".admin-user-row");
+  if(!row)return;
+  const user=registeredUsersCache.find(item=>String(item.user_id)===String(row.dataset.registeredUserId));
+  if(!user)return;
+
+  if(event.target.closest(".admin-open-user-record")){
+    await openAdminRecordEditor(Number(user.candidate_id));
+    return;
+  }
+
+  if(event.target.closest(".admin-create-user-record")){
+    openAdminCreateCandidateDialog({
+      mode:"preregister",
+      email:user.email||""
+    });
   }
 });
 

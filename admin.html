@@ -35,10 +35,19 @@
       <p class="eyebrow">Accesso riservato</p>
       <h1>Gestione richieste</h1>
       <p>
-        Inserisci l’email dell’account amministratore. Riceverai un link di accesso:
-        il sito non raccoglie né conserva password.
+        Accedi con Google usando l’email già autorizzata come amministratore.
+        In alternativa puoi richiedere un codice via email.
       </p>
       <p class="auth-safety-note">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+      <div class="social-login-grid" aria-label="Accesso amministratore con provider esterno">
+        <button id="admin-login-google" class="social-login-button social-login-google" type="button">
+          <span class="social-login-icon" aria-hidden="true">G</span>
+          <span>Accedi con Google</span>
+        </button>
+      </div>
+      <p id="admin-social-login-message" class="admin-message" role="status"></p>
+      <div class="auth-divider"><span>oppure usa il codice email</span></div>
+
       <form id="admin-login-form" class="admin-login-form">
         <label>Email
           <input id="admin-email" type="email" autocomplete="email" required>

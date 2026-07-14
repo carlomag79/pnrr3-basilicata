@@ -277,6 +277,25 @@ async function handleSession(session){
   await loadMine();
 }
 
+async function signInWithProvider(provider){
+  const message=$("#social-login-message");
+  message.textContent="Reindirizzamento al provider…";
+
+  const redirectTo=new URL("account.html",window.location.href).href;
+  const options={redirectTo};
+
+  if(provider==="azure"){
+    options.scopes="openid email profile";
+  }
+
+  const {error}=await sb.auth.signInWithOAuth({provider,options});
+  if(error){
+    message.textContent=error.message||"Non è stato possibile avviare l’accesso.";
+  }
+}
+
+$("#login-google").addEventListener("click",()=>signInWithProvider("google"));
+
 async function requestOtp(email,createUser=true){
   return sb.auth.signInWithOtp({
     email,

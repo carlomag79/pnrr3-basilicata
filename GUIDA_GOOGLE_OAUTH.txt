@@ -1,0 +1,37 @@
+VERSIONE 4.3 — ACCESSO GOOGLE + OTP EMAIL
+
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Non è necessaria una nuova migrazione SQL se la V4 è già stata eseguita.
+3. Il login Microsoft è stato rimosso.
+4. Il codice OTP via email resta disponibile come metodo alternativo.
+
+SUPABASE
+Authentication > URL Configuration
+
+Site URL:
+https://pnrr3.carlomagni.it/
+
+Redirect URLs:
+https://pnrr3.carlomagni.it/account.html
+https://pnrr3.carlomagni.it/admin.html
+
+Callback OAuth configurato in Google:
+https://rdoegrnkdmjhqqaayaxp.supabase.co/auth/v1/callback
+
+SUPABASE > AUTHENTICATION > PROVIDERS > GOOGLE
+- Enable Sign in with Google: attivo
+- Client ID: quello creato in Google Cloud
+- Client Secret: quello creato in Google Cloud
+
+TEST CONSIGLIATI
+1. Apri account.html in finestra anonima.
+2. Accedi con un account Google già presente in Supabase.
+3. Verifica che ritrovi candidatura e preferenze.
+4. Accedi con un account Google nuovo.
+5. Verifica che compaia la richiesta moderata.
+6. Prova admin.html con la stessa email già autorizzata come amministratore.
+
+NOTA
+Un account Google con un indirizzo diverso da quello già registrato in Supabase
+viene considerato un altro utente. Per l'amministrazione occorre usare esattamente
+l'email autorizzata.

@@ -241,6 +241,25 @@ async function rejectRequest(requestId) {
   await loadAdminRequests();
 }
 
+async function adminSignInWithProvider(provider){
+  const message=document.querySelector("#admin-social-login-message");
+  message.textContent="Reindirizzamento al provider…";
+
+  const redirectTo=new URL("admin.html",window.location.href).href;
+  const options={redirectTo};
+
+  if(provider==="azure"){
+    options.scopes="openid email profile";
+  }
+
+  const {error}=await adminSupabase.auth.signInWithOAuth({provider,options});
+  if(error){
+    message.textContent=error.message||"Non è stato possibile avviare l’accesso.";
+  }
+}
+
+document.querySelector("#admin-login-google").addEventListener("click",()=>adminSignInWithProvider("google"));
+
 document.querySelector("#admin-login-form").addEventListener("submit", async event => {
   event.preventDefault();
   const message=document.querySelector("#admin-login-message");

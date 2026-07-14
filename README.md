@@ -317,3 +317,13 @@ template email Supabase affinché mostri `{{ .Token }}`.
 - caricamento differito e ordinato degli script;
 - messaggi visibili in caso di risorsa o configurazione non caricata;
 - gestione esplicita degli errori durante l’invio del codice.
+
+
+## Versione 4.2
+
+Accesso con Google e Microsoft aggiunto a `account.html` e `admin.html`; OTP email mantenuto come alternativa. Vedi `GUIDA_GOOGLE_MICROSOFT.txt`.
+
+
+## Versione 4.3
+
+Login Microsoft rimosso. Restano Google OAuth e OTP email.

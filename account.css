@@ -93,3 +93,16 @@
 .registration-message{margin-top:15px;padding:12px 14px;background:var(--surface-soft);border-left:4px solid var(--accent)}
 .registration-message:empty{display:none}
 @media(max-width:760px){.registration-request-form{grid-template-columns:1fr}}
+
+.social-login-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.social-login-button{min-height:50px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:1px solid var(--line);font:inherit;font-weight:750;cursor:pointer}
+.social-login-button:hover{background:var(--surface-soft)}
+.social-login-icon{width:24px;height:24px;display:grid;place-items:center;font-size:1.15rem;font-weight:900}
+.social-login-icon--microsoft{grid-template-columns:repeat(2,8px);grid-template-rows:repeat(2,8px);gap:2px}
+.social-login-icon--microsoft i{display:block;width:8px;height:8px;background:currentColor}
+.social-login-message{min-height:1.25em;margin:10px 0 0;color:var(--danger);font-size:.88rem}
+.auth-divider{margin:22px 0 4px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.78rem;font-weight:750;text-transform:uppercase;letter-spacing:.05em}
+.auth-divider::before,.auth-divider::after{content:"";height:1px;flex:1;background:var(--line)}
+@media(max-width:620px){.social-login-grid{grid-template-columns:1fr}}
+
+.social-login-grid{grid-template-columns:1fr}

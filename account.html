@@ -34,9 +34,18 @@
   <main class="container account-main">
     <section id="auth-panel" class="panel auth-panel">
       <p class="eyebrow">Accesso e registrazione</p>
-      <h2>Accedi tramite codice email</h2>
-      <p>Inserisci la tua email: riceverai un codice numerico da digitare sul sito. Non servono password, nome, cognome o telefono.</p>
+      <h2>Accedi al tuo account</h2>
+      <p>Usa Google per accedere senza attendere email. Il codice OTP resta disponibile come alternativa.</p>
       <p class="auth-safety-note">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+
+      <div class="social-login-grid" aria-label="Accesso con provider esterno">
+        <button id="login-google" class="social-login-button social-login-google" type="button">
+          <span class="social-login-icon" aria-hidden="true">G</span>
+          <span>Accedi con Google</span>
+        </button>
+      </div>
+      <p id="social-login-message" class="social-login-message" role="status"></p>
+      <div class="auth-divider"><span>oppure usa il codice email</span></div>
 
       <form id="otp-request-form" class="auth-form">
         <label>Email

@@ -513,3 +513,22 @@ body.admin-page {
 .social-login-grid{grid-template-columns:1fr}
 
 .admin-support-panel{margin-bottom:22px}
+
+.support-candidate-tools{margin-top:16px;padding:14px;background:var(--surface-soft);border:1px solid var(--line)}
+.support-candidate-tools summary{cursor:pointer;font-weight:800}
+.support-candidate-tools__body{padding-top:14px}
+.support-create-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.support-create-grid__wide{grid-column:1/-1}
+.support-create-grid small{display:block;margin-top:4px;color:var(--muted)}
+.support-candidate-results{display:grid;gap:8px;margin-top:12px}
+.support-candidate-match{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px;background:#fff;border:1px solid var(--line)}
+.support-candidate-match strong,.support-candidate-match span{display:block}
+.support-candidate-match span{margin-top:3px;color:var(--muted);font-size:.86rem}
+@media(max-width:700px){.support-create-grid{grid-template-columns:1fr}.support-create-grid__wide{grid-column:auto}.support-candidate-match{align-items:flex-start;flex-direction:column}}
+
+.support-preferences-block{margin-top:16px;padding:14px;background:#fff;border:1px solid var(--line)}
+.support-preferences-block h3{margin:0 0 10px}
+.admin-support-schools{display:grid;gap:8px;margin:0;padding-left:22px}
+.admin-support-schools li{padding:8px 0}
+.admin-support-schools strong,.admin-support-schools span{display:block}
+.admin-support-schools span{margin-top:3px;color:var(--muted);font-size:.86rem}

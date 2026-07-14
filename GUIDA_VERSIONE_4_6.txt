@@ -1,0 +1,30 @@
+VERSIONE 4.6 — SCUOLE CON DISPONIBILITÀ NELLE SEGNALAZIONI
+
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_6_scuole_disponibili.sql
+3. Devono essere già presenti le migrazioni V4.4 e V4.5.
+
+MODULO UTENTE
+- l’utente indica classe, posizione e punteggio;
+- seleziona da 1 a 30 scuole o plessi;
+- vengono mostrate soltanto sedi con disponibilità positiva per la classe;
+- le scuole possono essere cercate, aggiunte, rimosse e riordinate;
+- cambiando classe, la selezione viene azzerata per evitare incoerenze;
+- la segnalazione salva i codici scuola e l’ordine delle preferenze.
+
+AREA AMMINISTRATIVA
+- la segnalazione mostra l’elenco delle scuole selezionate;
+- non vengono più richiesti comuni o province;
+- cliccando “Crea compilazione con queste scuole”, il sistema:
+  • usa classe, posizione e punteggio della segnalazione;
+  • salva le singole scuole nell’ordine scelto dall’utente;
+  • ricava automaticamente province e comuni dai dati delle scuole;
+  • impedisce la creazione di un duplicato esatto;
+  • associa l’account se l’email esiste in Supabase Auth;
+  • segna la segnalazione come risolta.
+
+NOTA TECNICA
+I campi provincia e comuni restano internamente nel database per compatibilità
+con le versioni precedenti e con la tabella pubblica, ma non vengono più scelti
+manualmente dall’utente o dall’amministratore.

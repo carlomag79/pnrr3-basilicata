@@ -334,3 +334,13 @@ Login Microsoft rimosso. Restano Google OAuth e OTP email.
 Aggiunto un modulo pubblico per gli utenti che non riescono ad accedere con
 Google o OTP e una coda di gestione nell’area amministrativa. Eseguire
 `migration_v4_4_assistenza_manuale.sql`.
+
+
+## Versione 4.5
+
+Gestione diretta delle compilazioni dalle segnalazioni di assistenza: ricerca record coincidenti, collegamento e creazione amministrativa.
+
+
+## Versione 4.6
+
+Le segnalazioni raccolgono e salvano direttamente le scuole/plessi con disponibilità, ordinate dall’utente. Comuni e province vengono ricavati automaticamente solo per compatibilità interna.

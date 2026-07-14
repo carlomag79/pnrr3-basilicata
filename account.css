@@ -117,3 +117,9 @@
 .manual-support-message{min-height:1.3em;margin-top:12px;font-weight:700}
 .support-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 @media(max-width:700px){.manual-support-form{grid-template-columns:1fr}.manual-support-form__wide{grid-column:auto}}
+
+.support-school-picker{padding:16px;background:var(--surface-soft);border:1px solid var(--line)}
+.support-school-picker__heading{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}
+.support-school-picker__heading p{margin:4px 0 0;color:var(--muted)}
+#support-school-results{max-height:300px;margin-top:12px}
+#support-selected-schools{margin-top:14px}

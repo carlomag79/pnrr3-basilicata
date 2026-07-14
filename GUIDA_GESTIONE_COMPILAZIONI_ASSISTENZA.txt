@@ -1,0 +1,34 @@
+VERSIONE 4.5 — GESTIONE COMPILAZIONI DALL’ASSISTENZA
+
+1. Carica e sostituisci i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_5_gestione_compilazioni_admin.sql
+3. La migrazione V4.4 deve essere già presente.
+
+NELL’AREA AMMINISTRATIVA
+Apri una segnalazione in “Assistenza manuale” e seleziona
+“Gestisci la compilazione”.
+
+AZIONI DISPONIBILI
+
+A. Cerca record coincidenti
+- cerca compilazioni con la stessa classe, posizione e punteggio;
+- mostra ID, email associata e comuni;
+- “Collega alla segnalazione” associa il record alla richiesta;
+- se l’email indicata esiste in Supabase Auth, associa anche il record
+  all’account, purché non sia già occupato.
+
+B. Crea compilazione
+- usa classe, posizione e punteggio della segnalazione;
+- richiede provincia principale e almeno un comune;
+- la seconda provincia è facoltativa;
+- l’email account è facoltativa, ma se inserita deve esistere in Auth;
+- impedisce la creazione se esiste già un record coincidente;
+- chiude automaticamente la segnalazione come risolta.
+
+NOTE
+- una compilazione creata senza account resta pubblica ma non è modificabile
+  dall’utente finché non viene associata successivamente;
+- le preferenze dei singoli plessi non vengono inventate: l’utente potrà
+  aggiungerle dopo l’accesso;
+- tutte le azioni sono riservate agli amministratori.

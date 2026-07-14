@@ -19,6 +19,7 @@ let currentSubmission = null;
 let lastLegacyImport = false;
 let pendingOtpEmail = "";
 let registrationStatus = null;
+let supportSelectedSchools = [];
 
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -429,6 +430,100 @@ $("#delete-account-data").addEventListener("click",async()=>{
 });
 
 
+
+function renderSupportSchoolSearch(){
+  const root=$("#support-school-results");
+  if(!root)return;
+
+  const classe=$("#support-class").value;
+  const q=$("#support-school-search").value.trim().toLocaleLowerCase("it-IT");
+
+  const matches=allSchools.filter(s=>{
+    const posts=availablePosts(s,classe);
+    const hay=`${s.denominazione} ${s.comune} ${s.istituto} ${s.codice}`.toLocaleLowerCase("it-IT");
+    return posts>0
+      && (!q||hay.includes(q))
+      && !supportSelectedSchools.some(item=>item.codice_scuola===s.codice);
+  }).slice(0,60);
+
+  root.innerHTML=matches.length?matches.map(s=>`
+    <article class="school-result">
+      <div>
+        <strong>${esc(s.denominazione)} – ${esc(s.comune)}</strong>
+        <span>${esc(s.istituto)}</span>
+        <small>${s.codice}</small>
+        <span class="school-result__posts">${availablePosts(s,classe)} ${availablePosts(s,classe)===1?"posto":"posti"} disponibili</span>
+      </div>
+      <button class="secondary support-add-school" type="button" data-code="${s.codice}">Aggiungi</button>
+    </article>
+  `).join(""):'<p class="updates-empty">Nessuna scuola con disponibilità per questi criteri.</p>';
+}
+
+function renderSupportSelectedSchools(){
+  const root=$("#support-selected-schools");
+  if(!root)return;
+
+  $("#support-school-counter").textContent=`${supportSelectedSchools.length} / 30`;
+
+  root.innerHTML=supportSelectedSchools.length?supportSelectedSchools.map((item,index)=>{
+    const school=allSchools.find(s=>s.codice===item.codice_scuola);
+    if(!school)return "";
+    return `
+      <article class="selected-school">
+        <span class="selected-school__number">${index+1}</span>
+        <div>
+          <strong>${esc(school.denominazione)} – ${esc(school.comune)}</strong>
+          <span>${esc(school.istituto)} · ${availablePosts(school,item.classe)} posti disponibili</span>
+        </div>
+        <div class="selected-school__actions">
+          <button class="secondary support-move-school" data-index="${index}" data-dir="-1" type="button" aria-label="Sposta su">↑</button>
+          <button class="secondary support-move-school" data-index="${index}" data-dir="1" type="button" aria-label="Sposta giù">↓</button>
+          <button class="danger-button support-remove-school" data-index="${index}" type="button" aria-label="Rimuovi">×</button>
+        </div>
+      </article>`;
+  }).join(""):'<p class="updates-empty">Seleziona almeno una scuola.</p>';
+
+  renderSupportSchoolSearch();
+}
+
+$("#support-class").addEventListener("change",()=>{
+  supportSelectedSchools=[];
+  renderSupportSelectedSchools();
+});
+
+$("#support-school-search").addEventListener("input",renderSupportSchoolSearch);
+
+$("#support-school-results").addEventListener("click",event=>{
+  const button=event.target.closest(".support-add-school");
+  if(!button||supportSelectedSchools.length>=30)return;
+  supportSelectedSchools.push({
+    classe:$("#support-class").value,
+    codice_scuola:button.dataset.code
+  });
+  renderSupportSelectedSchools();
+});
+
+$("#support-selected-schools").addEventListener("click",event=>{
+  const remove=event.target.closest(".support-remove-school");
+  if(remove){
+    supportSelectedSchools.splice(Number(remove.dataset.index),1);
+    renderSupportSelectedSchools();
+    return;
+  }
+
+  const move=event.target.closest(".support-move-school");
+  if(move){
+    const index=Number(move.dataset.index);
+    const target=index+Number(move.dataset.dir);
+    if(target>=0&&target<supportSelectedSchools.length){
+      [supportSelectedSchools[index],supportSelectedSchools[target]]=[
+        supportSelectedSchools[target],supportSelectedSchools[index]
+      ];
+      renderSupportSelectedSchools();
+    }
+  }
+});
+
 $("#manual-support-form").addEventListener("submit",async event=>{
   event.preventDefault();
 
@@ -439,6 +534,11 @@ $("#manual-support-form").addEventListener("submit",async event=>{
 
   if(!Number.isInteger(posizione)||posizione<1||!Number.isFinite(punteggio)||punteggio<0){
     message.textContent="Controlla posizione e punteggio.";
+    return;
+  }
+
+  if(!supportSelectedSchools.length){
+    message.textContent="Seleziona almeno una scuola con disponibilità.";
     return;
   }
 
@@ -453,6 +553,7 @@ $("#manual-support-form").addEventListener("submit",async event=>{
     p_punteggio:punteggio,
     p_issue:$("#support-issue").value,
     p_note:$("#support-note").value.trim()||null,
+    p_preferenze_scuole:supportSelectedSchools.map((item,index)=>({...item,ordine:index+1})),
     p_website:$("#support-website").value
   });
 
@@ -464,8 +565,10 @@ $("#manual-support-form").addEventListener("submit",async event=>{
   }
 
   event.target.reset();
+  supportSelectedSchools=[];
+  renderSupportSelectedSchools();
   message.textContent="Richiesta inviata. Sarà verificata manualmente; verrai ricontattato all’indirizzo indicato.";
 });
 
 sb.auth.onAuthStateChange((_event,session)=>handleSession(session));
-(async()=>{await loadSchools();const {data}=await sb.auth.getSession();await handleSession(data.session)})();
+(async()=>{await loadSchools();renderSupportSelectedSchools();const {data}=await sb.auth.getSession();await handleSession(data.session)})();

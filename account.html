@@ -94,6 +94,20 @@
             <label>Punteggio
               <input id="support-score" type="number" min="0" step="0.01" required>
             </label>
+            <div class="manual-support-form__wide support-school-picker">
+              <div class="support-school-picker__heading">
+                <div>
+                  <strong>Preferenze scolastiche</strong>
+                  <p>Seleziona esclusivamente scuole o plessi con disponibilità per la classe indicata.</p>
+                </div>
+                <span id="support-school-counter" class="badge">0 / 30</span>
+              </div>
+              <label>Cerca scuola, comune o istituto
+                <input id="support-school-search" type="search" placeholder="Es. Senise, Matera, Brancato">
+              </label>
+              <div id="support-school-results" class="school-search-results"></div>
+              <div id="support-selected-schools" class="selected-schools"></div>
+            </div>
             <label class="manual-support-form__wide">Problema riscontrato
               <select id="support-issue" required>
                 <option value="google">Non riesco ad accedere con Google</option>
@@ -275,7 +289,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.4.0" defer></script>
-  <script src="account.js?v=4.4.0" defer></script>
+  <script src="config.js?v=4.6.0" defer></script>
+  <script src="account.js?v=4.6.0" defer></script>
 </body>
 </html>

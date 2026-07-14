@@ -18,6 +18,7 @@ const adminSupabase = window.supabase.createClient(
 
 let adminRequests = [];
 let pendingAdminOtpEmail = "";
+let adminSchools = [];
 
 const loginPanel = document.querySelector("#admin-login-panel");
 const adminApp = document.querySelector("#admin-app");
@@ -343,6 +344,7 @@ adminSupabase.auth.onAuthStateChange((_event, session) => {
 });
 
 (async function initAdmin() {
+  await loadAdminSchools();
   const { data } = await adminSupabase.auth.getSession();
   await handleSession(data.session);
 })();
@@ -350,6 +352,48 @@ adminSupabase.auth.onAuthStateChange((_event, session) => {
 
 
 
+
+
+async function loadAdminSchools(){
+  if(adminSchools.length)return;
+  const response=await fetch("scuole.json",{cache:"no-store"});
+  if(!response.ok)throw new Error("Impossibile caricare le scuole.");
+  adminSchools=await response.json();
+}
+
+function adminSchoolByCode(code){
+  return adminSchools.find(s=>s.codice===code);
+}
+
+function renderSupportPreferences(preferences){
+  const prefs=Array.isArray(preferences)?preferences:[];
+  if(!prefs.length)return '<p class="admin-empty">Nessuna scuola selezionata.</p>';
+
+  return `<ol class="admin-support-schools">${prefs.map(pref=>{
+    const school=adminSchoolByCode(pref.codice_scuola);
+    if(!school)return `<li>${adminEscape(pref.codice_scuola)}</li>`;
+    const posts=Number(school.disponibilita?.[pref.classe]||0);
+    return `<li>
+      <strong>${adminEscape(school.denominazione)} – ${adminEscape(school.comune)}</strong>
+      <span>${adminEscape(school.istituto)} · ${adminEscape(school.codice)} · ${posts} posti disponibili</span>
+    </li>`;
+  }).join("")}</ol>`;
+}
+
+function supportLocationData(preferences){
+  const schools=(Array.isArray(preferences)?preferences:[])
+    .map(pref=>adminSchoolByCode(pref.codice_scuola))
+    .filter(Boolean);
+
+  const provinces=[...new Set(schools.map(s=>s.provincia).filter(Boolean))];
+  const municipalities=[...new Set(schools.map(s=>s.comune).filter(Boolean))];
+
+  return {
+    provincia1:provinces[0]||"Potenza",
+    provincia2:provinces[1]||null,
+    comuni:municipalities.length?municipalities:["Preferenze scolastiche"]
+  };
+}
 
 async function loadManualSupportRequests(){
   const root=document.querySelector("#admin-support-requests");
@@ -376,6 +420,7 @@ async function loadManualSupportRequests(){
   }
 
   const requests=data||[];
+  window.__manualSupportRequests=requests;
   root.innerHTML=requests.length?requests.map(request=>`
     <article class="admin-request" data-support-id="${request.id}">
       <header class="admin-request__head">
@@ -396,6 +441,28 @@ async function loadManualSupportRequests(){
         </div>
         ${request.note?`<p class="admin-note"><strong>Nota utente:</strong> ${adminEscape(request.note)}</p>`:""}
         ${request.admin_note?`<p class="admin-note"><strong>Nota amministratore:</strong> ${adminEscape(request.admin_note)}</p>`:""}
+        ${request.candidate_id?`<p class="admin-note"><strong>Compilazione collegata:</strong> record #${request.candidate_id}</p>`:""}
+        <div class="support-preferences-block">
+          <h3>Scuole selezionate dall’utente</h3>
+          ${renderSupportPreferences(request.preferenze_scuole)}
+        </div>
+        <div class="support-candidate-tools">
+          <details>
+            <summary>Gestisci la compilazione</summary>
+            <div class="support-candidate-tools__body">
+              <p>Puoi cercare un record esistente oppure creare la compilazione usando esattamente le scuole selezionate nella segnalazione.</p>
+              <label class="support-create-grid__wide">Email account da associare
+                <input class="support-link-email" type="email" value="${adminEscape(request.email)}">
+                <small>Facoltativa: deve già esistere in Supabase Auth.</small>
+              </label>
+              <div class="admin-request__actions">
+                <button class="secondary support-find-candidates" type="button">Cerca record coincidenti</button>
+                <button class="primary support-create-candidate" type="button">Crea compilazione con queste scuole</button>
+              </div>
+              <div class="support-candidate-results" hidden></div>
+            </div>
+          </details>
+        </div>
         <div class="admin-request__actions">
           ${request.status==="pending"?'<button class="secondary support-take" type="button">Prendi in carico</button>':""}
           ${request.status!=="resolved"?'<button class="primary support-resolve" type="button">Segna come risolta</button>':""}
@@ -413,6 +480,80 @@ document.querySelector("#admin-support-requests")?.addEventListener("click",asyn
   if(!article)return;
 
   const requestId=Number(article.dataset.supportId);
+
+  if(event.target.closest(".support-find-candidates")){
+    const root=article.querySelector(".support-candidate-results");
+    root.hidden=false;
+    root.innerHTML='<p class="admin-empty">Ricerca in corso…</p>';
+
+    const {data,error}=await adminSupabase.rpc("admin_find_manual_support_candidates",{
+      p_request_id:requestId
+    });
+
+    if(error){
+      root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+      return;
+    }
+
+    const matches=data||[];
+    root.innerHTML=matches.length?matches.map(match=>`
+      <div class="support-candidate-match" data-candidate-id="${match.candidate_id}">
+        <div>
+          <strong>Record #${match.candidate_id}</strong>
+          <span>${adminEscape(match.email||"Non associato")} · ${adminEscape((match.comuni||[]).join(", "))}</span>
+        </div>
+        <button class="secondary support-use-candidate" type="button">Collega alla segnalazione</button>
+      </div>
+    `).join(""):'<p class="admin-empty">Nessun record coincidente.</p>';
+    return;
+  }
+
+  if(event.target.closest(".support-use-candidate")){
+    const match=event.target.closest(".support-candidate-match");
+    const candidateId=Number(match.dataset.candidateId);
+    const email=article.querySelector(".support-link-email")?.value.trim()||null;
+
+    if(!confirm(`Collegare la segnalazione al record #${candidateId}?`))return;
+
+    const {error}=await adminSupabase.rpc("admin_attach_manual_support_candidate",{
+      p_request_id:requestId,
+      p_candidate_id:candidateId,
+      p_account_email:email
+    });
+
+    if(error)return alert(error.message);
+    await Promise.all([loadManualSupportRequests(),loadAdminRecords(),loadDuplicates()]);
+    return;
+  }
+
+  if(event.target.closest(".support-create-candidate")){
+    const email=article.querySelector(".support-link-email").value.trim()||null;
+    const request=(window.__manualSupportRequests||[]).find(item=>Number(item.id)===requestId);
+
+    if(!request||!Array.isArray(request.preferenze_scuole)||!request.preferenze_scuole.length){
+      alert("La segnalazione non contiene preferenze scolastiche.");
+      return;
+    }
+
+    const location=supportLocationData(request.preferenze_scuole);
+
+    if(!confirm("Creare una nuova compilazione con le scuole selezionate dall’utente?"))return;
+
+    const {data,error}=await adminSupabase.rpc("admin_create_candidate_from_manual_support",{
+      p_request_id:requestId,
+      p_preferenze_scuole:request.preferenze_scuole,
+      p_provincia_1:location.provincia1,
+      p_provincia_2:location.provincia2,
+      p_comuni:location.comuni,
+      p_account_email:email
+    });
+
+    if(error)return alert(error.message);
+    alert(`Compilazione creata: record #${data}`);
+    await Promise.all([loadManualSupportRequests(),loadAdminRecords(),loadDuplicates()]);
+    return;
+  }
+
   let status=null;
   let note=null;
 

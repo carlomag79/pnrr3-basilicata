@@ -230,6 +230,13 @@
                 <option value="unlinked">Non associati</option>
               </select>
             </label>
+            <label>Preferenze scolastiche
+              <select id="admin-filter-preferences">
+                <option value="all">Tutte</option>
+                <option value="present">Presenti</option>
+                <option value="missing">Mancanti</option>
+              </select>
+            </label>
             <div class="admin-search-actions">
               <button class="primary" type="submit">Applica filtri</button>
               <button id="admin-reset-record-filters" class="secondary" type="button">Azzera</button>
@@ -410,7 +417,7 @@
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.9.0" defer></script>
-  <script src="admin.js?v=4.9.0" defer></script>
+  <script src="config.js?v=4.10.0" defer></script>
+  <script src="admin.js?v=4.10.0" defer></script>
 </body>
 </html>

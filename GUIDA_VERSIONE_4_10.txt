@@ -1,0 +1,26 @@
+VERSIONE 4.10 — STATI DI PUBBLICAZIONE
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_10_stati_pubblicazione.sql
+3. La migrazione V4.9 deve essere già installata.
+
+NUOVI STATI VISIVI
+Ogni record mostra separatamente:
+- Account associato / Account non associato;
+- Pubblicato – preferenze scolastiche complete;
+- Pubblicato – dati storici per comune.
+
+Un record senza preferenze scolastiche non è considerato nascosto:
+rimane pubblicato e continua a contribuire ai dati storici basati sui comuni.
+
+NUOVO FILTRO
+Nella ricerca avanzata è disponibile:
+Preferenze scolastiche
+- Tutte;
+- Presenti;
+- Mancanti.
+
+Usa “Mancanti” per individuare le vecchie compilazioni da completare
+gradualmente con scuole e plessi.

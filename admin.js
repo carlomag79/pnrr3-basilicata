@@ -817,7 +817,8 @@ function getRecordFilters(){
     p_posizione:positionValue?Number(positionValue):null,
     p_punteggio:scoreValue?Number(scoreValue):null,
     p_comune:(document.querySelector("#admin-filter-municipality")?.value||"").trim()||null,
-    p_linked_status:document.querySelector("#admin-filter-linked")?.value||"all"
+    p_linked_status:document.querySelector("#admin-filter-linked")?.value||"all",
+    p_preferences_status:document.querySelector("#admin-filter-preferences")?.value||"all"
   };
 }
 
@@ -1040,7 +1041,12 @@ async function loadAdminRecords(){
         <div class="admin-record-row__title">
           <strong>Record #${record.candidate_id}</strong>
           <span class="badge ${record.email?"badge--linked":"badge--unlinked"}">
-            ${record.email?"Associato":"Non associato"}
+            ${record.email?"Account associato":"Account non associato"}
+          </span>
+          <span class="badge ${Number(record.preferences_count)>0?"badge--complete":"badge--historic"}">
+            ${Number(record.preferences_count)>0
+              ?"Pubblicato – preferenze scolastiche complete"
+              :"Pubblicato – dati storici per comune"}
           </span>
         </div>
         <span>${record.email?adminEscape(record.email):"Nessun account collegato"}</span>
@@ -1106,6 +1112,11 @@ async function loadDuplicates(){
             <div>
               <strong>Record #${record.candidate_id}</strong>
               <span>${record.email?adminEscape(record.email):"Non associato a un account"}</span>
+              <span class="badge ${Number(record.preferences_count)>0?"badge--complete":"badge--historic"}">
+                ${Number(record.preferences_count)>0
+                  ?"Preferenze scolastiche complete"
+                  :"Dati storici per comune"}
+              </span>
               <small>${(record.comuni||[]).map(adminEscape).join(" · ")||"Nessun comune storico"}</small>
               <small>${record.preferences_count||0} preferenze scolastiche · ${adminDate(record.updated_at||record.created_at)}</small>
             </div>

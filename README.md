@@ -362,3 +362,8 @@ dell’account e fusione delle preferenze scolastiche.
 Aggiunta la creazione diretta delle compilazioni dalle richieste di
 rivendicazione e la sezione **Utenti pre-registrati**, con associazione
 automatica della compilazione al primo accesso con la stessa email.
+
+## Versione 4.10
+
+Aggiunti stati distinti per pubblicazione e associazione account, oltre al
+filtro per individuare le compilazioni con preferenze scolastiche mancanti.

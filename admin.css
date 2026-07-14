@@ -580,3 +580,6 @@ body.admin-page {
 #admin-create-school-results{max-height:300px;overflow:auto}
 #admin-create-selected-schools{margin-top:14px}
 @media(max-width:700px){.admin-create-user-grid{grid-template-columns:1fr}}
+
+.badge--complete{color:#17623b;background:#e7f6ed}
+.badge--historic{color:#7b5514;background:#fff2cf}

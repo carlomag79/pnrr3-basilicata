@@ -116,7 +116,7 @@ function popupHtml(school, coordinates, approximate = false) {
       <p><strong>Codice:</strong> ${escapeHtml(school.codice)}</p>
       ${approximate ? '<p><em>Posizione cartografica approssimativa.</em></p>' : ""}
       <div class="school-popup__availability">${formatAvailability(school)}</div>
-      ${hasOfficialAvailability(school) ? '<p class="school-popup__source"><strong>Fonte:</strong> prospetti ufficiali disponibilità immissioni in ruolo 2026/27 - USP Matera.</p>' : '<p class="school-popup__source is-pending">Disponibilità ufficiali non ancora pubblicate per questa sede.</p>'}
+      ${hasOfficialAvailability(school) ? `<p class="school-popup__source"><strong>Fonte:</strong> prospetti ufficiali disponibilità immissioni in ruolo 2026/27 - USP ${escapeHtml(school.provincia)}.</p>` : '<p class="school-popup__source is-pending">Disponibilità ufficiali non ancora pubblicate per questa sede.</p>'}
       <div class="school-popup__distances">
         <p><strong>Distanza in linea d’aria:</strong></p>
         <p>Matera: ${materaDistance} km · Potenza: ${potenzaDistance} km</p>

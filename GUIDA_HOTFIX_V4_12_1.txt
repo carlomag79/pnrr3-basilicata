@@ -1,0 +1,26 @@
+HOTFIX V4.12.1 — RECORD UTENTI E DOPPIONI
+
+INSTALLAZIONE
+1. Sostituisci i file del pacchetto sul sito.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_12_1_gestione_record_utenti.sql
+3. Ricarica admin-users.html con Ctrl + F5.
+
+CORREZIONE
+Il salvataggio di un record storico senza preferenze scolastiche non richiede
+più che comuni e province siano ricavati dalle scuole. Vengono mantenuti i
+comuni storici già pubblicati.
+
+GESTIONE DALL’AREA RISERVATA DELL’UTENTE
+Aprendo “Gestisci area riservata” vengono mostrati:
+- il record associato all’utente;
+- eventuali record anonimi con la stessa combinazione di classe, posizione
+  e punteggio.
+
+Per ogni record puoi:
+- modificarlo;
+- eliminare singolarmente un possibile doppione;
+- unire tutti i doppioni nel record associato all’utente.
+
+L’unione conserva il record associato, trasferisce le preferenze compatibili
+e cancella i record secondari.

@@ -856,17 +856,66 @@ async function openAdminUserArea(user){
       <div><span>Email</span><strong>${adminEscape(user.email)}</strong></div>
       <div><span>Primo accesso</span><strong>${adminDate(user.created_at)}</strong></div>
       <div><span>Ultimo accesso</span><strong>${adminDate(user.last_sign_in_at)}</strong></div>
-      <div><span>Compilazione</span><strong>${user.candidate_id?`Record #${user.candidate_id}`:"Nessun record"}</strong></div>
+      <div><span>Compilazione collegata</span><strong>${user.candidate_id?`Record #${user.candidate_id}`:"Nessun record"}</strong></div>
     </div>
-    <div class="admin-record-row__actions">
-      ${user.candidate_id
-        ? `<button class="secondary admin-area-edit-record" type="button" data-candidate-id="${user.candidate_id}">Modifica compilazione</button>`
-        : `<button class="primary admin-area-create-record" type="button" data-email="${adminEscape(user.email)}">Crea compilazione</button>`}
-    </div>`;
+    ${user.candidate_id
+      ? '<div id="admin-user-related-records"><p class="admin-empty">Ricerca record collegati e possibili doppioni…</p></div>'
+      : `<div class="admin-record-row__actions"><button class="primary admin-area-create-record" type="button" data-email="${adminEscape(user.email)}">Crea compilazione</button></div>`}`;
 
   history.innerHTML='<p class="admin-empty">Caricamento messaggi…</p>';
   dialog.showModal();
-  await loadAdminUserMessages(user.user_id);
+  await Promise.all([
+    loadAdminUserMessages(user.user_id),
+    user.candidate_id?loadAdminUserRelatedRecords(user.user_id):Promise.resolve()
+  ]);
+}
+
+
+async function loadAdminUserRelatedRecords(userId){
+  const root=document.querySelector("#admin-user-related-records");
+  if(!root)return;
+
+  const {data,error}=await adminSupabase.rpc("admin_list_user_related_records",{
+    p_user_id:userId
+  });
+
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  const records=data||[];
+  if(!records.length){
+    root.innerHTML='<p class="admin-empty">Nessun record collegato.</p>';
+    return;
+  }
+
+  root.innerHTML=`
+    <div class="admin-subheading">
+      <div>
+        <h3>Record dell’utente e possibili doppioni</h3>
+        <p>Il record associato è evidenziato. Gli altri hanno la stessa combinazione di classe, posizione e punteggio.</p>
+      </div>
+    </div>
+    <div class="admin-user-related-list">
+      ${records.map(record=>`
+        <article class="admin-user-related-record ${record.is_linked?"is-linked":""}" data-candidate-id="${record.candidate_id}">
+          <div>
+            <div class="admin-record-row__title">
+              <strong>Record #${record.candidate_id}</strong>
+              ${record.is_linked?'<span class="badge badge--linked">Associato all’utente</span>':'<span class="badge badge--historic">Possibile doppione</span>'}
+            </div>
+            <div class="admin-record-candidatures">${renderCandidatureSummary(record.candidature)}</div>
+            <small>${record.preferences_count||0} preferenze scolastiche · ${(record.comuni||[]).map(adminEscape).join(" · ")||"Nessun comune storico"}</small>
+          </div>
+          <div class="admin-record-row__actions">
+            <button class="secondary admin-related-edit" type="button">Modifica</button>
+            ${record.is_linked
+              ? (records.length>1?'<button class="primary admin-related-merge" type="button">Unisci i doppioni in questo record</button>':'')
+              : '<button class="danger-button admin-related-delete" type="button">Elimina doppione</button>'}
+          </div>
+        </article>`).join("")}
+    </div>`;
 }
 
 async function loadAdminUserMessages(userId){
@@ -1422,15 +1471,48 @@ document.querySelector("#admin-close-user-area")?.addEventListener("click",()=>{
 });
 
 document.querySelector("#admin-user-area-summary")?.addEventListener("click",async event=>{
-  const edit=event.target.closest(".admin-area-edit-record");
-  if(edit){
-    await openAdminRecordEditor(Number(edit.dataset.candidateId));
-    return;
-  }
-
   const create=event.target.closest(".admin-area-create-record");
   if(create){
     openAdminCreateCandidateDialog({mode:"preregister",email:create.dataset.email||""});
+    return;
+  }
+
+  const row=event.target.closest(".admin-user-related-record");
+  if(!row)return;
+  const candidateId=Number(row.dataset.candidateId);
+  const userId=document.querySelector("#admin-message-user-id").value;
+
+  if(event.target.closest(".admin-related-edit")){
+    await openAdminRecordEditor(candidateId);
+    return;
+  }
+
+  if(event.target.closest(".admin-related-delete")){
+    if(!confirm(`Eliminare definitivamente il possibile doppione #${candidateId}?`))return;
+    const {error}=await adminSupabase.rpc("admin_delete_candidate",{p_candidate_id:candidateId});
+    if(error)return alert(error.message);
+    await Promise.all([loadAdminUserRelatedRecords(userId),loadRegisteredUsers()]);
+    return;
+  }
+
+  if(event.target.closest(".admin-related-merge")){
+    const related=[...document.querySelectorAll(".admin-user-related-record")]
+      .map(item=>Number(item.dataset.candidateId));
+    const sourceIds=related.filter(id=>id!==candidateId);
+    if(!sourceIds.length)return;
+
+    if(!confirm(
+      `Unire ${sourceIds.length} ${sourceIds.length===1?"record":"record"} nel record #${candidateId}?\n\n`+
+      `I record ${sourceIds.map(id=>"#"+id).join(", ")} saranno eliminati.`
+    ))return;
+
+    const {error}=await adminSupabase.rpc("admin_merge_duplicate_candidates",{
+      p_primary_candidate_id:candidateId,
+      p_duplicate_candidate_ids:sourceIds
+    });
+    if(error)return alert(error.message);
+
+    await Promise.all([loadAdminUserRelatedRecords(userId),loadRegisteredUsers()]);
   }
 });
 
@@ -1732,7 +1814,10 @@ document.querySelector("#admin-record-editor-form")?.addEventListener("submit",a
   }
 
   closeAdminRecordEditor();
-  await Promise.all([loadAdminRecords(),loadDuplicates()]);
+  const activeUserId=document.querySelector("#admin-message-user-id")?.value;
+  const refreshes=[loadAdminRecords(),loadDuplicates()];
+  if(activeUserId)refreshes.push(loadAdminUserRelatedRecords(activeUserId),loadRegisteredUsers());
+  await Promise.all(refreshes);
 });
 
 document.querySelector("#admin-duplicates")?.addEventListener("click",async event=>{

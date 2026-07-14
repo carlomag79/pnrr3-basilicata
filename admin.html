@@ -146,8 +146,9 @@
       <section class="panel admin-records-panel">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Controllo dati</p>
-            <h1>Record e possibili duplicati</h1>
+            <p class="eyebrow">Gestione dati</p>
+            <h1>Record / Compilazioni</h1>
+            <p>Consulta, modifica, associa, elimina e unisci tutte le compilazioni presenti sul sito.</p>
           </div>
           <button id="admin-refresh-records" class="secondary" type="button">Aggiorna</button>
         </div>
@@ -155,8 +156,8 @@
         <div class="admin-duplicate-block">
           <div class="admin-subheading">
             <div>
-              <h2>Possibili duplicati</h2>
-              <p>Gruppi con la stessa classe, posizione e punteggio.</p>
+              <h2>Duplicati e unione record</h2>
+              <p>Scegli il record principale da conservare e unisci gli altri record dello stesso gruppo.</p>
             </div>
             <span id="admin-duplicate-count" class="badge">0 gruppi</span>
           </div>
@@ -166,6 +167,12 @@
         </div>
 
         <div class="admin-record-search-block">
+          <div class="admin-subheading">
+            <div>
+              <h2>Tutte le compilazioni</h2>
+              <p>Ricerca, selezione multipla e modifica completa dei record.</p>
+            </div>
+          </div>
           <div class="admin-subheading">
             <div>
               <h2>Ricerca avanzata</h2>
@@ -211,6 +218,16 @@
             </div>
           </form>
 
+          <div class="admin-record-bulkbar">
+            <label class="admin-record-select-all">
+              <input id="admin-select-all-records" type="checkbox">
+              Seleziona tutti i risultati
+            </label>
+            <button id="admin-select-unlinked-records" class="secondary" type="button">Seleziona non associati</button>
+            <button id="admin-clear-record-selection" class="secondary" type="button">Deseleziona</button>
+            <span id="admin-selected-record-count" class="badge">0 selezionati</span>
+            <button id="admin-delete-selected-records" class="danger-button" type="button" disabled>Elimina selezionati</button>
+          </div>
           <p id="admin-record-results-count" class="admin-help"></p>
           <div id="admin-records" class="admin-records"></div>
         </div>
@@ -238,8 +255,75 @@
     </div>
   </main>
 
+  <dialog id="admin-record-editor" class="admin-record-editor">
+    <form id="admin-record-editor-form" method="dialog">
+      <div class="admin-record-editor__header">
+        <div>
+          <p class="eyebrow">Gestione record</p>
+          <h2 id="admin-record-editor-title">Modifica record</h2>
+        </div>
+        <button id="admin-close-record-editor" class="secondary" type="button" aria-label="Chiudi">×</button>
+      </div>
+
+      <div class="admin-record-editor__body">
+        <label>Email account associato
+          <input id="admin-edit-record-email" type="email" placeholder="Lascia vuoto per non associare alcun account">
+          <small>L’account deve essere già presente in Supabase Auth.</small>
+        </label>
+
+        <section class="admin-editor-section">
+          <div class="admin-subheading">
+            <div>
+              <h3>Candidature</h3>
+              <p>Puoi gestire fino a quattro classi di concorso.</p>
+            </div>
+            <button id="admin-add-edit-candidature" class="secondary" type="button">Aggiungi classe</button>
+          </div>
+          <div id="admin-edit-candidatures" class="admin-edit-candidatures"></div>
+        </section>
+
+        <section class="admin-editor-section">
+          <div class="admin-subheading">
+            <div>
+              <h3>Preferenze scolastiche</h3>
+              <p>Sono mostrate soltanto scuole o plessi con disponibilità per la classe selezionata.</p>
+            </div>
+            <span id="admin-edit-school-counter" class="badge">0 / 30</span>
+          </div>
+
+          <div class="admin-edit-school-picker">
+            <label>Classe
+              <select id="admin-edit-school-class"></select>
+            </label>
+            <label>Provincia
+              <select id="admin-edit-school-province">
+                <option value="">Entrambe</option>
+                <option value="Matera">Matera</option>
+                <option value="Potenza">Potenza</option>
+              </select>
+            </label>
+            <label>Cerca scuola, comune o istituto
+              <input id="admin-edit-school-search" type="search" placeholder="Es. Senise, Matera, Brancato">
+            </label>
+          </div>
+
+          <div id="admin-edit-school-results" class="school-search-results"></div>
+          <div id="admin-edit-selected-schools" class="selected-schools"></div>
+        </section>
+      </div>
+
+      <div class="admin-record-editor__footer">
+        <p id="admin-record-editor-message" class="admin-message" role="status"></p>
+        <div>
+          <button id="admin-cancel-record-editor" class="secondary" type="button">Annulla</button>
+          <button class="primary" type="submit">Salva modifiche</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.6.0" defer></script>
-  <script src="admin.js?v=4.6.0" defer></script>
+  <script src="config.js?v=4.8.0" defer></script>
+  <script src="admin.js?v=4.8.0" defer></script>
 </body>
 </html>

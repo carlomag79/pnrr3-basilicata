@@ -19,6 +19,10 @@ const adminSupabase = window.supabase.createClient(
 let adminRequests = [];
 let pendingAdminOtpEmail = "";
 let adminSchools = [];
+let adminRecordsCache = [];
+const selectedAdminRecordIds = new Set();
+let editingAdminRecord = null;
+let editingAdminPreferences = [];
 
 const loginPanel = document.querySelector("#admin-login-panel");
 const adminApp = document.querySelector("#admin-app");
@@ -701,6 +705,189 @@ function renderCandidatureSummary(candidature){
   ).join("<br>");
 }
 
+
+function adminAvailablePosts(school,classe){
+  return Number(school?.disponibilita?.[classe]||0);
+}
+
+function adminAddEditCandidature(value={}){
+  const root=document.querySelector("#admin-edit-candidatures");
+  if(!root||root.children.length>=4)return;
+
+  const row=document.createElement("div");
+  row.className="admin-edit-candidature";
+  row.innerHTML=`
+    <label>Classe
+      <select class="admin-edit-class">
+        <option value="AAAA">AAAA</option>
+        <option value="ADAA">ADAA</option>
+        <option value="EEEE">EEEE</option>
+        <option value="ADEE">ADEE</option>
+      </select>
+    </label>
+    <label>Posizione
+      <input class="admin-edit-position" type="number" min="1" step="1" required>
+    </label>
+    <label>Punteggio
+      <input class="admin-edit-score" type="number" min="0" step="0.01" required>
+    </label>
+    <button class="danger-button admin-remove-edit-candidature" type="button">Rimuovi</button>`;
+
+  row.querySelector(".admin-edit-class").value=value.classe||"EEEE";
+  row.querySelector(".admin-edit-position").value=value.posizione??"";
+  row.querySelector(".admin-edit-score").value=value.punteggio??"";
+  root.appendChild(row);
+  refreshAdminEditSchoolClasses();
+}
+
+function getAdminEditedCandidatures(){
+  return [...document.querySelectorAll(".admin-edit-candidature")].map(row=>({
+    classe:row.querySelector(".admin-edit-class").value,
+    posizione:Number(row.querySelector(".admin-edit-position").value),
+    punteggio:Number(row.querySelector(".admin-edit-score").value)
+  }));
+}
+
+function refreshAdminEditSchoolClasses(){
+  const select=document.querySelector("#admin-edit-school-class");
+  if(!select)return;
+  const current=select.value;
+  const classes=[...new Set(
+    [...document.querySelectorAll(".admin-edit-class")].map(node=>node.value)
+  )];
+
+  select.innerHTML=classes.map(classe=>`<option value="${classe}">${classe}</option>`).join("");
+  if(classes.includes(current))select.value=current;
+  renderAdminEditSchoolSearch();
+}
+
+function renderAdminEditSchoolSearch(){
+  const root=document.querySelector("#admin-edit-school-results");
+  if(!root)return;
+
+  const classe=document.querySelector("#admin-edit-school-class")?.value;
+  const province=document.querySelector("#admin-edit-school-province")?.value||"";
+  const query=(document.querySelector("#admin-edit-school-search")?.value||"").trim().toLocaleLowerCase("it-IT");
+
+  if(!classe){
+    root.innerHTML='<p class="admin-empty">Aggiungi prima una candidatura.</p>';
+    return;
+  }
+
+  const matches=adminSchools.filter(school=>{
+    const hay=`${school.denominazione} ${school.comune} ${school.istituto} ${school.codice}`.toLocaleLowerCase("it-IT");
+    return adminAvailablePosts(school,classe)>0
+      && (!province||school.provincia===province)
+      && (!query||hay.includes(query))
+      && !editingAdminPreferences.some(pref=>pref.classe===classe&&pref.codice_scuola===school.codice);
+  }).slice(0,60);
+
+  root.innerHTML=matches.length?matches.map(school=>`
+    <article class="school-result">
+      <div>
+        <strong>${adminEscape(school.denominazione)} – ${adminEscape(school.comune)}</strong>
+        <span>${adminEscape(school.istituto)}</span>
+        <small>${adminEscape(school.codice)}</small>
+        <span class="school-result__posts">${adminAvailablePosts(school,classe)} posti disponibili</span>
+      </div>
+      <button class="secondary admin-add-edit-school" type="button" data-code="${school.codice}" data-class="${classe}">Aggiungi</button>
+    </article>`).join(""):'<p class="admin-empty">Nessuna scuola disponibile per questi criteri.</p>';
+}
+
+function renderAdminEditSelectedSchools(){
+  const root=document.querySelector("#admin-edit-selected-schools");
+  const counter=document.querySelector("#admin-edit-school-counter");
+  if(!root||!counter)return;
+
+  counter.textContent=`${editingAdminPreferences.length} / 30`;
+
+  root.innerHTML=editingAdminPreferences.length?editingAdminPreferences.map((pref,index)=>{
+    const school=adminSchoolByCode(pref.codice_scuola);
+    return `<article class="selected-school">
+      <span class="selected-school__number">${index+1}</span>
+      <div>
+        <strong><span class="class-chip ${adminEscape(pref.classe)}">${adminEscape(pref.classe)}</span> ${adminEscape(school?.denominazione||pref.codice_scuola)}${school?` – ${adminEscape(school.comune)}`:""}</strong>
+        <span>${school?`${adminEscape(school.istituto)} · ${adminAvailablePosts(school,pref.classe)} posti disponibili`:"Scuola non presente nel file corrente"}</span>
+      </div>
+      <div class="selected-school__actions">
+        <button class="secondary admin-move-edit-school" data-index="${index}" data-dir="-1" type="button">↑</button>
+        <button class="secondary admin-move-edit-school" data-index="${index}" data-dir="1" type="button">↓</button>
+        <button class="danger-button admin-remove-edit-school" data-index="${index}" type="button">×</button>
+      </div>
+    </article>`;
+  }).join(""):'<p class="admin-empty">Nessuna preferenza scolastica.</p>';
+
+  renderAdminEditSchoolSearch();
+}
+
+async function openAdminRecordEditor(candidateId){
+  const dialog=document.querySelector("#admin-record-editor");
+  const message=document.querySelector("#admin-record-editor-message");
+  message.textContent="Caricamento record…";
+
+  const {data,error}=await adminSupabase.rpc("admin_get_candidate_record",{
+    p_candidate_id:candidateId
+  });
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  editingAdminRecord=Array.isArray(data)?data[0]:data;
+  if(!editingAdminRecord){
+    alert("Record non trovato.");
+    return;
+  }
+
+  document.querySelector("#admin-record-editor-title").textContent=`Modifica record #${candidateId}`;
+  document.querySelector("#admin-edit-record-email").value=editingAdminRecord.email||"";
+  document.querySelector("#admin-edit-candidatures").innerHTML="";
+  (editingAdminRecord.candidature||[]).forEach(adminAddEditCandidature);
+  if(!document.querySelector("#admin-edit-candidatures").children.length)adminAddEditCandidature();
+
+  editingAdminPreferences=(editingAdminRecord.preferenze_scuole||[]).map(pref=>({
+    classe:pref.classe,
+    codice_scuola:pref.codice_scuola
+  }));
+
+  renderAdminEditSelectedSchools();
+  message.textContent="";
+  dialog.showModal();
+}
+
+function closeAdminRecordEditor(){
+  document.querySelector("#admin-record-editor")?.close();
+  editingAdminRecord=null;
+  editingAdminPreferences=[];
+}
+
+function deriveAdminLocations(preferences){
+  const schools=preferences.map(pref=>adminSchoolByCode(pref.codice_scuola)).filter(Boolean);
+  const provinces=[...new Set(schools.map(school=>school.provincia).filter(Boolean))];
+  const municipalities=[...new Set(schools.map(school=>school.comune).filter(Boolean))];
+  return {
+    provincia1:provinces[0]||editingAdminRecord?.provincia_1||"Potenza",
+    provincia2:provinces[1]||null,
+    comuni:municipalities.length?municipalities:(editingAdminRecord?.comuni||["Preferenze scolastiche"])
+  };
+}
+
+function updateRecordSelectionUi(){
+  const count=selectedAdminRecordIds.size;
+  const countRoot=document.querySelector("#admin-selected-record-count");
+  const deleteButton=document.querySelector("#admin-delete-selected-records");
+  const selectAll=document.querySelector("#admin-select-all-records");
+
+  if(countRoot)countRoot.textContent=`${count} ${count===1?"selezionato":"selezionati"}`;
+  if(deleteButton)deleteButton.disabled=count===0;
+  if(selectAll){
+    const visibleIds=adminRecordsCache.map(record=>Number(record.candidate_id));
+    selectAll.checked=visibleIds.length>0&&visibleIds.every(id=>selectedAdminRecordIds.has(id));
+    selectAll.indeterminate=visibleIds.some(id=>selectedAdminRecordIds.has(id))&&!selectAll.checked;
+  }
+}
+
 async function loadAdminRecords(){
   const root=document.querySelector("#admin-records");
   const countRoot=document.querySelector("#admin-record-results-count");
@@ -715,11 +902,18 @@ async function loadAdminRecords(){
     return;
   }
 
-  const records=data||[];
-  countRoot.textContent=`${records.length} ${records.length===1?"record trovato":"record trovati"}`;
+  adminRecordsCache=data||[];
+  const visibleIds=new Set(adminRecordsCache.map(record=>Number(record.candidate_id)));
+  [...selectedAdminRecordIds].forEach(id=>{if(!visibleIds.has(id))selectedAdminRecordIds.delete(id)});
 
-  root.innerHTML=records.length?records.map(record=>`
+  countRoot.textContent=`${adminRecordsCache.length} ${adminRecordsCache.length===1?"record trovato":"record trovati"}`;
+
+  root.innerHTML=adminRecordsCache.length?adminRecordsCache.map(record=>`
     <article class="admin-record-row" data-candidate-id="${record.candidate_id}">
+      <label class="admin-record-row__select" title="Seleziona il record">
+        <input class="admin-record-checkbox" type="checkbox" ${selectedAdminRecordIds.has(Number(record.candidate_id))?"checked":""}>
+        <span class="sr-only">Seleziona record #${record.candidate_id}</span>
+      </label>
       <div class="admin-record-row__main">
         <div class="admin-record-row__title">
           <strong>Record #${record.candidate_id}</strong>
@@ -733,10 +927,13 @@ async function loadAdminRecords(){
         <small>${record.preferences_count} preferenze scolastiche · aggiornato ${adminDate(record.updated_at||record.created_at)}</small>
       </div>
       <div class="admin-record-row__actions">
+        <button class="secondary admin-edit-record" type="button">Modifica</button>
         ${record.email?"":'<button class="secondary admin-link-record" type="button">Associa a email</button>'}
         <button class="danger-button admin-delete-record" type="button">Elimina</button>
       </div>
     </article>`).join(""):'<p class="admin-empty">Nessun record corrisponde ai filtri selezionati.</p>';
+
+  updateRecordSelectionUi();
 }
 
 async function loadDuplicates(){
@@ -757,8 +954,13 @@ async function loadDuplicates(){
   const groups=data||[];
   countRoot.textContent=`${groups.length} ${groups.length===1?"gruppo":"gruppi"}`;
 
-  root.innerHTML=groups.length?groups.map((group,index)=>`
-    <article class="admin-duplicate-group">
+  root.innerHTML=groups.length?groups.map((group,index)=>{
+    const records=group.records||[];
+    const linkedRecords=records.filter(record=>record.email);
+    const suggestedPrimary=(linkedRecords[0]||records[0])?.candidate_id;
+
+    return `
+    <article class="admin-duplicate-group" data-group-index="${index}">
       <header>
         <div>
           <strong>Gruppo ${index+1}</strong>
@@ -767,8 +969,18 @@ async function loadDuplicates(){
         <span class="badge">${group.record_count} record</span>
       </header>
       <div class="admin-duplicate-records">
-        ${(group.records||[]).map(record=>`
+        ${records.map(record=>`
           <div class="admin-duplicate-record" data-candidate-id="${record.candidate_id}">
+            <label class="admin-duplicate-primary">
+              <input
+                class="admin-duplicate-primary-radio"
+                type="radio"
+                name="duplicate-primary-${index}"
+                value="${record.candidate_id}"
+                ${Number(record.candidate_id)===Number(suggestedPrimary)?"checked":""}
+              >
+              <span>Conserva questo</span>
+            </label>
             <div>
               <strong>Record #${record.candidate_id}</strong>
               <span>${record.email?adminEscape(record.email):"Non associato a un account"}</span>
@@ -776,12 +988,21 @@ async function loadDuplicates(){
               <small>${record.preferences_count||0} preferenze scolastiche · ${adminDate(record.updated_at||record.created_at)}</small>
             </div>
             <div class="admin-record-row__actions">
+              <button class="secondary admin-edit-duplicate" type="button">Modifica</button>
               ${record.email?"":'<button class="secondary admin-link-duplicate" type="button">Associa</button>'}
               <button class="danger-button admin-delete-duplicate" type="button">Elimina</button>
             </div>
           </div>`).join("")}
       </div>
-    </article>`).join(""):'<p class="admin-empty">Nessun duplicato esatto rilevato.</p>';
+      <footer class="admin-duplicate-merge">
+        <div>
+          <strong>Unisci il gruppo</strong>
+          <p>Il record selezionato sarà conservato; account e preferenze compatibili verranno trasferiti dagli altri.</p>
+        </div>
+        <button class="primary admin-merge-duplicates" type="button">Unisci duplicati</button>
+      </footer>
+    </article>`;
+  }).join(""):'<p class="admin-empty">Nessun duplicato esatto rilevato.</p>';
 }
 
 document.querySelector("#admin-add-user-form")?.addEventListener("submit",async event=>{
@@ -823,6 +1044,11 @@ document.querySelector("#admin-records")?.addEventListener("click",async event=>
   if(!row)return;
   const candidateId=Number(row.dataset.candidateId);
 
+  if(event.target.closest(".admin-edit-record")){
+    await openAdminRecordEditor(candidateId);
+    return;
+  }
+
   if(event.target.closest(".admin-delete-record")){
     if(!confirm(`Eliminare definitivamente il record #${candidateId}?`))return;
     const {error}=await adminSupabase.rpc("admin_delete_candidate",{p_candidate_id:candidateId});
@@ -842,10 +1068,260 @@ document.querySelector("#admin-records")?.addEventListener("click",async event=>
   }
 });
 
+
+document.querySelector("#admin-records")?.addEventListener("change",event=>{
+  const checkbox=event.target.closest(".admin-record-checkbox");
+  if(!checkbox)return;
+  const row=checkbox.closest(".admin-record-row");
+  const candidateId=Number(row.dataset.candidateId);
+  if(checkbox.checked)selectedAdminRecordIds.add(candidateId);
+  else selectedAdminRecordIds.delete(candidateId);
+  updateRecordSelectionUi();
+});
+
+document.querySelector("#admin-select-all-records")?.addEventListener("change",event=>{
+  adminRecordsCache.forEach(record=>{
+    const id=Number(record.candidate_id);
+    if(event.target.checked)selectedAdminRecordIds.add(id);
+    else selectedAdminRecordIds.delete(id);
+  });
+  loadAdminRecords();
+});
+
+document.querySelector("#admin-select-unlinked-records")?.addEventListener("click",()=>{
+  adminRecordsCache.filter(record=>!record.email).forEach(record=>{
+    selectedAdminRecordIds.add(Number(record.candidate_id));
+  });
+  document.querySelectorAll(".admin-record-row").forEach(row=>{
+    const record=adminRecordsCache.find(item=>Number(item.candidate_id)===Number(row.dataset.candidateId));
+    const checkbox=row.querySelector(".admin-record-checkbox");
+    if(record&&!record.email&&checkbox)checkbox.checked=true;
+  });
+  updateRecordSelectionUi();
+});
+
+document.querySelector("#admin-clear-record-selection")?.addEventListener("click",()=>{
+  selectedAdminRecordIds.clear();
+  document.querySelectorAll(".admin-record-checkbox").forEach(checkbox=>checkbox.checked=false);
+  updateRecordSelectionUi();
+});
+
+document.querySelector("#admin-delete-selected-records")?.addEventListener("click",async()=>{
+  const ids=[...selectedAdminRecordIds];
+  if(!ids.length)return;
+
+  const linkedCount=adminRecordsCache.filter(record=>
+    ids.includes(Number(record.candidate_id))&&Boolean(record.email)
+  ).length;
+
+  const warning=linkedCount
+    ? ` Tra questi, ${linkedCount} ${linkedCount===1?"è associato":"sono associati"} a un account.`
+    : "";
+
+  if(!confirm(`Eliminare definitivamente ${ids.length} ${ids.length===1?"record":"record"}?${warning}\n\nL’operazione non può essere annullata.`))return;
+
+  const {data,error}=await adminSupabase.rpc("admin_bulk_delete_candidates",{
+    p_candidate_ids:ids
+  });
+
+  if(error)return alert(error.message);
+
+  selectedAdminRecordIds.clear();
+  alert(`${data||0} ${Number(data)===1?"record eliminato":"record eliminati"}.`);
+  await Promise.all([loadAdminRecords(),loadDuplicates()]);
+});
+
+document.querySelector("#admin-add-edit-candidature")?.addEventListener("click",()=>adminAddEditCandidature());
+
+document.querySelector("#admin-edit-candidatures")?.addEventListener("click",event=>{
+  const button=event.target.closest(".admin-remove-edit-candidature");
+  if(!button)return;
+  const root=document.querySelector("#admin-edit-candidatures");
+  if(root.children.length<=1){
+    alert("Il record deve contenere almeno una candidatura.");
+    return;
+  }
+  const row=button.closest(".admin-edit-candidature");
+  const removedClass=row.querySelector(".admin-edit-class").value;
+  row.remove();
+  const remainingClasses=new Set([...document.querySelectorAll(".admin-edit-class")].map(node=>node.value));
+  if(!remainingClasses.has(removedClass)){
+    editingAdminPreferences=editingAdminPreferences.filter(pref=>pref.classe!==removedClass);
+  }
+  refreshAdminEditSchoolClasses();
+  renderAdminEditSelectedSchools();
+});
+
+document.querySelector("#admin-edit-candidatures")?.addEventListener("change",event=>{
+  if(!event.target.matches(".admin-edit-class"))return;
+  refreshAdminEditSchoolClasses();
+});
+
+["admin-edit-school-class","admin-edit-school-province"].forEach(id=>{
+  document.querySelector(`#${id}`)?.addEventListener("change",renderAdminEditSchoolSearch);
+});
+document.querySelector("#admin-edit-school-search")?.addEventListener("input",renderAdminEditSchoolSearch);
+
+document.querySelector("#admin-edit-school-results")?.addEventListener("click",event=>{
+  const button=event.target.closest(".admin-add-edit-school");
+  if(!button||editingAdminPreferences.length>=30)return;
+  editingAdminPreferences.push({
+    classe:button.dataset.class,
+    codice_scuola:button.dataset.code
+  });
+  renderAdminEditSelectedSchools();
+});
+
+document.querySelector("#admin-edit-selected-schools")?.addEventListener("click",event=>{
+  const remove=event.target.closest(".admin-remove-edit-school");
+  if(remove){
+    editingAdminPreferences.splice(Number(remove.dataset.index),1);
+    renderAdminEditSelectedSchools();
+    return;
+  }
+
+  const move=event.target.closest(".admin-move-edit-school");
+  if(move){
+    const index=Number(move.dataset.index);
+    const target=index+Number(move.dataset.dir);
+    if(target>=0&&target<editingAdminPreferences.length){
+      [editingAdminPreferences[index],editingAdminPreferences[target]]=[
+        editingAdminPreferences[target],editingAdminPreferences[index]
+      ];
+      renderAdminEditSelectedSchools();
+    }
+  }
+});
+
+["admin-close-record-editor","admin-cancel-record-editor"].forEach(id=>{
+  document.querySelector(`#${id}`)?.addEventListener("click",closeAdminRecordEditor);
+});
+
+document.querySelector("#admin-record-editor-form")?.addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!editingAdminRecord)return;
+
+  const message=document.querySelector("#admin-record-editor-message");
+  const button=event.submitter;
+  const candidature=getAdminEditedCandidatures();
+
+  if(!candidature.length||candidature.some(item=>
+    !["AAAA","ADAA","EEEE","ADEE"].includes(item.classe)
+    || !Number.isInteger(item.posizione)
+    || item.posizione<1
+    || !Number.isFinite(item.punteggio)
+    || item.punteggio<0
+  )){
+    message.textContent="Controlla classi, posizioni e punteggi.";
+    return;
+  }
+
+  const signatureSet=new Set(candidature.map(item=>`${item.classe}:${item.posizione}:${item.punteggio.toFixed(2)}`));
+  if(signatureSet.size!==candidature.length){
+    message.textContent="La stessa candidatura non può essere inserita due volte.";
+    return;
+  }
+
+  const validClasses=new Set(candidature.map(item=>item.classe));
+  if(editingAdminPreferences.some(pref=>!validClasses.has(pref.classe))){
+    message.textContent="Rimuovi le preferenze associate a classi non più presenti.";
+    return;
+  }
+
+  const preferences=editingAdminPreferences.map((pref,index)=>({
+    classe:pref.classe,
+    codice_scuola:pref.codice_scuola,
+    ordine:index+1
+  }));
+  const locations=deriveAdminLocations(preferences);
+
+  message.textContent="Salvataggio in corso…";
+  if(button)button.disabled=true;
+
+  const {error}=await adminSupabase.rpc("admin_update_candidate_record",{
+    p_candidate_id:Number(editingAdminRecord.candidate_id),
+    p_candidature:candidature,
+    p_preferenze_scuole:preferences,
+    p_account_email:document.querySelector("#admin-edit-record-email").value.trim()||null,
+    p_provincia_1:locations.provincia1,
+    p_provincia_2:locations.provincia2,
+    p_comuni:locations.comuni
+  });
+
+  if(button)button.disabled=false;
+
+  if(error){
+    message.textContent=error.message;
+    return;
+  }
+
+  closeAdminRecordEditor();
+  await Promise.all([loadAdminRecords(),loadDuplicates()]);
+});
+
 document.querySelector("#admin-duplicates")?.addEventListener("click",async event=>{
+  const group=event.target.closest(".admin-duplicate-group");
+
+  if(event.target.closest(".admin-merge-duplicates")){
+    if(!group)return;
+
+    const ids=[...group.querySelectorAll(".admin-duplicate-record")]
+      .map(row=>Number(row.dataset.candidateId));
+    const primaryId=Number(
+      group.querySelector(".admin-duplicate-primary-radio:checked")?.value
+    );
+
+    if(!primaryId||ids.length<2){
+      alert("Seleziona il record principale da conservare.");
+      return;
+    }
+
+    const sourceIds=ids.filter(id=>id!==primaryId);
+    const primaryRow=group.querySelector(`.admin-duplicate-record[data-candidate-id="${primaryId}"]`);
+    const primaryEmail=primaryRow?.querySelector("div > span")?.textContent||"";
+
+    const warning=primaryEmail&&primaryEmail!=="Non associato a un account"
+      ? `\n\nIl record principale è associato a: ${primaryEmail}`
+      : "";
+
+    if(!confirm(
+      `Unire ${ids.length} record conservando il record #${primaryId}?`+
+      `\n\nI record ${sourceIds.map(id=>"#"+id).join(", ")} saranno eliminati.`+
+      warning+
+      `\n\nL’operazione non può essere annullata.`
+    ))return;
+
+    const button=event.target.closest(".admin-merge-duplicates");
+    button.disabled=true;
+    button.textContent="Unione in corso…";
+
+    const {data,error}=await adminSupabase.rpc("admin_merge_duplicate_candidates",{
+      p_primary_candidate_id:primaryId,
+      p_duplicate_candidate_ids:sourceIds
+    });
+
+    if(error){
+      button.disabled=false;
+      button.textContent="Unisci duplicati";
+      alert(error.message);
+      return;
+    }
+
+    alert(`Unione completata. Record conservato: #${data}.`);
+    selectedAdminRecordIds.clear();
+    await Promise.all([loadDuplicates(),loadAdminRecords()]);
+    return;
+  }
+
   const row=event.target.closest(".admin-duplicate-record");
   if(!row)return;
   const candidateId=Number(row.dataset.candidateId);
+
+  if(event.target.closest(".admin-edit-duplicate")){
+    event.preventDefault();
+    await openAdminRecordEditor(candidateId);
+    return;
+  }
 
   if(event.target.closest(".admin-delete-duplicate")){
     if(!confirm(`Eliminare definitivamente il record #${candidateId}?`))return;

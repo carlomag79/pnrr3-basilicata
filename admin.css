@@ -532,3 +532,44 @@ body.admin-page {
 .admin-support-schools li{padding:8px 0}
 .admin-support-schools strong,.admin-support-schools span{display:block}
 .admin-support-schools span{margin-top:3px;color:var(--muted);font-size:.86rem}
+
+.admin-record-bulkbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0;padding:12px;background:var(--surface-soft);border:1px solid var(--line)}
+.admin-record-select-all{display:flex;align-items:center;gap:8px;font-weight:800}
+.admin-record-select-all input,.admin-record-row__select input{width:18px;height:18px}
+.admin-record-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:flex-start}
+.admin-record-row__select{padding-top:4px}
+.admin-record-editor{width:min(980px,calc(100vw - 28px));max-height:92vh;padding:0;border:0;background:var(--surface);box-shadow:0 22px 70px rgba(0,0,0,.25)}
+.admin-record-editor::backdrop{background:rgba(0,0,0,.55)}
+.admin-record-editor form{margin:0}
+.admin-record-editor__header,.admin-record-editor__footer{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.admin-record-editor__header h2{margin:2px 0 0}
+.admin-record-editor__body{display:grid;gap:22px;max-height:68vh;overflow:auto;padding:22px}
+.admin-record-editor__footer{border-top:1px solid var(--line);border-bottom:0}
+.admin-record-editor__footer>div{display:flex;gap:10px}
+.admin-editor-section{padding:16px;background:var(--surface-soft);border:1px solid var(--line)}
+.admin-edit-candidatures{display:grid;gap:10px}
+.admin-edit-candidature{display:grid;grid-template-columns:1fr 1fr 1fr auto;align-items:end;gap:10px;padding:12px;background:#fff;border:1px solid var(--line)}
+.admin-edit-school-picker{display:grid;grid-template-columns:180px 180px minmax(220px,1fr);gap:10px;margin:14px 0}
+#admin-edit-school-results{max-height:280px;overflow:auto}
+#admin-edit-selected-schools{margin-top:14px}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:760px){
+  .admin-record-row{grid-template-columns:auto minmax(0,1fr)}
+  .admin-record-row__actions{grid-column:1/-1}
+  .admin-edit-candidature,.admin-edit-school-picker{grid-template-columns:1fr}
+  .admin-record-editor__footer{align-items:stretch;flex-direction:column}
+  .admin-record-editor__footer>div{justify-content:flex-end}
+}
+
+.admin-records-panel>.section-heading{padding-bottom:16px;border-bottom:1px solid var(--line)}
+.admin-records-panel>.section-heading p:not(.eyebrow){margin:6px 0 0;color:var(--muted)}
+.admin-duplicate-primary{display:flex;align-items:center;gap:7px;min-width:132px;font-weight:800;cursor:pointer}
+.admin-duplicate-primary input{width:18px;height:18px}
+.admin-duplicate-merge{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 15px;background:#fff8e7;border-top:1px solid rgba(208,154,66,.35)}
+.admin-duplicate-merge strong{display:block}
+.admin-duplicate-merge p{margin:4px 0 0;color:var(--muted);font-size:.86rem}
+.admin-duplicate-record:has(.admin-duplicate-primary-radio:checked){background:#f6fbf8;box-shadow:inset 4px 0 0 var(--success)}
+@media(max-width:760px){
+  .admin-duplicate-primary{min-width:0}
+  .admin-duplicate-merge{align-items:flex-start;flex-direction:column}
+}

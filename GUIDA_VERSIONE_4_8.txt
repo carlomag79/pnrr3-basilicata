@@ -1,0 +1,47 @@
+VERSIONE 4.8 — RECORD / COMPILAZIONI E UNIONE DUPLICATI
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_8_unisci_duplicati.sql
+3. La migrazione V4.7 deve essere già installata.
+
+SEZIONE RECORD / COMPILAZIONI
+La precedente sezione “Record e possibili duplicati” è diventata
+“Record / Compilazioni”. Da qui puoi:
+- cercare tutte le compilazioni;
+- filtrare per ID, email, classe, posizione, punteggio, comune e stato account;
+- selezionare ed eliminare più record;
+- modificare candidature, email e preferenze scolastiche;
+- associare un record a un account;
+- analizzare e unire i duplicati.
+
+UNISCI DUPLICATI
+Per ogni gruppo:
+1. seleziona “Conserva questo” sul record principale;
+2. controlla email e numero di preferenze;
+3. clicca “Unisci duplicati”;
+4. conferma l’operazione.
+
+Il sistema:
+- verifica che i record abbiano la stessa firma di candidatura;
+- impedisce l’unione di record associati a account diversi;
+- trasferisce l’unico account associato al record principale;
+- unisce le preferenze scolastiche senza duplicati;
+- conserva prima l’ordine del record principale;
+- aggiunge poi le preferenze presenti nei record secondari;
+- mantiene un massimo di 30 preferenze;
+- aggiorna eventuali richieste di assistenza e rivendicazioni;
+- elimina i record secondari;
+- conserva l’ID del record principale.
+
+SCELTA CONSIGLIATA DEL RECORD PRINCIPALE
+Il pannello preseleziona:
+- prima un record associato a un account;
+- altrimenti il primo record del gruppo.
+
+Controlla comunque sempre la scelta prima di confermare.
+
+ATTENZIONE
+L’unione è definitiva. Prima di usarla su molti record, prova un singolo
+gruppo e controlla il risultato nella sezione “Tutte le compilazioni”.

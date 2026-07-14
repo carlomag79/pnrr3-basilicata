@@ -1,0 +1,46 @@
+VERSIONE 4.7 — GESTIONE COMPLETA DEI RECORD
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_7_admin_record_manager.sql
+3. Mantieni installate tutte le migrazioni e gli hotfix precedenti.
+
+SELEZIONE ED ELIMINAZIONE MULTIPLA
+Nella sezione “Record e possibili duplicati” puoi:
+- selezionare singoli record;
+- selezionare tutti i risultati filtrati;
+- selezionare soltanto i record non associati;
+- deselezionare tutto;
+- eliminare in blocco i record selezionati.
+
+Prima dell’eliminazione viene indicato se tra i record selezionati ce ne sono
+alcuni associati a un account. L’eliminazione è definitiva.
+
+MODIFICA DI UN RECORD
+Clicca “Modifica” accanto al record. Dal pannello puoi:
+- associare, cambiare o rimuovere l’email account;
+- aggiungere, modificare o rimuovere candidature;
+- modificare posizione e punteggio;
+- aggiungere fino a quattro classi di concorso;
+- cercare scuole con disponibilità;
+- aggiungere, rimuovere e riordinare le preferenze;
+- salvare tutto senza entrare nel database.
+
+Le province e i comuni storici vengono ricavati automaticamente dalle scuole
+selezionate e mantenuti soltanto per compatibilità interna.
+
+CONTROLLI DI SICUREZZA
+- accesso riservato agli amministratori;
+- massimo 300 record per eliminazione massiva;
+- un account non può essere associato a due record;
+- classi, posizioni, punteggi e codici scuola vengono validati;
+- le preferenze devono riferirsi alle classi presenti nel record.
+
+TEST CONSIGLIATO
+1. Filtra “Non associati”.
+2. Seleziona due record di prova.
+3. Verifica il messaggio di conferma senza procedere, se non vuoi eliminarli.
+4. Apri un record con “Modifica”.
+5. Cambia l’ordine di due scuole e salva.
+6. Riapri il record per controllare che le modifiche siano state mantenute.

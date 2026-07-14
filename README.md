@@ -344,3 +344,15 @@ Gestione diretta delle compilazioni dalle segnalazioni di assistenza: ricerca re
 ## Versione 4.6
 
 Le segnalazioni raccolgono e salvano direttamente le scuole/plessi con disponibilità, ordinate dall’utente. Comuni e province vengono ricavati automaticamente solo per compatibilità interna.
+
+## Versione 4.7
+
+Gestione completa dei record dall’area amministrativa: selezione multipla,
+eliminazione massiva, modifica di candidature, email e preferenze scolastiche.
+Eseguire `migration_v4_7_admin_record_manager.sql`.
+
+## Versione 4.8
+
+La gestione dati è raccolta nella sezione **Record / Compilazioni**. Aggiunta
+la funzione **Unisci duplicati**, con scelta del record principale, trasferimento
+dell’account e fusione delle preferenze scolastiche.

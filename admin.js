@@ -819,7 +819,7 @@ async function loadRegisteredUsers(){
         <small>Primo accesso: ${adminDate(user.created_at)}${user.last_sign_in_at?` · ultimo accesso ${adminDate(user.last_sign_in_at)}`:""}</small>
         <small>
           ${user.candidate_id
-            ? `Record #${user.candidate_id} · ${adminCandidatureSummary(user.candidature)}`
+            ? `Record #${user.candidate_id} · ${renderCandidatureSummary(user.candidature)}`
             : "Nessun record collegato"}
         </small>
       </div>

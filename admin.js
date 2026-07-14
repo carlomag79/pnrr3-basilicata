@@ -23,6 +23,8 @@ let adminRecordsCache = [];
 const selectedAdminRecordIds = new Set();
 let editingAdminRecord = null;
 let editingAdminPreferences = [];
+let creatingAdminPreferences = [];
+let preregisteredUsersCache = [];
 
 const loginPanel = document.querySelector("#admin-login-panel");
 const adminApp = document.querySelector("#admin-app");
@@ -80,7 +82,7 @@ async function handleSession(session) {
     loginPanel.hidden = true;
     adminApp.hidden = false;
     logoutButton.hidden = false;
-    await Promise.all([loadAdminRequests(), loadManualSupportRequests(), loadRegistrationRequests(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
+    await Promise.all([loadAdminRequests(), loadManualSupportRequests(), loadRegistrationRequests(), loadPreregisteredUsers(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
   } catch (error) {
     loginPanel.hidden = false;
     adminApp.hidden = true;
@@ -151,6 +153,7 @@ function renderAdminRequests() {
         ${request.status === "pending" ? `
           <div class="admin-request__actions">
             <button class="secondary admin-find-matches" type="button">Trova record compatibili</button>
+            <button class="primary admin-create-from-claim" type="button">Crea compilazione</button>
             <button class="danger-button admin-reject" type="button">Rifiuta</button>
           </div>
           <div class="admin-matches" hidden></div>
@@ -178,7 +181,7 @@ async function findMatches(requestId, article) {
 
   const matches = data || [];
   if (!matches.length) {
-    matchesRoot.innerHTML = '<p class="admin-empty">Nessun record corrispondente trovato. Puoi rifiutare la richiesta oppure verificare manualmente in Supabase.</p>';
+    matchesRoot.innerHTML = '<p class="admin-empty">Nessun record corrispondente trovato. Puoi creare direttamente la compilazione da questa richiesta.</p>';
     return;
   }
 
@@ -332,6 +335,18 @@ document.querySelector("#admin-requests").addEventListener("click", async event 
 
   if (event.target.closest(".admin-find-matches")) {
     await findMatches(requestId, article);
+  }
+
+  if (event.target.closest(".admin-create-from-claim")) {
+    const request=adminRequests.find(item=>Number(item.id)===requestId);
+    openAdminCreateCandidateDialog({
+      mode:"claim",
+      requestId,
+      email:request?.requester_email||"",
+      classe:request?.classe||"EEEE",
+      posizione:request?.posizione||"",
+      punteggio:request?.punteggio||""
+    });
   }
 
   if (event.target.closest(".admin-approve")) {
@@ -667,6 +682,113 @@ document.querySelector("#admin-registration-requests")?.addEventListener("click"
     await loadRegistrationRequests();
   }
 });
+
+
+function renderAdminCreateSchoolSearch(){
+  const root=document.querySelector("#admin-create-school-results");
+  if(!root)return;
+
+  const classe=document.querySelector("#admin-create-class").value;
+  const province=document.querySelector("#admin-create-school-province").value;
+  const query=document.querySelector("#admin-create-school-search").value.trim().toLocaleLowerCase("it-IT");
+
+  const matches=adminSchools.filter(school=>{
+    const hay=`${school.denominazione} ${school.comune} ${school.istituto} ${school.codice}`.toLocaleLowerCase("it-IT");
+    return adminAvailablePosts(school,classe)>0
+      && (!province||school.provincia===province)
+      && (!query||hay.includes(query))
+      && !creatingAdminPreferences.some(pref=>pref.codice_scuola===school.codice);
+  }).slice(0,60);
+
+  root.innerHTML=matches.length?matches.map(school=>`
+    <article class="school-result">
+      <div>
+        <strong>${adminEscape(school.denominazione)} – ${adminEscape(school.comune)}</strong>
+        <span>${adminEscape(school.istituto)}</span>
+        <small>${adminEscape(school.codice)}</small>
+        <span class="school-result__posts">${adminAvailablePosts(school,classe)} posti disponibili</span>
+      </div>
+      <button class="secondary admin-create-add-school" type="button" data-code="${school.codice}">Aggiungi</button>
+    </article>`).join(""):'<p class="admin-empty">Nessuna scuola disponibile per questi criteri.</p>';
+}
+
+function renderAdminCreateSelectedSchools(){
+  const root=document.querySelector("#admin-create-selected-schools");
+  const counter=document.querySelector("#admin-create-school-counter");
+  if(!root||!counter)return;
+
+  counter.textContent=`${creatingAdminPreferences.length} / 30`;
+  root.innerHTML=creatingAdminPreferences.length?creatingAdminPreferences.map((pref,index)=>{
+    const school=adminSchoolByCode(pref.codice_scuola);
+    return `<article class="selected-school">
+      <span class="selected-school__number">${index+1}</span>
+      <div>
+        <strong>${adminEscape(school?.denominazione||pref.codice_scuola)}${school?` – ${adminEscape(school.comune)}`:""}</strong>
+        <span>${school?`${adminEscape(school.istituto)} · ${adminAvailablePosts(school,pref.classe)} posti disponibili`:""}</span>
+      </div>
+      <div class="selected-school__actions">
+        <button class="secondary admin-create-move-school" data-index="${index}" data-dir="-1" type="button">↑</button>
+        <button class="secondary admin-create-move-school" data-index="${index}" data-dir="1" type="button">↓</button>
+        <button class="danger-button admin-create-remove-school" data-index="${index}" type="button">×</button>
+      </div>
+    </article>`;
+  }).join(""):'<p class="admin-empty">Seleziona almeno una scuola.</p>';
+
+  renderAdminCreateSchoolSearch();
+}
+
+function openAdminCreateCandidateDialog(options={}){
+  document.querySelector("#admin-create-mode").value=options.mode||"preregister";
+  document.querySelector("#admin-create-request-id").value=options.requestId||"";
+  document.querySelector("#admin-create-email").value=options.email||"";
+  document.querySelector("#admin-create-class").value=options.classe||"EEEE";
+  document.querySelector("#admin-create-position").value=options.posizione||"";
+  document.querySelector("#admin-create-score").value=options.punteggio||"";
+  document.querySelector("#admin-create-candidate-title").textContent=
+    options.mode==="claim"?"Crea compilazione dalla richiesta":"Crea utente pre-registrato";
+  document.querySelector("#admin-create-candidate-message").textContent="";
+  document.querySelector("#admin-create-school-search").value="";
+  document.querySelector("#admin-create-school-province").value="";
+  creatingAdminPreferences=[];
+  renderAdminCreateSelectedSchools();
+  document.querySelector("#admin-create-candidate-dialog").showModal();
+}
+
+function closeAdminCreateCandidateDialog(){
+  document.querySelector("#admin-create-candidate-dialog")?.close();
+  creatingAdminPreferences=[];
+}
+
+async function loadPreregisteredUsers(){
+  const root=document.querySelector("#admin-preregistered-users");
+  if(!root)return;
+  root.innerHTML='<p class="admin-empty">Caricamento utenti…</p>';
+
+  const {data,error}=await adminSupabase.rpc("admin_list_preregistered_users");
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  preregisteredUsersCache=data||[];
+  const waiting=preregisteredUsersCache.filter(item=>item.status==="waiting").length;
+  const activated=preregisteredUsersCache.filter(item=>item.status==="activated").length;
+  document.querySelector("#preregistered-waiting-count").textContent=waiting;
+  document.querySelector("#preregistered-activated-count").textContent=activated;
+
+  root.innerHTML=preregisteredUsersCache.length?preregisteredUsersCache.map(item=>`
+    <article class="admin-user-row" data-preregistered-id="${item.id}">
+      <div>
+        <strong>${adminEscape(item.email)}</strong>
+        <small>Record #${item.candidate_id} · ${item.status==="activated"?"Account attivato":"In attesa del primo accesso"}</small>
+        <small>Creato ${adminDate(item.created_at)}${item.activated_at?` · attivato ${adminDate(item.activated_at)}`:""}</small>
+      </div>
+      <div class="admin-record-row__actions">
+        <button class="secondary admin-copy-preregistered-message" type="button">Copia messaggio</button>
+        ${item.status==="waiting"?'<button class="danger-button admin-delete-preregistered" type="button">Elimina predisposizione</button>':""}
+      </div>
+    </article>`).join(""):'<p class="admin-empty">Nessun utente pre-registrato.</p>';
+}
 
 async function loadAdminUsers(){
   const root=document.querySelector("#admin-users-list");
@@ -1004,6 +1126,147 @@ async function loadDuplicates(){
     </article>`;
   }).join(""):'<p class="admin-empty">Nessun duplicato esatto rilevato.</p>';
 }
+
+
+document.querySelector("#admin-new-preregistered-user")?.addEventListener("click",()=>{
+  openAdminCreateCandidateDialog({mode:"preregister"});
+});
+
+["admin-close-create-candidate","admin-cancel-create-candidate"].forEach(id=>{
+  document.querySelector(`#${id}`)?.addEventListener("click",closeAdminCreateCandidateDialog);
+});
+
+document.querySelector("#admin-create-class")?.addEventListener("change",()=>{
+  creatingAdminPreferences=[];
+  renderAdminCreateSelectedSchools();
+});
+document.querySelector("#admin-create-school-province")?.addEventListener("change",renderAdminCreateSchoolSearch);
+document.querySelector("#admin-create-school-search")?.addEventListener("input",renderAdminCreateSchoolSearch);
+
+document.querySelector("#admin-create-school-results")?.addEventListener("click",event=>{
+  const button=event.target.closest(".admin-create-add-school");
+  if(!button||creatingAdminPreferences.length>=30)return;
+  creatingAdminPreferences.push({
+    classe:document.querySelector("#admin-create-class").value,
+    codice_scuola:button.dataset.code
+  });
+  renderAdminCreateSelectedSchools();
+});
+
+document.querySelector("#admin-create-selected-schools")?.addEventListener("click",event=>{
+  const remove=event.target.closest(".admin-create-remove-school");
+  if(remove){
+    creatingAdminPreferences.splice(Number(remove.dataset.index),1);
+    renderAdminCreateSelectedSchools();
+    return;
+  }
+
+  const move=event.target.closest(".admin-create-move-school");
+  if(move){
+    const index=Number(move.dataset.index);
+    const target=index+Number(move.dataset.dir);
+    if(target>=0&&target<creatingAdminPreferences.length){
+      [creatingAdminPreferences[index],creatingAdminPreferences[target]]=[
+        creatingAdminPreferences[target],creatingAdminPreferences[index]
+      ];
+      renderAdminCreateSelectedSchools();
+    }
+  }
+});
+
+document.querySelector("#admin-create-candidate-form")?.addEventListener("submit",async event=>{
+  event.preventDefault();
+  const message=document.querySelector("#admin-create-candidate-message");
+  const button=event.submitter;
+  const mode=document.querySelector("#admin-create-mode").value;
+  const email=document.querySelector("#admin-create-email").value.trim();
+  const classe=document.querySelector("#admin-create-class").value;
+  const posizione=Number(document.querySelector("#admin-create-position").value);
+  const punteggio=Number(document.querySelector("#admin-create-score").value);
+
+  if(!email||!Number.isInteger(posizione)||posizione<1||!Number.isFinite(punteggio)||punteggio<0){
+    message.textContent="Controlla email, posizione e punteggio.";
+    return;
+  }
+
+  if(!creatingAdminPreferences.length){
+    message.textContent="Seleziona almeno una scuola.";
+    return;
+  }
+
+  const preferences=creatingAdminPreferences.map((pref,index)=>({
+    classe:pref.classe,
+    codice_scuola:pref.codice_scuola,
+    ordine:index+1
+  }));
+  const locations=supportLocationData(preferences);
+
+  message.textContent="Creazione in corso…";
+  if(button)button.disabled=true;
+
+  const rpc=mode==="claim"
+    ?"admin_create_candidate_from_claim"
+    :"admin_create_preregistered_candidate";
+
+  const args={
+    p_email:email,
+    p_classe:classe,
+    p_posizione:posizione,
+    p_punteggio:punteggio,
+    p_preferenze_scuole:preferences,
+    p_provincia_1:locations.provincia1,
+    p_provincia_2:locations.provincia2,
+    p_comuni:locations.comuni
+  };
+
+  if(mode==="claim"){
+    args.p_request_id=Number(document.querySelector("#admin-create-request-id").value);
+  }
+
+  const {data,error}=await adminSupabase.rpc(rpc,args);
+  if(button)button.disabled=false;
+
+  if(error){
+    message.textContent=error.message;
+    return;
+  }
+
+  closeAdminCreateCandidateDialog();
+  alert(mode==="claim"
+    ?`Compilazione creata e richiesta approvata. Record #${data}.`
+    :`Utente predisposto correttamente. Record #${data}.`);
+
+  await Promise.all([
+    loadAdminRequests(),
+    loadPreregisteredUsers(),
+    loadAdminRecords(),
+    loadDuplicates()
+  ]);
+});
+
+document.querySelector("#admin-preregistered-users")?.addEventListener("click",async event=>{
+  const row=event.target.closest(".admin-user-row");
+  if(!row)return;
+  const item=preregisteredUsersCache.find(entry=>Number(entry.id)===Number(row.dataset.preregisteredId));
+  if(!item)return;
+
+  if(event.target.closest(".admin-copy-preregistered-message")){
+    const text=`Ciao! Ho predisposto la tua compilazione sul sito PNRR3 Basilicata. Puoi accedere da https://pnrr3.carlomagni.it/account.html usando Google oppure il codice email, purché utilizzi l’indirizzo ${item.email}. Al primo accesso la compilazione sarà associata automaticamente al tuo account.`;
+    try{
+      await navigator.clipboard.writeText(text);
+      alert("Messaggio copiato.");
+    }catch{
+      prompt("Copia il messaggio:",text);
+    }
+  }
+
+  if(event.target.closest(".admin-delete-preregistered")){
+    if(!confirm(`Eliminare la predisposizione per ${item.email} e il relativo record #${item.candidate_id}?`))return;
+    const {error}=await adminSupabase.rpc("admin_delete_preregistered_user",{p_id:Number(item.id)});
+    if(error)return alert(error.message);
+    await Promise.all([loadPreregisteredUsers(),loadAdminRecords(),loadDuplicates()]);
+  }
+});
 
 document.querySelector("#admin-add-user-form")?.addEventListener("submit",async event=>{
   event.preventDefault();

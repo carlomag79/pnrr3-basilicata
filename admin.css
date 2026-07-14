@@ -573,3 +573,10 @@ body.admin-page {
   .admin-duplicate-primary{min-width:0}
   .admin-duplicate-merge{align-items:flex-start;flex-direction:column}
 }
+
+.admin-preregistered-panel{margin-bottom:22px}
+.admin-preregistered-panel>.section-heading p:not(.eyebrow){margin:6px 0 0;color:var(--muted)}
+.admin-create-user-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#admin-create-school-results{max-height:300px;overflow:auto}
+#admin-create-selected-schools{margin-top:14px}
+@media(max-width:700px){.admin-create-user-grid{grid-template-columns:1fr}}

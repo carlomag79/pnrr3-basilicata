@@ -275,6 +275,8 @@ async function handleSession(session){
   $("#auth-panel").hidden=true;
   $("#account-app").hidden=false;
   $("#account-email").textContent=session.user.email||"Utente autenticato";
+  const {error:preregisterError}=await sb.rpc("claim_my_preregistered_candidate");
+  if(preregisterError)console.warn("Associazione pre-registrazione:",preregisterError.message);
   await loadMine();
 }
 

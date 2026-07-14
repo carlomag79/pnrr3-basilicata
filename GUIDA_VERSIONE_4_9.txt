@@ -1,0 +1,53 @@
+VERSIONE 4.9 — RIVENDICAZIONI E UTENTI PRE-REGISTRATI
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_9_claims_preregistered_users.sql
+3. La migrazione V4.8 deve essere già installata.
+
+CORREZIONI E RIVENDICAZIONI
+Per ogni richiesta in attesa sono disponibili:
+- Trova record compatibili;
+- Crea compilazione;
+- Rifiuta.
+
+Se non esiste un record:
+1. clicca “Crea compilazione”;
+2. controlla email, classe, posizione e punteggio;
+3. seleziona le scuole con disponibilità;
+4. ordina le preferenze;
+5. conferma.
+
+Il sistema crea il record, approva la richiesta e:
+- lo associa subito se il richiedente possiede già un account;
+- altrimenti prepara l’associazione automatica alla prima autenticazione
+  effettuata con l’email indicata.
+
+UTENTI PRE-REGISTRATI
+Nella nuova sezione “Utenti pre-registrati”:
+1. clicca “Crea nuovo utente”;
+2. inserisci l’email;
+3. indica classe, posizione e punteggio;
+4. seleziona e ordina le scuole;
+5. crea la compilazione.
+
+Puoi quindi usare “Copia messaggio” e inviare all’interessato le istruzioni.
+Quando accede con Google o OTP usando la stessa email, la compilazione viene
+associata automaticamente.
+
+STATI
+- In attesa di accesso: l’email non ha ancora effettuato il primo accesso;
+- Account attivato: l’account è stato collegato al record.
+
+SICUREZZA
+- non vengono create password;
+- non viene esposta la service role key;
+- l’utente deve dimostrare il controllo dell’email tramite Google o OTP;
+- non è possibile predisporre due record aperti per la stessa email;
+- non è possibile associare lo stesso account a più compilazioni;
+- classe, posizione, punteggio e preferenze vengono validati.
+
+ELIMINAZIONE
+Puoi eliminare una predisposizione soltanto finché è ancora in attesa. In quel
+caso viene eliminato anche il record collegato.

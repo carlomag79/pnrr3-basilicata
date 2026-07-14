@@ -356,3 +356,9 @@ Eseguire `migration_v4_7_admin_record_manager.sql`.
 La gestione dati è raccolta nella sezione **Record / Compilazioni**. Aggiunta
 la funzione **Unisci duplicati**, con scelta del record principale, trasferimento
 dell’account e fusione delle preferenze scolastiche.
+
+## Versione 4.9
+
+Aggiunta la creazione diretta delle compilazioni dalle richieste di
+rivendicazione e la sezione **Utenti pre-registrati**, con associazione
+automatica della compilazione al primo accesso con la stessa email.

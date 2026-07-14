@@ -1,0 +1,38 @@
+VERSIONE 4.4 — ASSISTENZA MANUALE
+
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. In Supabase SQL Editor esegui:
+   migration_v4_4_assistenza_manuale.sql
+3. Non rieseguire le migrazioni precedenti se sono già installate.
+4. La pagina account mostra il link:
+   “Non riesci ad accedere? Richiedi assistenza manuale”.
+5. L’utente indica:
+   - email;
+   - eventuale email alternativa;
+   - classe;
+   - posizione;
+   - punteggio;
+   - problema riscontrato;
+   - eventuale nota.
+6. Nell’area amministrativa compare la sezione “Assistenza manuale”.
+7. Puoi segnare ogni richiesta come:
+   - Da esaminare;
+   - In lavorazione;
+   - Risolta;
+   - Archiviata.
+8. Il pannello mostra anche il numero di record esistenti con la stessa
+   classe, posizione e punteggio.
+
+COME RISOLVERE MANUALMENTE
+- ricontatta l’utente all’indirizzo indicato;
+- verifica classe, posizione e punteggio;
+- per un record già esistente, usa la procedura di associazione/rivendicazione;
+- per un nuovo vincitore, invitalo ad accedere con un account Google oppure
+  valuta l’associazione a un’email alternativa verificabile;
+- non chiedere mai password o credenziali istituzionali.
+
+SICUREZZA
+- il modulo non crea sessioni e non concede accesso automatico;
+- la richiesta è soltanto una segnalazione da verificare;
+- gli utenti anonimi non possono leggere la tabella delle richieste;
+- richieste pendenti della stessa email vengono aggiornate, non duplicate.

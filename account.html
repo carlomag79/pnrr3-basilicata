@@ -65,6 +65,57 @@
         </div>
         <p id="otp-message" role="status"></p>
       </form>
+
+      <details class="manual-support">
+        <summary>Non riesci ad accedere? Richiedi assistenza manuale</summary>
+        <div class="manual-support__body">
+          <p>
+            Usa questo modulo soltanto se non riesci ad accedere né con Google né
+            con il codice email. La richiesta sarà verificata manualmente.
+          </p>
+          <form id="manual-support-form" class="manual-support-form">
+            <label>Email usata o da associare
+              <input id="support-email" type="email" autocomplete="email" required placeholder="nome@esempio.it">
+            </label>
+            <label>Email alternativa per essere ricontattati
+              <input id="support-contact-email" type="email" autocomplete="email" placeholder="Facoltativa">
+            </label>
+            <label>Classe
+              <select id="support-class" required>
+                <option value="AAAA">AAAA</option>
+                <option value="ADAA">ADAA</option>
+                <option value="EEEE">EEEE</option>
+                <option value="ADEE">ADEE</option>
+              </select>
+            </label>
+            <label>Posizione
+              <input id="support-position" type="number" min="1" step="1" required>
+            </label>
+            <label>Punteggio
+              <input id="support-score" type="number" min="0" step="0.01" required>
+            </label>
+            <label class="manual-support-form__wide">Problema riscontrato
+              <select id="support-issue" required>
+                <option value="google">Non riesco ad accedere con Google</option>
+                <option value="otp">Non ricevo il codice email</option>
+                <option value="both">Non riesco con nessuno dei due metodi</option>
+                <option value="existing_account">Credo di avere già un account o un record</option>
+                <option value="other">Altro</option>
+              </select>
+            </label>
+            <label class="manual-support-form__wide">Note
+              <textarea id="support-note" rows="4" maxlength="800" placeholder="Descrivi brevemente cosa succede. Non inserire password o credenziali."></textarea>
+            </label>
+            <label class="support-honeypot" aria-hidden="true">Sito web
+              <input id="support-website" type="text" tabindex="-1" autocomplete="off">
+            </label>
+            <div class="manual-support-form__wide">
+              <button class="secondary" type="submit">Invia richiesta di assistenza</button>
+            </div>
+          </form>
+          <p id="manual-support-message" class="manual-support-message" role="status"></p>
+        </div>
+      </details>
     </section>
 
     <div id="account-app" hidden>
@@ -224,7 +275,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.1.0" defer></script>
-  <script src="account.js?v=4.1.0" defer></script>
+  <script src="config.js?v=4.4.0" defer></script>
+  <script src="account.js?v=4.4.0" defer></script>
 </body>
 </html>

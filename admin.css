@@ -511,3 +511,5 @@ body.admin-page {
 @media(max-width:620px){.social-login-grid{grid-template-columns:1fr}}
 
 .social-login-grid{grid-template-columns:1fr}
+
+.admin-support-panel{margin-bottom:22px}

@@ -428,5 +428,44 @@ $("#delete-account-data").addEventListener("click",async()=>{
   selectedSchools=[];$("#account-candidatures").innerHTML="";addCandidature();renderSelected();$("#account-message").textContent="Dati eliminati.";
 });
 
+
+$("#manual-support-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+
+  const button=event.submitter;
+  const message=$("#manual-support-message");
+  const posizione=Number($("#support-position").value);
+  const punteggio=Number($("#support-score").value);
+
+  if(!Number.isInteger(posizione)||posizione<1||!Number.isFinite(punteggio)||punteggio<0){
+    message.textContent="Controlla posizione e punteggio.";
+    return;
+  }
+
+  message.textContent="Invio della richiesta…";
+  if(button)button.disabled=true;
+
+  const {data,error}=await sb.rpc("submit_manual_support_request",{
+    p_email:$("#support-email").value.trim(),
+    p_contact_email:$("#support-contact-email").value.trim()||null,
+    p_classe:$("#support-class").value,
+    p_posizione:posizione,
+    p_punteggio:punteggio,
+    p_issue:$("#support-issue").value,
+    p_note:$("#support-note").value.trim()||null,
+    p_website:$("#support-website").value
+  });
+
+  if(button)button.disabled=false;
+
+  if(error){
+    message.textContent=error.message||"Non è stato possibile inviare la richiesta.";
+    return;
+  }
+
+  event.target.reset();
+  message.textContent="Richiesta inviata. Sarà verificata manualmente; verrai ricontattato all’indirizzo indicato.";
+});
+
 sb.auth.onAuthStateChange((_event,session)=>handleSession(session));
 (async()=>{await loadSchools();const {data}=await sb.auth.getSession();await handleSession(data.session)})();

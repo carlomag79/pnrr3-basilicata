@@ -73,6 +73,33 @@
         <button id="admin-refresh" class="secondary" type="button">Aggiorna richieste</button>
       </section>
 
+
+      <section class="panel admin-support-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Accessi problematici</p>
+            <h1>Assistenza manuale</h1>
+          </div>
+          <label class="admin-status-filter">Stato
+            <select id="admin-support-status">
+              <option value="pending">Da esaminare</option>
+              <option value="in_progress">In lavorazione</option>
+              <option value="resolved">Risolte</option>
+              <option value="dismissed">Archiviate</option>
+              <option value="all">Tutte</option>
+            </select>
+          </label>
+        </div>
+        <div class="admin-registration-stats">
+          <span><strong id="support-pending-count">0</strong> da esaminare</span>
+          <span><strong id="support-progress-count">0</strong> in lavorazione</span>
+          <span><strong id="support-resolved-count">0</strong> risolte</span>
+        </div>
+        <div id="admin-support-requests" class="admin-requests">
+          <p class="admin-empty">Caricamento richieste…</p>
+        </div>
+      </section>
+
       <section class="panel admin-registration-panel">
         <div class="section-heading">
           <div>
@@ -212,7 +239,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.1.0" defer></script>
-  <script src="admin.js?v=4.1.0" defer></script>
+  <script src="config.js?v=4.4.0" defer></script>
+  <script src="admin.js?v=4.4.0" defer></script>
 </body>
 </html>

@@ -44,7 +44,10 @@ function statusLabel(status) {
   return {
     pending: "In attesa",
     approved: "Approvata",
-    rejected: "Rifiutata"
+    rejected: "Rifiutata",
+    in_progress: "In lavorazione",
+    resolved: "Risolta",
+    dismissed: "Archiviata"
   }[status] || status;
 }
 
@@ -72,7 +75,7 @@ async function handleSession(session) {
     loginPanel.hidden = true;
     adminApp.hidden = false;
     logoutButton.hidden = false;
-    await Promise.all([loadAdminRequests(), loadRegistrationRequests(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
+    await Promise.all([loadAdminRequests(), loadManualSupportRequests(), loadRegistrationRequests(), loadAdminUsers(), loadAdminRecords(), loadDuplicates()]);
   } catch (error) {
     loginPanel.hidden = false;
     adminApp.hidden = true;
@@ -346,6 +349,102 @@ adminSupabase.auth.onAuthStateChange((_event, session) => {
 
 
 
+
+
+async function loadManualSupportRequests(){
+  const root=document.querySelector("#admin-support-requests");
+  if(!root)return;
+
+  const status=document.querySelector("#admin-support-status")?.value||"pending";
+  root.innerHTML='<p class="admin-empty">Caricamento richieste…</p>';
+
+  const [{data,error},{data:countsData,error:countsError}]=await Promise.all([
+    adminSupabase.rpc("admin_list_manual_support_requests",{p_status:status}),
+    adminSupabase.rpc("admin_manual_support_counts")
+  ]);
+
+  if(countsData&&!countsError){
+    const counts=Array.isArray(countsData)?countsData[0]:countsData;
+    document.querySelector("#support-pending-count").textContent=counts.pending_count||0;
+    document.querySelector("#support-progress-count").textContent=counts.in_progress_count||0;
+    document.querySelector("#support-resolved-count").textContent=counts.resolved_count||0;
+  }
+
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  const requests=data||[];
+  root.innerHTML=requests.length?requests.map(request=>`
+    <article class="admin-request" data-support-id="${request.id}">
+      <header class="admin-request__head">
+        <div>
+          <h2>${adminEscape(request.email)}</h2>
+          <p>Ricevuta ${adminDate(request.created_at)}</p>
+        </div>
+        <span class="admin-request__status">${statusLabel(request.status)}</span>
+      </header>
+      <div class="admin-request__body">
+        <div class="admin-request__facts">
+          <div class="admin-fact"><span>Contatto</span><strong>${adminEscape(request.contact_email||request.email)}</strong></div>
+          <div class="admin-fact"><span>Classe</span><strong>${adminEscape(request.classe)}</strong></div>
+          <div class="admin-fact"><span>Posizione</span><strong>${request.posizione}</strong></div>
+          <div class="admin-fact"><span>Punteggio</span><strong>${Number(request.punteggio).toLocaleString("it-IT",{minimumFractionDigits:2})}</strong></div>
+          <div class="admin-fact"><span>Problema</span><strong>${adminEscape(request.issue)}</strong></div>
+          <div class="admin-fact"><span>Record coincidenti</span><strong>${request.existing_matches||0}</strong></div>
+        </div>
+        ${request.note?`<p class="admin-note"><strong>Nota utente:</strong> ${adminEscape(request.note)}</p>`:""}
+        ${request.admin_note?`<p class="admin-note"><strong>Nota amministratore:</strong> ${adminEscape(request.admin_note)}</p>`:""}
+        <div class="admin-request__actions">
+          ${request.status==="pending"?'<button class="secondary support-take" type="button">Prendi in carico</button>':""}
+          ${request.status!=="resolved"?'<button class="primary support-resolve" type="button">Segna come risolta</button>':""}
+          ${request.status!=="dismissed"?'<button class="danger-button support-dismiss" type="button">Archivia</button>':""}
+        </div>
+      </div>
+    </article>
+  `).join(""):'<p class="admin-empty">Nessuna richiesta per questo filtro.</p>';
+}
+
+document.querySelector("#admin-support-status")?.addEventListener("change",loadManualSupportRequests);
+
+document.querySelector("#admin-support-requests")?.addEventListener("click",async event=>{
+  const article=event.target.closest(".admin-request");
+  if(!article)return;
+
+  const requestId=Number(article.dataset.supportId);
+  let status=null;
+  let note=null;
+
+  if(event.target.closest(".support-take")){
+    status="in_progress";
+    note=prompt("Nota interna o istruzioni per il ricontatto:","Richiesta presa in carico.");
+    if(note===null)return;
+  }
+
+  if(event.target.closest(".support-resolve")){
+    status="resolved";
+    note=prompt("Come è stata risolta la richiesta?","Utente ricontattato e accesso ripristinato.");
+    if(note===null)return;
+  }
+
+  if(event.target.closest(".support-dismiss")){
+    if(!confirm("Archiviare questa richiesta?"))return;
+    status="dismissed";
+    note="Richiesta archiviata.";
+  }
+
+  if(!status)return;
+
+  const {error}=await adminSupabase.rpc("admin_update_manual_support_request",{
+    p_request_id:requestId,
+    p_status:status,
+    p_admin_note:note
+  });
+
+  if(error)return alert(error.message);
+  await loadManualSupportRequests();
+});
 
 async function loadRegistrationRequests(){
   const status=document.querySelector("#admin-registration-status")?.value||"pending";

@@ -327,3 +327,10 @@ Accesso con Google e Microsoft aggiunto a `account.html` e `admin.html`; OTP ema
 ## Versione 4.3
 
 Login Microsoft rimosso. Restano Google OAuth e OTP email.
+
+
+## Versione 4.4 — assistenza manuale
+
+Aggiunto un modulo pubblico per gli utenti che non riescono ad accedere con
+Google o OTP e una coda di gestione nell’area amministrativa. Eseguire
+`migration_v4_4_assistenza_manuale.sql`.

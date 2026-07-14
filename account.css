@@ -106,3 +106,14 @@
 @media(max-width:620px){.social-login-grid{grid-template-columns:1fr}}
 
 .social-login-grid{grid-template-columns:1fr}
+
+.manual-support{margin-top:24px;border-top:1px solid var(--line);padding-top:18px}
+.manual-support summary{cursor:pointer;font-weight:800;color:var(--accent-dark)}
+.manual-support__body{padding-top:16px}
+.manual-support__body>p{color:var(--muted)}
+.manual-support-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.manual-support-form__wide{grid-column:1/-1}
+.manual-support-form textarea{width:100%;resize:vertical}
+.manual-support-message{min-height:1.3em;margin-top:12px;font-weight:700}
+.support-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+@media(max-width:700px){.manual-support-form{grid-template-columns:1fr}.manual-support-form__wide{grid-column:auto}}

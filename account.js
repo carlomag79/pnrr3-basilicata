@@ -150,7 +150,7 @@ function renderSchoolSearch(){
   const matches=allSchools.filter(s=>{
     const posts=availablePosts(s,code);
     const hay=`${s.denominazione} ${s.comune} ${s.istituto}`.toLocaleLowerCase("it-IT");
-    return posts>0&&(!province||s.provincia===province)&&(!q||hay.includes(q))&&!selectedSchools.some(p=>p.codice===s.codice&&p.classe===code);
+    return posts>0&&(!province||s.provincia===province)&&(!q||hay.includes(q))&&!selectedSchools.some(p=>p.codice_scuola===s.codice&&p.classe===code);
   }).slice(0,60);
   root.innerHTML=matches.length?matches.map(s=>`
     <article class="school-result">
@@ -358,7 +358,9 @@ async function loadMine(){
     $("#account-editor").hidden=false;
     $("#legacy-import-panel").hidden=true;
     (currentSubmission.candidature||[]).forEach(addCandidature);
-    selectedSchools=(currentSubmission.preferenze_scuole||[]).map(x=>({classe:x.classe,codice_scuola:x.codice_scuola}));
+    selectedSchools=[...(currentSubmission.preferenze_scuole||[])]
+      .sort((a,b)=>Number(a.ordine||0)-Number(b.ordine||0))
+      .map(x=>({classe:x.classe,codice_scuola:x.codice_scuola}));
     $("#assigned-province").value=currentSubmission.provincia_assegnata||"";
   }else{
     const status=await getRegistrationStatus();
@@ -536,8 +538,33 @@ $("#assigned-province")?.addEventListener("change",()=>{
 $("#school-search").addEventListener("input",renderSchoolSearch);
 
 $("#school-search-results").addEventListener("click",e=>{
-  const b=e.target.closest(".add-school");if(!b||selectedSchools.length>=30)return;
-  selectedSchools.push({classe:b.dataset.class,codice_scuola:b.dataset.code});renderSelected();
+  const button=e.target.closest(".add-school");
+  if(!button)return;
+
+  const classe=button.dataset.class;
+  const codice_scuola=button.dataset.code;
+
+  if(selectedSchools.length>=30){
+    $("#account-message").textContent="Hai raggiunto il limite di 30 preferenze.";
+    return;
+  }
+
+  if(selectedSchools.some(item=>item.classe===classe&&item.codice_scuola===codice_scuola)){
+    $("#account-message").textContent="Questa scuola è già presente nelle tue preferenze.";
+    return;
+  }
+
+  selectedSchools=[
+    ...selectedSchools,
+    {classe,codice_scuola}
+  ];
+
+  renderSelected();
+
+  const school=allSchools.find(item=>item.codice===codice_scuola);
+  $("#account-message").textContent=school
+    ?`${school.denominazione} – ${school.comune} aggiunta come preferenza n. ${selectedSchools.length}.`
+    :`Scuola aggiunta come preferenza n. ${selectedSchools.length}.`;
 });
 $("#selected-schools").addEventListener("click",e=>{
   const remove=e.target.closest(".remove-school");

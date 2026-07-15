@@ -1,0 +1,32 @@
+HOTFIX V4.13.3 — AGGIUNTA E ORDINE DELLE SCUOLE
+
+PROBLEMA RISOLTO
+L’area riservata poteva gestire in modo incoerente le scuole già selezionate
+perché il controllo usava il campo errato “codice” invece di “codice_scuola”.
+
+CORREZIONI
+- ogni scuola nuova viene aggiunta in fondo alla lista;
+- una scuola già presente non può essere aggiunta due volte per la stessa classe;
+- dopo l’aggiunta compare un messaggio con il numero della preferenza;
+- l’elenco delle preferenze è mostrato prima dei risultati di ricerca;
+- le frecce modificano realmente l’ordine;
+- al caricamento, le scuole vengono ordinate in base al campo “ordine”;
+- il database rinumera sempre le preferenze da 1 in poi prima del salvataggio.
+
+INSTALLAZIONE
+1. Sostituisci account.html, account.js e account.css.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_13_3_ordine_preferenze.sql
+3. Ricarica account.html con Ctrl + F5.
+
+TEST RAPIDO
+1. Cerca e aggiungi Oppido.
+2. Cerca e aggiungi Moliterno.
+3. Nell’elenco devono apparire:
+   1 Oppido
+   2 Moliterno
+4. Usa la freccia verso l’alto su Moliterno.
+5. L’ordine deve diventare:
+   1 Moliterno
+   2 Oppido
+6. Salva e ricarica la pagina: l’ordine deve restare invariato.

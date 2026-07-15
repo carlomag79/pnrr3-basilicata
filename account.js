@@ -196,6 +196,27 @@ function deriveAssignedMunicipalities(preferences,province){
   return filteredHistorical.length?filteredHistorical:[province];
 }
 
+function deriveTerritorialData(preferences){
+  const schools=[...new Map(
+    preferences
+      .map(pref=>allSchools.find(school=>school.codice===pref.codice_scuola))
+      .filter(Boolean)
+      .map(school=>[school.codice,school])
+  ).values()];
+
+  const provinces=[...new Set(schools.map(school=>school.provincia).filter(Boolean))];
+  const municipalities=[...new Set(schools.map(school=>school.comune).filter(Boolean))];
+
+  return {
+    provincia1:provinces[0]||currentSubmission?.provincia_1||"Potenza",
+    provincia2:provinces[1]||null,
+    comuni:municipalities.length
+      ?municipalities
+      :(currentSubmission?.comuni||["Preferenze scolastiche"])
+  };
+}
+
+
 function refreshAssignedProvinceUi(){
   const province=assignedProvinceValue();
   const select=$("#school-province-filter");
@@ -207,7 +228,7 @@ function refreshAssignedProvinceUi(){
   }
 
   if(!province){
-    if(warning)warning.textContent="Seleziona la provincia assegnata prima di salvare.";
+    if(warning)warning.textContent="La provincia assegnata è facoltativa. Se la selezioni, verranno mantenute soltanto le scuole compatibili.";
     renderSchoolSearch();
     return;
   }
@@ -535,48 +556,61 @@ $("#account-form").addEventListener("submit",async e=>{
     return $("#account-message").textContent="Controlla posizione e punteggio.";
   }
 
-  if(!assignedProvince){
-    return $("#account-message").textContent="Indica la provincia assegnata.";
-  }
-
   const validClasses=new Set(candidature.map(x=>x.classe));
   if(selectedSchools.some(x=>!validClasses.has(x.classe))){
     return $("#account-message").textContent="Rimuovi le preferenze associate a classi non più presenti.";
   }
 
-  const incompatible=selectedSchools.filter(
-    pref=>schoolProvinceByCode(pref.codice_scuola)!==assignedProvince
-  );
+  let preferencesToSave=[...selectedSchools];
 
-  if(incompatible.length&&!confirm(
-    `Confermando, ${incompatible.length} ${incompatible.length===1?"preferenza scolastica sarà rimossa":"preferenze scolastiche saranno rimosse"} perché appartengono alla provincia non assegnata.`
-  ))return;
+  if(assignedProvince){
+    const incompatible=selectedSchools.filter(
+      pref=>schoolProvinceByCode(pref.codice_scuola)!==assignedProvince
+    );
 
-  selectedSchools=filterPreferencesByAssignedProvince(selectedSchools,assignedProvince);
+    if(incompatible.length&&!confirm(
+      `Confermando, ${incompatible.length} ${incompatible.length===1?"preferenza scolastica sarà rimossa":"preferenze scolastiche saranno rimosse"} perché appartengono alla provincia non assegnata.`
+    ))return;
 
-  if(!currentSubmission&&!selectedSchools.length){
-    renderSelected();
-    return $("#account-message").textContent="Aggiungi almeno una scuola della provincia assegnata.";
+    preferencesToSave=filterPreferencesByAssignedProvince(selectedSchools,assignedProvince);
   }
 
-  const prefs=selectedSchools.map((item,index)=>({...item,ordine:index+1}));
-  const municipalities=deriveAssignedMunicipalities(selectedSchools,assignedProvince);
+  if(!currentSubmission&&!preferencesToSave.length){
+    return $("#account-message").textContent="Aggiungi almeno una scuola.";
+  }
+
+  const prefs=preferencesToSave.map((item,index)=>({...item,ordine:index+1}));
+  const territory=assignedProvince
+    ?{
+        provincia1:assignedProvince,
+        provincia2:null,
+        comuni:deriveAssignedMunicipalities(preferencesToSave,assignedProvince)
+      }
+    :deriveTerritorialData(preferencesToSave);
 
   $("#save-status").textContent="Salvataggio…";
 
   const {error}=await sb.rpc("upsert_my_candidatura_v2",{
     p_candidature:candidature,
     p_preferenze_scuole:prefs,
-    p_provincia_assegnata:assignedProvince,
-    p_comuni:municipalities
+    p_provincia_assegnata:assignedProvince||null,
+    p_provincia_1:territory.provincia1,
+    p_provincia_2:territory.provincia2,
+    p_comuni:territory.comuni
   });
 
   $("#save-status").textContent=error?"Errore":"Salvato";
-  $("#account-message").textContent=error
-    ?error.message
-    :`Provincia di ${assignedProvince} salvata. Le preferenze incompatibili sono state rimosse.`;
 
-  if(!error)await loadMine();
+  if(error){
+    $("#account-message").textContent=error.message;
+    return;
+  }
+
+  $("#account-message").textContent=assignedProvince
+    ?`Dati aggiornati. Provincia di ${assignedProvince} salvata.`
+    :"Dati aggiornati correttamente. La provincia assegnata resta facoltativa.";
+
+  await loadMine();
 });
 
 $("#delete-account-data").addEventListener("click",async()=>{

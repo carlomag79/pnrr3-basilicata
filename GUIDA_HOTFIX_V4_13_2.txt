@@ -1,0 +1,27 @@
+HOTFIX V4.13.2 — PROVINCIA ASSEGNATA FACOLTATIVA
+
+COMPORTAMENTO
+La provincia assegnata non è obbligatoria.
+
+L’utente può:
+- correggere punteggio, posizione e classe;
+- modificare le preferenze scolastiche;
+- creare una nuova compilazione approvata;
+- lasciare vuoto il campo provincia assegnata.
+
+Se la provincia resta vuota:
+- nessuna preferenza viene eliminata;
+- Matera e Potenza possono continuare a convivere nel record;
+- province e comuni vengono ricavati dalle scuole selezionate;
+- per i record esistenti senza nuove scuole vengono mantenuti i dati storici.
+
+Se l’utente seleziona volontariamente Matera o Potenza:
+- le scuole dell’altra provincia vengono eliminate dopo conferma;
+- il record viene limitato alla provincia scelta;
+- provincia_2 viene rimossa.
+
+INSTALLAZIONE
+1. Sostituisci account.html e account.js.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_13_2_provincia_facoltativa.sql
+3. Ricarica account.html con Ctrl + F5.

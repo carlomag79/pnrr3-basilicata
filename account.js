@@ -142,7 +142,8 @@ function refreshSchoolClassFilter(){
 
 function renderSchoolSearch(){
   const code=$("#school-class-filter").value;
-  const province=$("#school-province-filter").value;
+  const assignedProvince=$("#assigned-province")?.value||"";
+  const province=assignedProvince||$("#school-province-filter").value;
   const q=$("#school-search").value.trim().toLocaleLowerCase("it-IT");
   const root=$("#school-search-results");
   if(!code){root.innerHTML='<p class="updates-empty">Aggiungi prima una classe.</p>';return}
@@ -156,6 +157,69 @@ function renderSchoolSearch(){
       <div><strong>${esc(s.denominazione)} – ${esc(s.comune)}</strong><span>${esc(s.istituto)}</span><small>${s.codice}</small><span class="school-result__posts">${availablePosts(s,code)} ${availablePosts(s,code)===1?"posto":"posti"} ${code}</span></div>
       <button class="secondary add-school" type="button" data-code="${s.codice}" data-class="${code}">Aggiungi</button>
     </article>`).join(""):'<p class="updates-empty">Nessuna scuola disponibile per questi criteri.</p>';
+}
+
+
+function assignedProvinceValue(){
+  return $("#assigned-province")?.value||"";
+}
+
+function schoolProvinceByCode(code){
+  return allSchools.find(school=>school.codice===code)?.provincia||null;
+}
+
+function filterPreferencesByAssignedProvince(preferences,province){
+  if(!province)return [...preferences];
+  return preferences.filter(pref=>schoolProvinceByCode(pref.codice_scuola)===province);
+}
+
+function deriveAssignedMunicipalities(preferences,province){
+  const fromSchools=[...new Set(
+    preferences
+      .map(pref=>allSchools.find(school=>school.codice===pref.codice_scuola))
+      .filter(school=>school&&school.provincia===province)
+      .map(school=>school.comune)
+      .filter(Boolean)
+  )];
+
+  if(fromSchools.length)return fromSchools;
+
+  const historical=Array.isArray(currentSubmission?.comuni)?currentSubmission.comuni:[];
+  const municipalityProvince=new Map();
+  allSchools.forEach(school=>{
+    if(school.comune&&school.provincia&&!municipalityProvince.has(school.comune)){
+      municipalityProvince.set(school.comune,school.provincia);
+    }
+  });
+
+  const filteredHistorical=historical.filter(comune=>municipalityProvince.get(comune)===province);
+  return filteredHistorical.length?filteredHistorical:[province];
+}
+
+function refreshAssignedProvinceUi(){
+  const province=assignedProvinceValue();
+  const select=$("#school-province-filter");
+  const warning=$("#assigned-province-warning");
+
+  if(select){
+    select.disabled=Boolean(province);
+    if(province)select.value=province;
+  }
+
+  if(!province){
+    if(warning)warning.textContent="Seleziona la provincia assegnata prima di salvare.";
+    renderSchoolSearch();
+    return;
+  }
+
+  const invalid=selectedSchools.filter(pref=>schoolProvinceByCode(pref.codice_scuola)!==province);
+  if(warning){
+    warning.textContent=invalid.length
+      ? `${invalid.length} ${invalid.length===1?"preferenza dell’altra provincia sarà rimossa":"preferenze dell’altra provincia saranno rimosse"} al salvataggio.`
+      : `Saranno considerate soltanto le scuole della provincia di ${province}.`;
+  }
+
+  renderSchoolSearch();
 }
 
 function renderSelected(){
@@ -274,6 +338,7 @@ async function loadMine(){
     $("#legacy-import-panel").hidden=true;
     (currentSubmission.candidature||[]).forEach(addCandidature);
     selectedSchools=(currentSubmission.preferenze_scuole||[]).map(x=>({classe:x.classe,codice_scuola:x.codice_scuola}));
+    $("#assigned-province").value=currentSubmission.provincia_assegnata||"";
   }else{
     const status=await getRegistrationStatus();
     showRegistrationState(status);
@@ -288,11 +353,13 @@ async function loadMine(){
       addCandidature();
     }
     selectedSchools=[];
+    $("#assigned-province").value="";
     await checkAccountClaim();
   }
 
   $("#legacy-school-note").hidden=!(lastLegacyImport || (currentSubmission && (!currentSubmission.preferenze_scuole || !currentSubmission.preferenze_scuole.length)));
   renderSelected();
+  refreshAssignedProvinceUi();
 }
 
 async function handleSession(session){
@@ -441,6 +508,10 @@ $("#add-account-candidature").addEventListener("click",()=>{if(document.querySel
 $("#account-candidatures").addEventListener("click",e=>{if(e.target.closest(".remove-account-candidature")){if(document.querySelectorAll(".account-candidature").length>1)e.target.closest(".account-candidature").remove();refreshSchoolClassFilter()}});
 $("#account-candidatures").addEventListener("change",e=>{if(e.target.matches(".account-class"))refreshSchoolClassFilter()});
 ["school-class-filter","school-province-filter"].forEach(id=>$("#"+id).addEventListener("change",renderSchoolSearch));
+$("#assigned-province")?.addEventListener("change",()=>{
+  refreshAssignedProvinceUi();
+  renderSelected();
+});
 $("#school-search").addEventListener("input",renderSchoolSearch);
 
 $("#school-search-results").addEventListener("click",e=>{
@@ -456,16 +527,56 @@ $("#selected-schools").addEventListener("click",e=>{
 
 $("#account-form").addEventListener("submit",async e=>{
   e.preventDefault();
+
   const candidature=getCandidatures();
-  if(candidature.some(x=>!Number.isInteger(x.posizione)||x.posizione<1||!Number.isFinite(x.punteggio)||x.punteggio<0)){return $("#account-message").textContent="Controlla posizione e punteggio."}
-  if(!selectedSchools.length)return $("#account-message").textContent="Aggiungi almeno una scuola.";
+  const assignedProvince=assignedProvinceValue();
+
+  if(candidature.some(x=>!Number.isInteger(x.posizione)||x.posizione<1||!Number.isFinite(x.punteggio)||x.punteggio<0)){
+    return $("#account-message").textContent="Controlla posizione e punteggio.";
+  }
+
+  if(!assignedProvince){
+    return $("#account-message").textContent="Indica la provincia assegnata.";
+  }
+
   const validClasses=new Set(candidature.map(x=>x.classe));
-  if(selectedSchools.some(x=>!validClasses.has(x.classe)))return $("#account-message").textContent="Rimuovi le preferenze associate a classi non più presenti.";
+  if(selectedSchools.some(x=>!validClasses.has(x.classe))){
+    return $("#account-message").textContent="Rimuovi le preferenze associate a classi non più presenti.";
+  }
+
+  const incompatible=selectedSchools.filter(
+    pref=>schoolProvinceByCode(pref.codice_scuola)!==assignedProvince
+  );
+
+  if(incompatible.length&&!confirm(
+    `Confermando, ${incompatible.length} ${incompatible.length===1?"preferenza scolastica sarà rimossa":"preferenze scolastiche saranno rimosse"} perché appartengono alla provincia non assegnata.`
+  ))return;
+
+  selectedSchools=filterPreferencesByAssignedProvince(selectedSchools,assignedProvince);
+
+  if(!currentSubmission&&!selectedSchools.length){
+    renderSelected();
+    return $("#account-message").textContent="Aggiungi almeno una scuola della provincia assegnata.";
+  }
+
+  const prefs=selectedSchools.map((item,index)=>({...item,ordine:index+1}));
+  const municipalities=deriveAssignedMunicipalities(selectedSchools,assignedProvince);
+
   $("#save-status").textContent="Salvataggio…";
-  const prefs=selectedSchools.map((x,i)=>({...x,ordine:i+1}));
-  const {data,error}=await sb.rpc("upsert_my_candidatura_v2",{p_candidature:candidature,p_preferenze_scuole:prefs});
+
+  const {error}=await sb.rpc("upsert_my_candidatura_v2",{
+    p_candidature:candidature,
+    p_preferenze_scuole:prefs,
+    p_provincia_assegnata:assignedProvince,
+    p_comuni:municipalities
+  });
+
   $("#save-status").textContent=error?"Errore":"Salvato";
-  $("#account-message").textContent=error?error.message:"Preferenze aggiornate correttamente.";
+  $("#account-message").textContent=error
+    ?error.message
+    :`Provincia di ${assignedProvince} salvata. Le preferenze incompatibili sono state rimosse.`;
+
+  if(!error)await loadMine();
 });
 
 $("#delete-account-data").addEventListener("click",async()=>{

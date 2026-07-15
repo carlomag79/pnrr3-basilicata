@@ -621,3 +621,6 @@ body.admin-page {
 .admin-user-related-record.is-linked{border-left:4px solid var(--success)}
 .admin-user-related-record>div:first-child{display:grid;gap:4px}
 @media(max-width:720px){.admin-user-related-record{align-items:flex-start;flex-direction:column}}
+
+.admin-broadcast-panel{margin-bottom:22px}
+.admin-broadcast-panel>.section-heading p:not(.eyebrow){margin:6px 0 0;color:var(--muted)}

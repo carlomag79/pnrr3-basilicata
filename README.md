@@ -382,3 +382,10 @@ La gestione utenti è stata separata nella pagina `admin-users.html`. Sono
 disponibili gestione dell’area riservata, messaggi interni, invio email
 facoltativo tramite Edge Function e rivendicazione dei record per gli utenti
 registrati che non possiedono ancora una compilazione.
+
+## Versione 4.13
+
+Aggiunta la selezione della provincia assegnata nell’area riservata. Il
+salvataggio elimina automaticamente le preferenze della provincia esclusa e
+aggiorna i dati territoriali usati nei calcoli. La pagina Utenti consente
+inoltre di inviare un messaggio interno a tutti gli account registrati.

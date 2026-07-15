@@ -83,7 +83,7 @@ async function handleSession(session) {
     loginPanel.hidden = true;
     adminApp.hidden = false;
     logoutButton.hidden = false;
-    await Promise.all([loadPreregisteredUsers(), loadRegisteredUsers()]);
+    await Promise.all([loadBroadcastHistory(), loadPreregisteredUsers(), loadRegisteredUsers()]);
   } catch (error) {
     loginPanel.hidden = false;
     adminApp.hidden = true;
@@ -792,6 +792,28 @@ async function loadPreregisteredUsers(){
 }
 
 
+
+async function loadBroadcastHistory(){
+  const root=document.querySelector("#admin-broadcast-history");
+  if(!root)return;
+
+  const {data,error}=await adminSupabase.rpc("admin_list_broadcast_messages");
+  if(error){
+    root.innerHTML=`<p class="admin-empty">${adminEscape(error.message)}</p>`;
+    return;
+  }
+
+  root.innerHTML=(data||[]).length?(data||[]).map(item=>`
+    <article class="admin-message-card">
+      <header>
+        <strong>${adminEscape(item.subject)}</strong>
+        <span>${adminDate(item.created_at)}</span>
+      </header>
+      <p>${adminEscape(item.body).replaceAll("\\n","<br>")}</p>
+      <small>Consegnato a ${item.recipient_count} ${item.recipient_count===1?"utente":"utenti"}</small>
+    </article>`).join(""):'<p class="admin-empty">Nessuna comunicazione globale inviata.</p>';
+}
+
 async function loadRegisteredUsers(){
   const root=document.querySelector("#admin-registered-users-results");
   if(!root)return;
@@ -1430,6 +1452,42 @@ document.querySelector("#admin-preregistered-users")?.addEventListener("click",a
   }
 });
 
+
+
+document.querySelector("#admin-broadcast-form")?.addEventListener("submit",async event=>{
+  event.preventDefault();
+
+  const subject=document.querySelector("#admin-broadcast-subject").value.trim();
+  const body=document.querySelector("#admin-broadcast-body").value.trim();
+  const status=document.querySelector("#admin-broadcast-status");
+  const button=event.submitter;
+
+  if(!subject||!body){
+    status.textContent="Inserisci oggetto e messaggio.";
+    return;
+  }
+
+  if(!confirm("Inviare questo messaggio a tutti gli utenti registrati?"))return;
+
+  status.textContent="Invio collettivo in corso…";
+  if(button)button.disabled=true;
+
+  const {data,error}=await adminSupabase.rpc("admin_send_broadcast_message",{
+    p_subject:subject,
+    p_body:body
+  });
+
+  if(button)button.disabled=false;
+
+  if(error){
+    status.textContent=error.message;
+    return;
+  }
+
+  status.textContent=`Messaggio consegnato a ${data} ${Number(data)===1?"utente":"utenti"}.`;
+  event.target.reset();
+  await loadBroadcastHistory();
+});
 
 document.querySelector("#admin-registered-users-search-form")?.addEventListener("submit",async event=>{
   event.preventDefault();

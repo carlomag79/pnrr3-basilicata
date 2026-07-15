@@ -132,3 +132,9 @@
 .account-message-card header>div{display:grid;gap:4px}
 .account-message-card header span{color:var(--muted);font-size:.82rem}
 .account-message-card p{margin:12px 0 0;line-height:1.6}
+
+.assigned-province-box{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,320px);gap:18px;align-items:end;padding:18px;margin:0 0 20px;background:#f7fbfd;border:1px solid var(--line)}
+.assigned-province-box h3{margin:3px 0 7px}
+.assigned-province-box p{margin-bottom:0}
+.assigned-province-warning{grid-column:1/-1;padding:10px 12px;background:#fff4d8;border-left:4px solid #d79a20;font-weight:700}
+@media(max-width:720px){.assigned-province-box{grid-template-columns:1fr}}

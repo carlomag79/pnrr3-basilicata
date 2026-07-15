@@ -1,0 +1,51 @@
+VERSIONE 4.13 — PROVINCIA ASSEGNATA E MESSAGGI GLOBALI
+
+INSTALLAZIONE
+1. Carica e sostituisci tutti i file del pacchetto nel repository GitHub.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_13_provincia_assegnata_messaggi_globali.sql
+3. Le migrazioni fino alla V4.12.1 devono essere già installate.
+4. Ricarica account.html e admin-users.html con Ctrl + F5.
+
+PROVINCIA DI ASSEGNAZIONE
+Nell’area riservata di ogni utente è disponibile il campo:
+- Matera;
+- Potenza.
+
+Quando l’utente salva:
+- la provincia viene registrata nel record;
+- provincia_1 viene aggiornata con la provincia assegnata;
+- provincia_2 viene rimossa;
+- le preferenze scolastiche dell’altra provincia vengono eliminate;
+- i comuni utilizzati per i calcoli vengono limitati alle sedi rimaste nella
+  provincia assegnata.
+
+Prima del salvataggio viene mostrato il numero di preferenze che saranno
+rimosse. Se esistono preferenze incompatibili, il sistema chiede conferma.
+
+Una volta selezionata la provincia:
+- il filtro scuole viene bloccato sulla provincia assegnata;
+- nei risultati vengono mostrate soltanto scuole e plessi compatibili.
+
+RECORD STORICI
+I record storici possono salvare la provincia anche se non contengono ancora
+preferenze scolastiche. In questo caso vengono mantenuti soltanto i comuni
+storici riconducibili alla provincia scelta. Se non è possibile ricondurre
+alcun comune, viene conservato un riferimento territoriale alla provincia.
+
+MESSAGGIO A TUTTI GLI UTENTI
+In admin-users.html è disponibile la sezione:
+“Messaggio a tutti gli utenti”.
+
+L’amministratore inserisce:
+- oggetto;
+- testo.
+
+Dopo la conferma, il sistema crea una copia del messaggio per ogni account
+presente in Supabase Auth. Il messaggio compare nella sezione
+“Messaggi dall’amministrazione” dell’area riservata.
+
+La pagina mostra lo storico delle ultime 50 comunicazioni globali e il numero
+di destinatari raggiunti.
+
+I messaggi globali sono interni al sito e non generano email.

@@ -65,6 +65,29 @@
         <h1>Utenti</h1>
         <p>Gestisci utenti pre-registrati, account già attivi, aree riservate, compilazioni e comunicazioni.</p>
       </section>
+      <section class="panel admin-broadcast-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Comunicazione collettiva</p>
+            <h1>Messaggio a tutti gli utenti</h1>
+            <p>Il messaggio comparirà nell’area riservata di tutti gli account registrati.</p>
+          </div>
+        </div>
+        <form id="admin-broadcast-form" class="admin-message-compose">
+          <label>Oggetto
+            <input id="admin-broadcast-subject" type="text" maxlength="160" required>
+          </label>
+          <label>Messaggio
+            <textarea id="admin-broadcast-body" rows="6" maxlength="5000" required></textarea>
+          </label>
+          <button class="primary" type="submit">Invia a tutti gli utenti</button>
+          <p id="admin-broadcast-status" class="admin-message" role="status"></p>
+        </form>
+        <div id="admin-broadcast-history" class="admin-message-history">
+          <p class="admin-empty">Caricamento comunicazioni globali…</p>
+        </div>
+      </section>
+
       <section class="panel admin-preregistered-panel">
         <div class="section-heading">
           <div>
@@ -294,7 +317,7 @@
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="config.js?v=4.12.1" defer></script>
-  <script src="admin-users.js?v=4.12.1" defer></script>
+  <script src="config.js?v=4.13.0" defer></script>
+  <script src="admin-users.js?v=4.13.0" defer></script>
 </body>
 </html>

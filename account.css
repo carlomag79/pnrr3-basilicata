@@ -144,3 +144,6 @@
 .selected-preferences-heading p{margin:0;color:var(--muted)}
 .selected-school{position:relative}
 .selected-school__number{font-weight:900}
+
+.school-result .add-school{min-width:110px;position:relative;z-index:2}
+.school-result .add-school:disabled{opacity:.65;cursor:wait}

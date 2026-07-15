@@ -1,0 +1,16 @@
+HOTFIX V4.13.4 — PULSANTE AGGIUNGI SCUOLA
+
+Nel video la prima scuola viene aggiunta, mentre il clic su “Aggiungi” della
+seconda non produce effetto.
+
+La correzione:
+- assegna un listener esplicito a ogni pulsante;
+- blocca propagazioni indesiderate;
+- impedisce duplicati;
+- mantiene l’ordine di inserimento;
+- mostra il numero progressivo dopo ogni aggiunta.
+
+Installazione:
+1. sostituisci account.html, account.js e account.css;
+2. non serve alcuna migrazione SQL;
+3. ricarica con Ctrl + F5.

@@ -395,3 +395,9 @@ inoltre di inviare un messaggio interno a tutti gli account registrati.
 Importazione delle assegnazioni ufficiali di infanzia e primaria, abbinamento
 ai record tramite classe/posizione/punteggio, conferma amministrativa,
 visualizzazione nell’area riservata e congelamento delle preferenze.
+
+## Versione 4.15
+
+Aggiunta la pagina pubblica Assegnazioni con elenco anonimo, filtri, CSV,
+mappa delle sole scuole assegnate e marker proporzionali al numero di nomine.
+Aggiunti il collegamento nel menu e una sezione dedicata nella home page.

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Elenco anonimo e mappa delle assegnazioni ufficiali PNRR3 Basilicata per infanzia e primaria.">
+  <title>Assegnazioni – Vincitori PNRR3 Basilicata</title>
+  <link rel="stylesheet" href="style.css?v=4.15.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="site-shell.js?v=4.15.0" defer></script>
+</head>
+<body>
+<header class="site-header site-header--compact">
+  <div class="container">
+    <div class="site-brand">
+      <span class="project-mark project-mark--small" aria-hidden="true">🧑‍🏫</span>
+      <div><p class="eyebrow">Vincitori PNRR3 Basilicata Infanzia / Primaria</p><h1>Assegnazioni ufficiali</h1></div>
+    </div>
+    <p class="project-disclaimer">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+    <div id="site-navigation" class="site-navigation"></div>
+  </div>
+</header>
+
+<main class="container assignments-main">
+  <section class="panel assignments-intro">
+    <p class="eyebrow">Esiti 2026</p>
+    <h2>Le sedi assegnate per infanzia e primaria</h2>
+    <p>La pagina riporta gli esiti ufficiali in forma anonima. Nomi e cognomi non vengono pubblicati.</p>
+    <div id="assignments-stats" class="assignments-stats">
+      <span class="badge">Caricamento dati…</span>
+    </div>
+  </section>
+
+  <section class="panel assignments-map-panel">
+    <div class="section-heading">
+      <div><p class="eyebrow">Distribuzione territoriale</p><h2>Mappa delle scuole assegnate</h2><p>I punti più grandi indicano le scuole con il maggior numero di assegnazioni.</p></div>
+    </div>
+    <div class="assignment-map-legend">
+      <span><i class="assignment-dot assignment-dot--low"></i> 1 assegnazione</span>
+      <span><i class="assignment-dot assignment-dot--medium"></i> 2–4 assegnazioni</span>
+      <span><i class="assignment-dot assignment-dot--high"></i> 5 o più assegnazioni</span>
+    </div>
+    <div id="assignments-map" aria-label="Mappa delle scuole assegnate"><div class="map-loading">Caricamento mappa…</div></div>
+    <p class="map-note">La posizione può essere approssimata al comune o alla sede dell’istituto quando il codice ufficiale indica l’istituzione scolastica e non un singolo plesso.</p>
+  </section>
+
+  <section class="panel assignments-table-panel">
+    <div class="section-heading">
+      <div><p class="eyebrow">Elenco pubblico</p><h2>Tutte le assegnazioni</h2></div>
+      <button id="assignments-download" class="secondary" type="button">Scarica CSV</button>
+    </div>
+    <div class="filters assignments-filters">
+      <label>Classe
+        <select id="assignments-class">
+          <option value="ALL">Tutte</option>
+          <option value="AAAA">AAAA</option>
+          <option value="ADAA">ADAA</option>
+          <option value="EEEE">EEEE</option>
+          <option value="ADEE">ADEE</option>
+        </select>
+      </label>
+      <label>Provincia
+        <select id="assignments-province">
+          <option value="ALL">Tutte</option>
+          <option value="Matera">Matera</option>
+          <option value="Potenza">Potenza</option>
+        </select>
+      </label>
+      <label>Cerca scuola
+        <input id="assignments-search" type="search" placeholder="Codice o denominazione">
+      </label>
+    </div>
+    <div class="table-wrap">
+      <table class="assignments-table">
+        <thead>
+          <tr>
+            <th>Classe</th><th>Graduatoria</th><th>Posizione</th><th>Punteggio</th>
+            <th>Esito</th><th>Provincia</th><th>Scuola assegnata</th><th>COE</th>
+          </tr>
+        </thead>
+        <tbody id="assignments-body"><tr><td colspan="8">Caricamento…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="results-footer">
+      <p id="assignments-count" class="results-count"></p>
+      <button id="assignments-load-more" class="secondary" type="button" hidden>Mostra altri risultati</button>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="config.js?v=4.15.0" defer></script>
+<script src="assignments.js?v=4.15.0" defer></script>
+</body>
+</html>

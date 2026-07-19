@@ -22,6 +22,7 @@
         <a href="${homeAnchor("#map-section")}">Mappa</a>
         <a href="${homeAnchor("#results-section")}">Risultati</a>
         <a href="scuole.html"${isSchools ? ' aria-current="page"' : ""}>Scuole</a>
+        <a href="assignments.html"${location.pathname.endsWith("assignments.html") ? ' aria-current="page"' : ""}>Assegnazioni</a>
         <a href="account.html" class="account-menu-link"${isAccount ? ' aria-current="page"' : ""}>Log in</a>
       </nav>`;
 
@@ -44,6 +45,7 @@
           <a href="${homeAnchor("#map-section")}">Mappa delle preferenze</a>
           <a href="${homeAnchor("#results-section")}">Risultati</a>
           <a href="scuole.html">Scuole disponibili</a>
+          <a href="assignments.html">Assegnazioni ufficiali</a>
           <a href="account.html" class="account-menu-link">Log in</a>
         </nav>
       </aside>`;

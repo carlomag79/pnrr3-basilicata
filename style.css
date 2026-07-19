@@ -2309,3 +2309,33 @@ main > .panel::before {
 .project-mark--admin {
   font-size: 1rem;
 }
+
+
+/* Public assignments */
+.assignments-main{display:grid;gap:22px;padding-bottom:40px}
+.assignments-intro h2,.assignments-map-panel h2,.assignments-table-panel h2{margin-top:4px}
+.assignments-stats,.assignment-map-legend{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+#assignments-map{height:620px;overflow:hidden;background:#e6ebed;border:1px solid var(--line-strong);border-radius:var(--radius-md)}
+.assignment-map-legend span{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.82rem}
+.assignment-dot{display:inline-block;border-radius:50%;border:2px solid}
+.assignment-dot--low{width:14px;height:14px;background:#4d738a;border-color:#36576a}
+.assignment-dot--medium{width:20px;height:20px;background:#d07a35;border-color:#98531f}
+.assignment-dot--high{width:27px;height:27px;background:#8b2e2e;border-color:#641f1f}
+.assignments-filters{grid-template-columns:repeat(3,minmax(0,1fr))}
+.assignments-table th:nth-child(7),.assignments-table td:nth-child(7){min-width:280px}
+.assignment-popup h3{margin:0 0 8px}
+.assignment-popup p{margin:5px 0}
+.assignment-popup__classes{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.home-assignments-cta{overflow:hidden;background:linear-gradient(135deg,#f7fbfd,#eef5f7)}
+.home-assignments-cta__content{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.home-assignments-cta__content h2{margin:4px 0 8px}
+.home-assignments-cta__content p{max-width:760px;margin-bottom:0}
+.home-assignments-cta__facts{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.home-assignments-cta__facts span{padding:9px 12px;background:#fff;border:1px solid var(--line)}
+.home-assignments-cta__facts strong{margin-right:5px;font-size:1.08rem}
+.button-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap}
+@media(max-width:800px){
+  .assignments-filters{grid-template-columns:1fr}
+  #assignments-map{height:520px}
+  .home-assignments-cta__content{align-items:flex-start;flex-direction:column}
+}

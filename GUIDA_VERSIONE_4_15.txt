@@ -1,0 +1,34 @@
+VERSIONE 4.15 — PAGINA PUBBLICA ASSEGNAZIONI
+
+NOVITÀ
+- nuova pagina pubblica assignments.html;
+- elenco anonimo di tutte le 221 assegnazioni ufficiali;
+- filtri per classe, provincia e scuola;
+- esportazione CSV dell’elenco filtrato;
+- mappa con sole scuole assegnate;
+- marker più grandi per le sedi con più assegnazioni;
+- popup con codice, provincia, totale e distribuzione per classe;
+- nuova voce “Assegnazioni” nel menu desktop e mobile;
+- nuova sezione di presentazione nella home page.
+
+PRIVACY
+La funzione pubblica non restituisce nome e cognome. I nominativi continuano
+a essere disponibili esclusivamente nell’amministrazione.
+
+MAPPA
+La mappa usa i dati già presenti in scuole.json e la stessa base cartografica
+della pagina Scuole. Quando il codice assegnato identifica un istituto invece
+di un singolo plesso, viene utilizzata una sede compatibile o il centro
+approssimativo del comune.
+
+INSTALLAZIONE
+1. Carica tutti i file del pacchetto nel repository.
+2. Esegui in Supabase SQL Editor:
+   migration_v4_15_pagina_pubblica_assegnazioni.sql
+3. Ricarica il sito con Ctrl + F5.
+4. Apri assignments.html e verifica:
+   - totale 221 assegnazioni;
+   - filtri;
+   - mappa;
+   - CSV;
+   - collegamento dalla home.

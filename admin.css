@@ -624,3 +624,10 @@ body.admin-page {
 
 .admin-broadcast-panel{margin-bottom:22px}
 .admin-broadcast-panel>.section-heading p:not(.eyebrow){margin:6px 0 0;color:var(--muted)}
+
+.assignment-summary{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.assignment-status--automatic{background:#eaf5ff}
+.assignment-status--confirmed,.assignment-status--manual{background:#e9f8ef}
+.assignment-status--ambiguous{background:#fff4d8}
+.assignment-status--unmatched{background:#fdecec}
+.assignment-row{align-items:flex-start}

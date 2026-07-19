@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Assegnazioni ufficiali – PNRR3 Basilicata</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+<header class="admin-header">
+  <div class="container admin-header__inner">
+    <a class="admin-brand" href="index.html"><span class="project-mark project-mark--admin">🧑‍🏫</span><span><strong>Vincitori PNRR3 Basilicata</strong><small>Assegnazioni ufficiali</small></span></a>
+    <p class="admin-header__disclaimer">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+    <nav class="admin-page-nav"><a href="admin.html">Amministrazione</a><a href="admin-users.html">Utenti</a><a class="is-active" href="admin-assignments.html">Assegnazioni</a></nav>
+    <button id="admin-logout" class="secondary" type="button" hidden>Esci</button>
+  </div>
+</header>
+<main class="container admin-main">
+  <section id="admin-login-panel" class="admin-login panel">
+    <p class="eyebrow">Accesso riservato</p><h1>Assegnazioni ufficiali</h1>
+    <button id="admin-google-login" class="primary" type="button">Accedi con Google</button>
+    <form id="admin-otp-request-form" class="admin-inline-form"><label>Email amministratore<input id="admin-auth-email" type="email" required></label><button class="secondary" type="submit">Invia codice</button></form>
+    <form id="admin-otp-verify-form" class="admin-inline-form" hidden><label>Codice<input id="admin-auth-otp" inputmode="numeric" required></label><button class="primary" type="submit">Verifica</button></form>
+    <p id="admin-login-message" role="status"></p>
+  </section>
+  <div id="admin-assignments-app" hidden>
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">Esiti ufficiali</p><h1>Assegnazioni infanzia e primaria</h1><p>Abbina gli esiti ai record usando classe, posizione e punteggio. Confermando, le preferenze dell’utente diventano di sola lettura.</p></div><button id="refresh-assignment-matches" class="primary" type="button">Ricalcola abbinamenti</button></div>
+      <div id="assignment-summary" class="assignment-summary"></div>
+      <form id="assignment-filters" class="admin-record-filters">
+        <label>Classe<select id="assignment-class"><option value="">Tutte</option><option>AAAA</option><option>ADAA</option><option>EEEE</option><option>ADEE</option></select></label>
+        <label>Stato<select id="assignment-status"><option value="all">Tutti</option><option value="automatic">Automatici</option><option value="confirmed">Confermati</option><option value="manual">Manuali</option><option value="ambiguous">Ambigui</option><option value="unmatched">Non abbinati</option></select></label>
+        <label>Ricerca<input id="assignment-query" type="search" placeholder="Posizione, scuola o nominativo"></label>
+        <button class="secondary" type="submit">Filtra</button>
+      </form>
+      <div id="assignment-list" class="admin-records"><p class="admin-empty">Caricamento…</p></div>
+    </section>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="config.js?v=4.14.0" defer></script>
+<script src="admin-assignments.js?v=4.14.0" defer></script>
+</body></html>

@@ -147,3 +147,10 @@
 
 .school-result .add-school{min-width:110px;position:relative;z-index:2}
 .school-result .add-school:disabled{opacity:.65;cursor:wait}
+
+.official-assignment-panel{margin-bottom:22px}
+.official-assignment-card{padding:18px;margin-top:12px;border:1px solid var(--line);background:#f7fbfd}
+.official-assignment-card header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.official-assignment-card header>div,.official-assignment-school{display:grid;gap:4px}
+.official-assignment-school{margin:14px 0;padding:13px;background:#fff}
+.official-assignment-card p{margin-bottom:0}

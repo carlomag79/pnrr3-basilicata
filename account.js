@@ -388,6 +388,57 @@ async function loadAccountMessages(){
     </article>`).join(""):'<p class="admin-empty">Nessun messaggio ricevuto.</p>';
 }
 
+
+let officialPreferencesLocked=false;
+
+async function loadOfficialAssignments(){
+  const panel=$("#official-assignment-panel");
+  const root=$("#official-assignment-list");
+  const note=$("#official-assignment-lock-note");
+  if(!panel||!root)return;
+
+  const {data,error}=await sb.rpc("get_my_official_assignments");
+  if(error){
+    console.warn("Assegnazioni ufficiali:",error.message);
+    return;
+  }
+
+  const rows=data||[];
+  if(!rows.length){
+    panel.hidden=true;
+    officialPreferencesLocked=false;
+    return;
+  }
+
+  panel.hidden=false;
+  officialPreferencesLocked=rows.some(row=>row.preferences_locked);
+  note.hidden=!officialPreferencesLocked;
+
+  root.innerHTML=rows.map(row=>`
+    <article class="official-assignment-card">
+      <header>
+        <div>
+          <strong>${esc(row.insegnamento)} · ${esc(row.esito)}</strong>
+          <span>Posizione ${row.posizione} · ${Number(row.punteggio).toFixed(2)} punti</span>
+        </div>
+        <span class="badge">${esc(row.provincia_assegnata)}</span>
+      </header>
+      <div class="official-assignment-school">
+        <strong>${esc(row.denominazione_scuola)}</strong>
+        <span>${esc(row.codice_scuola)}${row.nomina_coe?" · Nomina su COE":""}</span>
+      </div>
+      <p>${row.preference_position
+        ?`Hai ottenuto la preferenza n. <strong>${row.preference_position}</strong>.`
+        :"La scuola assegnata non era presente tra le preferenze registrate."}</p>
+    </article>`).join("");
+
+  if(officialPreferencesLocked){
+    document.querySelectorAll("#account-form input,#account-form select,#account-form button")
+      .forEach(element=>{element.disabled=true});
+    $("#save-status").textContent="Preferenze congelate";
+  }
+}
+
 async function loadMine(){
   const {data,error}=await sb.rpc("get_my_candidatura_v2");
   if(error)throw error;
@@ -437,7 +488,7 @@ async function handleSession(session){
   $("#account-email").textContent=session.user.email||"Utente autenticato";
   const {error:preregisterError}=await sb.rpc("claim_my_preregistered_candidate");
   if(preregisterError)console.warn("Associazione pre-registrazione:",preregisterError.message);
-  await Promise.all([loadMine(),loadAccountMessages()]);
+  await Promise.all([loadMine(),loadAccountMessages(),loadOfficialAssignments()]);
 }
 
 async function signInWithProvider(provider){

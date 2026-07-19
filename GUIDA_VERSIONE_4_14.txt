@@ -1,0 +1,44 @@
+VERSIONE 4.14 — ASSEGNAZIONI UFFICIALI
+
+CONTENUTO
+- 221 assegnazioni ufficiali importate:
+  - 25 AAAA;
+  - 7 ADAA;
+  - 177 EEEE;
+  - 12 ADEE.
+- nuova pagina admin-assignments.html;
+- abbinamento automatico mediante classe, posizione e punteggio;
+- conferma o associazione manuale del record;
+- visualizzazione dell’esito nell’area riservata;
+- calcolo della posizione della scuola ottenuta nelle preferenze;
+- congelamento delle preferenze dopo la conferma;
+- possibilità amministrativa di scollegare un abbinamento errato.
+
+INSTALLAZIONE
+1. Verifica di aver già eseguito le migrazioni fino alla V4.13.3.
+2. Carica tutti i file del pacchetto nel repository.
+3. Esegui in Supabase SQL Editor:
+   migration_v4_14_assegnazioni_ufficiali.sql
+4. Apri:
+   admin-assignments.html
+5. Clicca “Ricalcola abbinamenti”.
+6. Controlla gli abbinamenti automatici e confermali.
+7. Per le righe ambigue o non abbinate, usa “Associa a record” e inserisci
+   l’ID della compilazione corretta.
+
+STATI
+- automatic: una sola corrispondenza trovata, da confermare;
+- ambiguous: più record compatibili;
+- unmatched: nessun record compatibile;
+- confirmed: abbinamento automatico confermato;
+- manual: record scelto manualmente.
+
+PRIVACY
+I nominativi ufficiali sono visibili soltanto nell’amministrazione.
+Nell’area riservata l’utente vede esclusivamente il proprio esito.
+Non è stata aggiunta alcuna pagina pubblica con nomi e cognomi.
+
+BLOCCO DELLE PREFERENZE
+Quando un abbinamento viene confermato, il record passa in sola lettura per
+l’utente. Il controllo è applicato anche nel database, non soltanto
+nell’interfaccia. Gli amministratori possono continuare a intervenire.

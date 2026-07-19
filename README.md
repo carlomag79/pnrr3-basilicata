@@ -389,3 +389,9 @@ Aggiunta la selezione della provincia assegnata nell’area riservata. Il
 salvataggio elimina automaticamente le preferenze della provincia esclusa e
 aggiorna i dati territoriali usati nei calcoli. La pagina Utenti consente
 inoltre di inviare un messaggio interno a tutti gli account registrati.
+
+## Versione 4.14
+
+Importazione delle assegnazioni ufficiali di infanzia e primaria, abbinamento
+ai record tramite classe/posizione/punteggio, conferma amministrativa,
+visualizzazione nell’area riservata e congelamento delle preferenze.

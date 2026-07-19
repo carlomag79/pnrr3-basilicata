@@ -246,6 +246,12 @@
         <button id="account-logout" class="secondary" type="button">Esci</button>
       </section>
 
+      <section id="official-assignment-panel" class="panel official-assignment-panel" hidden>
+        <div class="section-heading"><div><p class="eyebrow">Esito ufficiale</p><h2>La tua assegnazione</h2></div><span class="badge">Dati ufficiali importati</span></div>
+        <div id="official-assignment-list"></div>
+        <p id="official-assignment-lock-note" class="legacy-school-note" hidden>Le preferenze originarie sono state congelate dopo la conferma dell’assegnazione e sono ora disponibili in sola lettura.</p>
+      </section>
+
       <section id="account-editor" class="panel account-editor">
         <p id="legacy-school-note" class="legacy-school-note" hidden>La vecchia compilazione è stata importata. Ora seleziona le singole scuole o i plessi: le precedenti preferenze comunali non vengono convertite automaticamente.</p>
         <div class="section-heading">
@@ -325,6 +331,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="config.js?v=4.13.3" defer></script>
-  <script src="account.js?v=4.13.4" defer></script>
+  <script src="account.js?v=4.14.0" defer></script>
 </body>
 </html>

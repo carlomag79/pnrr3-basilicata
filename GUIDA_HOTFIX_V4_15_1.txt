@@ -1,0 +1,9 @@
+HOTFIX V4.15.1 — GRAFICA SEZIONE ASSEGNAZIONI IN HOME
+
+- aggiunto elemento grafico con simbolo cartografico e fumetto;
+- totale 221 evidenziato graficamente;
+- pulsante coerente con lo stile secondary del sito;
+- layout ottimizzato per mobile.
+
+Sostituisci index.html e style.css.
+Non serve alcuna migrazione SQL.

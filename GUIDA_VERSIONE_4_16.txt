@@ -1,0 +1,23 @@
+VERSIONE 4.16 — PAGINA IL PROGETTO E REPORT PDF
+
+NOVITÀ
+- nuova pagina pubblica project.html;
+- presentazione della nascita e dell’evoluzione della piattaforma;
+- dashboard pubblica con dati aggregati e anonimi;
+- indicatori su compilazioni, account, preferenze, assegnazioni, scuole ed esiti abbinati;
+- distribuzione delle assegnazioni per classe e provincia;
+- sezione dedicata a metodo, privacy e conservazione storica;
+- download del report PDF riepilogativo;
+- nuova voce “Il progetto” nel menu desktop e mobile.
+
+INSTALLAZIONE
+1. Carica tutti i file del pacchetto nel repository.
+2. Esegui in Supabase:
+   migration_v4_16_pagina_progetto_dashboard.sql
+3. Apri project.html.
+4. Verifica il caricamento della dashboard.
+5. Verifica il download di report-pnrr3-basilicata-2026.pdf.
+
+PRIVACY
+La dashboard restituisce esclusivamente conteggi aggregati. Non espone email,
+nomi, cognomi o singoli record.

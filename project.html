@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Storia, finalità e dati aggregati del progetto Vincitori PNRR3 Basilicata Infanzia e Primaria.">
+  <title>Il progetto – Vincitori PNRR3 Basilicata</title>
+  <link rel="stylesheet" href="style.css?v=4.16.0">
+  <script src="site-shell.js?v=4.16.0" defer></script>
+</head>
+<body>
+<header class="site-header site-header--compact">
+  <div class="container">
+    <div class="site-brand">
+      <span class="project-mark project-mark--small" aria-hidden="true">🧑‍🏫</span>
+      <div>
+        <p class="eyebrow">Vincitori PNRR3 Basilicata Infanzia / Primaria</p>
+        <h1>Il progetto</h1>
+      </div>
+    </div>
+    <p class="project-disclaimer">Progetto indipendente e non ufficiale. Il sito non è collegato al Ministero dell’Istruzione, all’USR Basilicata, alla Regione Basilicata o ad altre amministrazioni pubbliche. Non inserire credenziali istituzionali.</p>
+    <div id="site-navigation" class="site-navigation"></div>
+  </div>
+</header>
+
+<main class="container project-page">
+  <section class="panel project-hero">
+    <div class="project-hero__graphic" aria-hidden="true">
+      <svg viewBox="0 0 120 120" role="img">
+        <rect x="16" y="24" width="88" height="70" rx="14"></rect>
+        <path d="M34 24v70M86 24v70"></path>
+        <path d="M60 14c11 0 20 8.5 20 19 0 13-20 31-20 31S40 46 40 33c0-10.5 9-19 20-19z"></path>
+        <circle cx="60" cy="33" r="6"></circle>
+      </svg>
+    </div>
+    <div>
+      <p class="eyebrow">Un progetto civico digitale</p>
+      <h2>Nato per rendere più comprensibili scelte, preferenze e assegnazioni</h2>
+      <p>La piattaforma è nata durante la procedura PNRR3 in Basilicata per raccogliere in modo ordinato le preferenze territoriali dei candidati, favorire il confronto e accompagnare la comunità fino alla pubblicazione delle sedi ufficiali.</p>
+      <p>Nel tempo il progetto si è trasformato da semplice form collaborativo in una piattaforma con account, preferenze scolastiche ordinate, rivendicazione dei record, messaggistica, abbinamento degli esiti ufficiali e consultazione pubblica anonima.</p>
+    </div>
+  </section>
+
+  <section class="panel project-dashboard">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Dashboard pubblica</p>
+        <h2>I dati raccolti dalla piattaforma</h2>
+        <p>Gli indicatori sono aggregati e non contengono informazioni personali.</p>
+      </div>
+      <span id="project-dashboard-updated" class="badge">Aggiornamento…</span>
+    </div>
+
+    <div id="project-metrics" class="project-metrics">
+      <article class="project-metric"><span>Compilazioni</span><strong>—</strong></article>
+      <article class="project-metric"><span>Account registrati</span><strong>—</strong></article>
+      <article class="project-metric"><span>Preferenze scolastiche</span><strong>—</strong></article>
+      <article class="project-metric"><span>Assegnazioni ufficiali</span><strong>—</strong></article>
+      <article class="project-metric"><span>Scuole assegnate</span><strong>—</strong></article>
+      <article class="project-metric"><span>Esiti abbinati</span><strong>—</strong></article>
+    </div>
+
+    <div class="project-dashboard__charts">
+      <article>
+        <h3>Assegnazioni per classe</h3>
+        <div id="project-class-bars" class="project-bars"></div>
+      </article>
+      <article>
+        <h3>Assegnazioni per provincia</h3>
+        <div id="project-province-bars" class="project-bars"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="project-story-grid">
+    <article class="panel">
+      <p class="eyebrow">Perché è nato</p>
+      <h2>Un bisogno concreto</h2>
+      <p>Le procedure di scelta delle sedi generano inevitabilmente domande, confronti e incertezza. Il sito ha offerto uno spazio comune nel quale raccogliere le intenzioni dei candidati senza presentarsi come fonte istituzionale.</p>
+      <p>L’obiettivo non è stato prevedere con certezza gli esiti, ma rendere leggibili informazioni disperse e dare agli utenti strumenti per organizzare le proprie decisioni.</p>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Come si è evoluto</p>
+      <h2>Dalle preferenze agli esiti</h2>
+      <ol class="project-timeline">
+        <li><strong>Raccolta iniziale</strong><span>Classi, posizioni, punteggi e preferenze comunali.</span></li>
+        <li><strong>Preferenze scolastiche</strong><span>Scuole e plessi ordinati direttamente dagli utenti.</span></li>
+        <li><strong>Account e amministrazione</strong><span>Gestione dei record, rivendicazioni e messaggi.</span></li>
+        <li><strong>Assegnazioni ufficiali</strong><span>Confronto tra le preferenze registrate e la sede ottenuta.</span></li>
+      </ol>
+    </article>
+  </section>
+
+  <section class="panel project-principles">
+    <div class="section-heading">
+      <div><p class="eyebrow">Metodo</p><h2>I principi del progetto</h2></div>
+    </div>
+    <div class="project-principles__grid">
+      <article><span aria-hidden="true">◇</span><h3>Indipendenza</h3><p>Nessun collegamento con amministrazioni pubbliche o istituzioni scolastiche.</p></article>
+      <article><span aria-hidden="true">◎</span><h3>Trasparenza</h3><p>Le fonti e i limiti del progetto sono dichiarati in modo esplicito.</p></article>
+      <article><span aria-hidden="true">▦</span><h3>Dati anonimi</h3><p>Nelle pagine pubbliche non vengono mostrati nome e cognome dei candidati.</p></article>
+      <article><span aria-hidden="true">✓</span><h3>Conservazione storica</h3><p>Le preferenze vengono congelate quando l’assegnazione è confermata.</p></article>
+    </div>
+  </section>
+
+  <section class="panel project-download">
+    <div class="project-download__icon" aria-hidden="true">
+      <svg viewBox="0 0 64 64">
+        <path d="M16 6h23l10 10v42H16z"></path>
+        <path d="M39 6v12h12"></path>
+        <path d="M32 25v19"></path>
+        <path d="m24 37 8 8 8-8"></path>
+      </svg>
+    </div>
+    <div>
+      <p class="eyebrow">Documento pubblico</p>
+      <h2>Scarica il report riepilogativo</h2>
+      <p>Il PDF racconta la nascita del progetto e riassume i dati delle assegnazioni ufficiali, la distribuzione territoriale, le scuole più coinvolte e le modalità di tutela della privacy.</p>
+    </div>
+    <a class="secondary project-download__button" href="report-pnrr3-basilicata-2026.pdf" download>
+      Scarica il report PDF <span aria-hidden="true">↓</span>
+    </a>
+  </section>
+
+  <section class="panel project-credits">
+    <p><strong>Ideazione e cura:</strong> Carlo Magni</p>
+    <p>Il progetto è stato realizzato come iniziativa indipendente a servizio dei candidati e della comunità dei docenti lucani.</p>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="config.js?v=4.16.0" defer></script>
+<script src="project.js?v=4.16.0" defer></script>
+</body>
+</html>

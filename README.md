@@ -401,3 +401,8 @@ visualizzazione nell’area riservata e congelamento delle preferenze.
 Aggiunta la pagina pubblica Assegnazioni con elenco anonimo, filtri, CSV,
 mappa delle sole scuole assegnate e marker proporzionali al numero di nomine.
 Aggiunti il collegamento nel menu e una sezione dedicata nella home page.
+
+## Versione 4.16
+
+Aggiunta la pagina pubblica Il progetto con presentazione, dashboard aggregata,
+metodologia, privacy e download del report PDF riepilogativo.

@@ -2351,3 +2351,28 @@ main > .panel::before {
 .home-assignments-cta__button span{font-size:1.15rem;transition:transform .15s ease}
 .home-assignments-cta__button:hover span{transform:translateX(3px)}
 @media(max-width:800px){.home-assignments-cta{grid-template-columns:1fr}.home-assignments-cta__graphic{min-height:150px}.home-assignments-cta__content{flex-direction:column}.home-assignments-cta__button{width:100%}}
+
+.home-assignments-cta__map{
+  display:grid;
+  place-items:center;
+  width:104px;
+  height:104px;
+  color:var(--accent-dark);
+  background:#fff;
+  border:2px solid #b9ced8;
+  border-radius:50%;
+  box-shadow:0 12px 30px rgba(38,68,82,.12);
+}
+.home-assignments-cta__map-icon{
+  width:62px;
+  height:62px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.home-assignments-cta__map-icon circle{
+  fill:currentColor;
+  stroke:none;
+}

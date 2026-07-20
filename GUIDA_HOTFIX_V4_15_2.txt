@@ -1,0 +1,11 @@
+HOTFIX V4.15.2 — CAMBIO ICONA SEZIONE “CONSULTA LE ASSEGNAZIONI”
+
+- rimossa l’icona che poteva ricordare una croce;
+- inserita una nuova icona SVG a tema mappa/assegnazioni.
+
+Sostituisci:
+- index.html
+- style.css
+
+Non serve alcuna migrazione SQL.
+Poi fai Ctrl + F5.
